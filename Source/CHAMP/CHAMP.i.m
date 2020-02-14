@@ -40,7 +40,9 @@ end intrinsic;
 //============================================================================
 intrinsic CHAMP_GetVersion() -> MonStgElt
 {}
-	__CHAMP_DIR := GetEnv("CHAMP_DIR");
+
+	__CHAMP_DIR := CHAMP_GetDir();
+
 	if CHAMP_GetOS() eq "Unix" then
 			ret1 := System("test -d "*__CHAMP_DIR*".git")/256;
 			ret2 := System("git --version > /dev/null");
