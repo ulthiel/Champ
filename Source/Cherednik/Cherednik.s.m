@@ -1,0 +1,24 @@
+{
+    AlgChe.i.m
+    AlgCheMult.i.m
+    AlgCheRes.i.m
+    AlgCheResMult.i.m
+    Parameters.i.m
+    RRCATools.i.m
+    RepTheory.i.m
+    Poisson.i.m
+    Verma.i.m
+    GordonDB.i.m
+    CMFamilies.i.m
+    RigidRepresentations.i.m
+    Center.i.m
+    SymplecticDoubling.i.m
+    CellularCharacters.i.m
+    CenterPresentation.i.m
+		EulerFamilies.i.m
+		SymplecticLeaves.i.m
+		CheCoeff.i.m
+		Supersingular.i.m
+		Cuspidal.i.m
+		BlockGraph.i.m
+}

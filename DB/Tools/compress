@@ -1,0 +1,21 @@
+import fnmatch
+import os
+
+matches = []
+for root, dirnames, filenames in os.walk('.'):
+  for filename in fnmatch.filter(filenames, '*.o.m'):
+      file = os.path.join(root, filename)
+      #print filename
+      orgsize = os.path.getsize(file)
+      if orgsize <= 20*1024:
+          continue
+      print filename
+      os.system("bzip2 --best " + file)
+      #os.system("gzip -d " + file + " > " + file + ".gz")
+      #os.system("gzip -f -d " + file)
+      #newsize = os.path.getsize(file + ".gz")
+      #ratio = float(orgsize)/float(newsize)
+      #if ratio >= 2:
+      #    os.system("rm " + file)
+      #else:
+      #    os.system("rm " + file + ".gz")

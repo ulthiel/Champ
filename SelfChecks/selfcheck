@@ -1,0 +1,9 @@
+#!/bin/bash
+../champ AlgCheRes.m
+../champ Attr.m
+../champ B2_BR.m
+../champ G4_AlgChe.m
+../champ G4_BR.m
+../champ G4_Verma.m
+../champ G5_Verma.m
+../champ ReflectionGroups.m

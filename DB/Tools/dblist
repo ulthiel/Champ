@@ -1,0 +1,12 @@
+import fnmatch
+import os
+
+matches = []
+count = 0
+for root, dirnames, filenames in os.walk('.'):
+  for filename in fnmatch.filter(filenames, 'CherednikGenericGGOR*'):
+      file = os.path.join(root, filename)
+      print file
+      count = count + 1
+
+print count
