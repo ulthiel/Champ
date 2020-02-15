@@ -9,13 +9,15 @@
 
 print "#########################################################";
 print "#  CHAMP (CHerednik Algebra Magma Package)              #";
-print "#  Version "*CHAMP_GetVersion()*"\t\t\t\t\t#";
+__CHAMP_VER := CHAMP_GetVersion();
+__CHAMP_VER *:= &*[" " : i in [1..45-#__CHAMP_VER] ];
+print "#  Version "*__CHAMP_VER*"#";
 print "#  Copyright (C) 2013-2020 Ulrich Thiel                 #";
 print "#  Licensed under GNU GPLv3                             #";
 print "#  Please cite                                          #";
 print "#    * LMS J. Comput. Math. 18 (2015), no. 1, 266-307   #";
 print "#  thiel@mathematik.uni-kl.de                           #";
-print "#  https://ulthiel.github.com/champ/                    #";
+print "#  https://github.com/ulthiel/champ                     #";
 print "#########################################################";
 
 //============================================================================
