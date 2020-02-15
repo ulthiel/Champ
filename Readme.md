@@ -117,7 +117,7 @@ Generators:
 //Create the rational Cherednik algebra for t and c generic (valued in a
 //polynomial ring)
 > W := TypeBReflectionGroup(2); //Weyl group of type B2 as above
-> H := RationalCherednikAlgebra(W);
+> H := RationalCherednikAlgebra(W : Type:="EG"); //I will explain the EG below
 Rational Cherednik algebra
 Generators:
     w1, w2, y1, y2, x1, x2
@@ -126,7 +126,7 @@ Generator degrees:
 Base ring:
     Polynomial ring of rank 3 over Rational Field
     Order: Lexicographical
-    Variables: t, k1_1, k2_1
+    Variables: t, c1, c2
 Group:
     MatrixGroup(2, Rational Field) of order 2^3
     Generators:
@@ -139,8 +139,8 @@ t-parameter:
     t
 c-parameter:
     Mapping from: { 1 .. 2 } to Polynomial ring of rank 3 over Rational Field
-    <1, 2*k1_1>
-    <2, 2*k2_1>
+    <1, c1>
+    <2, c2>
 
 //There is quite a bit to discuss now but let's start playing directly.
 //As you can see in the output, there are generators w1, w2, y1, y2, x1, x2.
@@ -159,10 +159,10 @@ c-parameter:
 [ 1 -1]*(x1 + x2)
 > H.5*H.3;
 [-1  0]
-[-1  1]*(2*k2_1)
+[-1  1]*(c2)
 +
 [-1  2]
-[ 0  1]*(2*k1_1)
+[ 0  1]*(c1)
 +
 [1 0]
 [0 1]*(y1*x1 + t)
@@ -178,13 +178,13 @@ c-parameter:
 
 ### Parameters
 
-There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a t-parameter and a c-parameter. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c_1,...,c_r] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I.
+This topic is a bit technical but important. There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a *t-parameter* and a *c-parameter*. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c_1,...,c_r] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I. For example, we could take a polynomial ring R=K[t,c] and set c(s)=c for all c. This would be the generic *equal* parameter case.
 
-For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R.
+For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R. In particular, you can work with generic parameters, generic parameters on a, say, hyperplane, or special parameters taking values in your base field K. You have complete freedom.
 
-[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the parameter space which makes some expressions in the parameters much simpler. I will refer them as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the *k-parameters* have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. By default, CHAMP uses k-parameters.
+[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero-Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
 
-The following examples should make all this clear.
+The following examples should make all of the above discussion clear.
 
 ```C++
 //First, some shortcuts for creating generic rational Cherednik algebras:
