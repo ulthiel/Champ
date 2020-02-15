@@ -156,6 +156,14 @@ intrinsic CenterGenerators(~H::AlgChe : UseDB:=true, SaveToDB:=false)
 
 end intrinsic;
 
+intrinsic CenterGenerators(H::AlgChe : UseDB:=true, SaveToDB:=false) -> SeqEnum
+{}
+
+	CenterGenerators(~H);
+	return H`CenterGenerators;
+
+end intrinsic;
+
 //============================================================================
 intrinsic CenterGenerator(~H::AlgChe, i::RngIntElt : UseDB:=true, SaveToDB:=false)
 {Compute and add i-th generator of the center}
@@ -216,6 +224,15 @@ intrinsic CenterGeneratorsOfDegreeZero(~H::AlgChe : UseDB:=true, SaveToDB:=false
 		j := deg0gens[i];
 		H`CenterGeneratorsOfDegreeZero[i] := H`CenterGenerators[j];
 	end for;
+
+end intrinsic;
+
+intrinsic CenterGeneratorsOfDegreeZero(H::AlgChe : UseDB:=true, SaveToDB:=false)
+-> List
+{}
+
+	CenterGeneratorsOfDegreeZero(~H);
+	return H`CenterGeneratorsOfDegreeZero;
 
 end intrinsic;
 

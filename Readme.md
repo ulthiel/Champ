@@ -31,6 +31,8 @@ You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.
 
 Alternatively, you can clone the git repository. This has a minor complication: due to large binary files in the database, it is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
+I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups selfcheck will take a bit of time but if the first few are fine, the rest should be fine as well).
+
 <a name="reflgroups"></a>
 
 ## Complex reflection groups
@@ -238,8 +240,8 @@ Rational Field
     <2, c2>
 
 //Now, let's look at k-parameters (the default):
-> W:=TypeBReflectionGroup(2);
-> CherednikParameter(W);
+> k:=CherednikParameter(W);
+> k;
 Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
     <1, 2*k1_1>
     <2, 2*k2_1>
@@ -250,8 +252,175 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 //This is an array indexed by orbits of reflection hyperplanes. Each entry is
 //again an array indexed by reflection hyperplanes in this orbit. The entries
 //of this array are the reflections for the corresponding hyperplane.
+//You can work with k-parameters exactly as with the c-parameters above.
 ```
 
 <a name="cmspaces"></a>
 
 ### Rational Cherednik algebras at t=0 and Calogero-Moser spaces
+
+The rational Cherednik algebra H_{t=0,c} has a big center Z_c: it is a Poisson deformation of the symplectic singularity (V \oplus V^*)/W, where W acts on V. The associated variety is called the *Calogero-Moser space* of W at parameter c. CHAMP can compute algebra generators of Z_c and also a presentation of this algebra (the former works even for large groups like F4, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
+
+```C++
+> W := TypeBReflectionGroup(2);
+> H := RationalCherednikAlgebra(W,0);
+> CenterGenerators(H); //this needs generic parameters!
+[*
+    [1 0]
+    [0 1]*(y1^2 - 2*y1*y2 + 2*y2^2),
+    [-1  0]
+    [-1  1]*(k2_1)
+    +
+    [-1  2]
+    [ 0  1]*(k1_1)
+    +
+    [ 1  0]
+    [ 1 -1]*(k2_1)
+    +
+    [1 0]
+    [0 1]*(y1*x1 + y2*x2)
+    +
+    [ 1 -2]
+    [ 0 -1]*(k1_1),
+    [1 0]
+    [0 1]*(x1^2 + x1*x2 + 1/2*x2^2),
+    [1 0]
+    [0 1]*(y1^4 - 4*y1^3*y2 + 6*y1^2*y2^2 - 4*y1*y2^3 + 2*y2^4),
+    [-1  0]
+    [-1  1]*(k2_1*y1^2 - 4*k2_1*y1*y2 + 4*k2_1*y2^2)
+    +
+    [-1  2]
+    [ 0  1]*(k1_1*y1^2 - 2*k1_1*y1*y2)
+    +
+    [ 1  0]
+    [ 1 -1]*(k2_1*y1^2)
+    +
+    [1 0]
+    [0 1]*(y1^3*x1 - 4*y1^2*y2*x1 - y1^2*y2*x2 + 4*y1*y2^2*x1 + 2*y1*y2^2*x2)
+    +
+    [ 1 -2]
+    [ 0 -1]*(-k1_1*y1^2 + 2*k1_1*y1*y2),
+    [-1  2]
+    [ 0  1]*(-2*k1_1*y2*x1 - 2*k1_1*y2*x2)
+    +
+    [ 1 -2]
+    [ 1 -1]*(-2*k1_1*k2_1)
+    +
+    [1 0]
+    [0 1]*(y1^2*x1^2 + y1^2*x1*x2 + 1/2*y1^2*x2^2 - 4*y1*y2*x1^2 - 4*y1*y2*x1*x2
+    - y1*y2*x2^2 + 4*y2^2*x1^2 + 4*y2^2*x1*x2 + y2^2*x2^2)
+    +
+    [-1  0]
+    [ 0 -1]*(-2*k1_1^2)
+    +
+    [ 1 -2]
+    [ 0 -1]*(-2*k1_1*y1*x1 + 2*k1_1*y2*x1)
+    +
+    [-1  2]
+    [-1  1]*(-2*k1_1*k2_1),
+    [-1  0]
+    [-1  1]*(k2_1*x1^2 + k2_1*x1*x2 + 1/4*k2_1*x2^2)
+    +
+    [-1  2]
+    [ 0  1]*(k1_1*x1^2 + 3/2*k1_1*x1*x2 + 3/4*k1_1*x2^2)
+    +
+    [ 1  0]
+    [ 1 -1]*(1/4*k2_1*x2^2)
+    +
+    [1 0]
+    [0 1]*(y1*x1^3 + 3/2*y1*x1^2*x2 + 3/4*y1*x1*x2^2 + 1/4*y2*x2^3)
+    +
+    [ 1 -2]
+    [ 0 -1]*(k1_1*x1^2 + 1/2*k1_1*x1*x2 + 1/4*k1_1*x2^2),
+    [1 0]
+    [0 1]*(x1^4 + 2*x1^3*x2 + 3/2*x1^2*x2^2 + 1/2*x1*x2^3 + 1/8*x2^4)
+*]
+> #CenterGenerators(H);
+8
+//The computation of the center generators inductively deforms fundamental
+//invariants of Z_0 = K[V \oplus V^*]^W. You can compute and acccess these
+//fundamental invariants as follows:
+> SymplecticDoublingFundamentalInvariants(W);
+[
+    y1^2 - 2*y1*y2 + 2*y2^2,
+    y1*x1 + y2*x2,
+    x1^2 + x1*x2 + 1/2*x2^2,
+    y1^4 - 4*y1^3*y2 + 6*y1^2*y2^2 - 4*y1*y2^3 + 2*y2^4,
+    y1^3*x1 - 4*y1^2*y2*x1 - y1^2*y2*x2 + 4*y1*y2^2*x1 + 2*y1*y2^2*x2,
+    y1^2*x1^2 + y1^2*x1*x2 + 1/2*y1^2*x2^2 - 4*y1*y2*x1^2 - 4*y1*y2*x1*x2 -
+        y1*y2*x2^2 + 4*y2^2*x1^2 + 4*y2^2*x1*x2 + y2^2*x2^2,
+    y1*x1^3 + 3/2*y1*x1^2*x2 + 3/4*y1*x1*x2^2 + 1/4*y2*x2^3,
+    x1^4 + 2*x1^3*x2 + 3/2*x1^2*x2^2 + 1/2*x1*x2^3 + 1/8*x2^4
+]
+//The deformation of an element of Z_0 to an element of Z_c is done with the
+//function TruncationInverse which you can also call directly if you are only
+//interested in special elements:
+> TruncationInverse(H, W`SymplecticDoublingFundamentalInvariants[1]);
+[1 0]
+[0 1]*(y1^2 - 2*y1*y2 + 2*y2^2)
+//On V \oplus V^* we have a natural N^2-grading. We are especially interested in
+//algebra generators of N^2-degree (d,d), i.e. of Z-degree 0.
+> [ Bidegree(f) : f in W`SymplecticDoublingFundamentalInvariants ];
+[ <2, 0>, <1, 1>, <0, 2>, <4, 0>, <3, 1>, <2, 2>, <1, 3>, <0, 4> ]
+//We see there are only 2 generators of Z-degree 0.
+//You can also directly compute only the degree-0 generators of Z_c as follows
+> CenterGeneratorsOfDegreeZero(H);
+[*
+    [-1  0]
+    [-1  1]*(k2_1)
+    +
+    [-1  2]
+    [ 0  1]*(k1_1)
+    +
+    [ 1  0]
+    [ 1 -1]*(k2_1)
+    +
+    [1 0]
+    [0 1]*(y1*x1 + y2*x2)
+    +
+    [ 1 -2]
+    [ 0 -1]*(k1_1),
+    [-1  2]
+    [ 0  1]*(-2*k1_1*y2*x1 - 2*k1_1*y2*x2)
+    +
+    [ 1 -2]
+    [ 1 -1]*(-2*k1_1*k2_1)
+    +
+    [1 0]
+    [0 1]*(y1^2*x1^2 + y1^2*x1*x2 + 1/2*y1^2*x2^2 - 4*y1*y2*x1^2 - 4*y1*y2*x1*x2
+    - y1*y2*x2^2 + 4*y2^2*x1^2 + 4*y2^2*x1*x2 + y2^2*x2^2)
+    +
+    [-1  0]
+    [ 0 -1]*(-2*k1_1^2)
+    +
+    [ 1 -2]
+    [ 0 -1]*(-2*k1_1*y1*x1 + 2*k1_1*y2*x1)
+    +
+    [-1  2]
+    [-1  1]*(-2*k1_1*k2_1)
+*]
+//We can even compute a presentation of the center of H
+> CenterPresentation(H);
+[
+    3*z1^2*z3 - z1*z2^2 - z1*z6 + 2*k1_1^2*z1 + z2*z5 - 2*z3*z4,
+    -4*z1*z2*z3 + 2*z1*z7 + z2^3 + 2*z2*z6 - 4*k2_1^2*z2 - z3*z5,
+    2*z1*z8 + z2^2*z3 - 2*z2*z7 - z3*z6 + 2*k1_1^2*z3,
+    8*z1^3*z3 - 3*z1^2*z2^2 - 4*z1^2*z6 + (4*k1_1^2 + 8*k2_1^2)*z1^2 +
+        2*z1*z2*z5 - 8*z1*z3*z4 + 4*z1*z3*z8 + 2*z2^2*z3^2 + 2*z2^2*z4 -
+        4*z2*z3*z7 - 2*z3^2*z6 + 4*k1_1^2*z3^2 + 4*z4*z6 - 8*k2_1^2*z4 - z5^2,
+    -7*z1^2*z2*z3 + 6*z1^2*z7 + z1*z2^3 + 3*z1*z2*z6 + (2*k1_1^2 -
+        4*k2_1^2)*z1*z2 + 2*z2*z3*z4 - 4*z4*z7 - z5*z6 + 2*k1_1^2*z5,
+    8*z1^2*z3^2 - 8*z1^2*z8 - 10*z1*z2^2*z3 + 6*z1*z2*z7 + (8*k1_1^2 -
+        4*k2_1^2)*z1*z3 + 2*z2^4 + 3*z2^2*z6 + (-6*k1_1^2 - 8*k2_1^2)*z2^2 +
+        z2*z3*z5 - 8*z3^2*z4 + 8*z4*z8 - 2*z5*z7 + (-4*k1_1^2 + 4*k2_1^2)*z6 +
+        8*k1_1^4 - 8*k1_1^2*k2_1^2,
+    -6*z1^2*z3^2 + 10*z1^2*z8 + 8*z1*z2^2*z3 - 8*z1*z2*z7 - z2^4 - 2*z2^2*z6 +
+        (4*k1_1^2 + 4*k2_1^2)*z2^2 + 4*z3^2*z4 - 4*z4*z8 - z6^2 + 4*k1_1^2*z6 -
+        4*k1_1^4,
+    -4*z1*z2*z3^2 + 2*z1*z2*z8 + 4*z1*z3*z7 + 3*z2^3*z3 - 4*z2^2*z7 + z2*z3*z6 +
+        (-2*k1_1^2 - 4*k2_1^2)*z2*z3 - 2*z3^2*z5 + 2*z5*z8 - 2*z6*z7 +
+        4*k1_1^2*z7,
+    -4*z1*z3^3 + 4*z1*z3*z8 - 2*z2^2*z3^2 - 2*z2^2*z8 + 8*z2*z3*z7 + 4*z3^2*z6 -
+        4*k2_1^2*z3^2 - 4*z6*z8 - 4*z7^2 + 8*k2_1^2*z8
+]
+```
