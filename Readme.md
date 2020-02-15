@@ -6,30 +6,32 @@ A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 
 
 With this package you can:
 * compute in rational Cherednik algebras (see [Etingof-Ginzburg](https://arxiv.org/abs/math/0011114))
-* compute generators of the center of the rational Cherednik algebra at t=0 and even a presentation (i.e. the coordinate algebra of the Calogero-Moser space)
+* compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space)
+* compute Poisson brackets on the center (towards symplectic leaves)
 * compute decomposition matrices and graded characters for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields.
+The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields.
 
 The theory and algorithms is discussed in the following publications:
 * U. Thiel, CHAMP: A Cherednik Algebra Magma Package
 LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
 
+In the following we will give a complete overview of the functionality.
 
 ## Downloading and running
 
 You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). It's most convenient to simply download the [latest release](https://github.com/ulthiel/champ/releases/latest). You can start champ by running ```./champ```.
 
-**For full functionality of CHAMP, you have to download the ReflectionGroups database from the assets as well and extract it in the ```DB``` directory of CHAMP.**
+**Important.** For full functionality of CHAMP, you have to download the ReflectionGroups database from the release assets as well and extract it in the ```DB``` directory of CHAMP.
 
-Alternatively, you can clone the git repository; but this has a little twist: the database is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest), and you first have to install this extension. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual.
+Alternatively, you can clone the git repository. This has a minor complication: due to large binary files in the database, it is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
 ## Reflection groups
 
-Models for several complex reflection groups, their character tables, character names, models for irreducible representations, and further data is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package.
+Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package. The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
 
-The following examples show how to use all functions around complex reflection groups:
+The following examples demonstrate how to use all functions around complex reflection groups:
 
 ```
 //Load the Weyl group B2 in a reflection representation
@@ -43,22 +45,34 @@ Generators:
     [ 1  0]
     [ 1 -1]
 
+//The database location for this group is stored in the DBDir attribute
+> W`DBDir;
+ReflectionGroups/B2_CHEVIE/
+
 //Character tables and standard character names are stored in the database.
 > CharacterTable(~W);
+> W`CharacterTable;
+[
+    ( 1, 1, 1, -1, -1 ),
+    ( 2, -2, 0, 0, 0 ),
+    ( 1, 1, -1, -1, 1 ),
+    ( 1, 1, 1, 1, 1 ),
+    ( 1, 1, -1, 1, -1 )
+]
 > W`CharacterNames;
-[ 11., 1.1, .11, 2., .2 ]
-```
+[ 11., 1.1, .11, 2., .2 ] //notation for bi-partitions
 
-The above illustrates a general philosophy: most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (hence the ~ operator). Especially for character tables, a call to Magma's internal CharacterTable would compute a character table and we would lose the labeling. Keep this in mind.
+//IMPORTANT: CharacterTable(W) without the ~ will use Magma's algorithm to
+//compute the character table; we won't get a labeling! Hence, always use the
+//procedure with the ~ operator.
 
-```
 //Load models for the irreducible representations. Their numbering will match
 //the one from the database.
 > Representations(~W);
 > W`Representations[0]; //I wanted to use positive characteristic
                         //representations one day, hence the 0.
 
-//Get the fake degrees (graded W-character of the coinvariant algebra)
+//Fake degrees (graded W-character of the coinvariant algebra)
 > FakeDegrees(~W);
 > W`FakeDegrees;
 [
@@ -70,14 +84,28 @@ The above illustrates a general philosophy: most objects (like groups) will have
 ]
 ```
 
-Other types of reflection groups (with connection to data from the database and/or natural choices) can be created with the following functions: ExceptionalComplexReflectionGroup, SymmetricReflectionGroup, CyclicReflectionGroup, TypeBReflectionGroup, TypeDReflectionGroup, ImprimitiveReflectionGroup, DihedralReflectionGroup.
+Other types of reflection groups (with connection to data from the database and/or natural choices) can be created with the following functions: ExceptionalComplexReflectionGroup, SymmetricReflectionGroup, TypeBReflectionGroup, TypeDReflectionGroup, DihedralReflectionGroup, CyclicReflectionGroup, ImprimitiveReflectionGroup.
+
+You can also load some special models directly from the database as in the following example:
+
+```
+> W := CHAMP_GetFromDB("ReflectionGroups/B2_BR", "GrpMat");
+> W;
+MatrixGroup(2, Rational Field)
+Generators:
+    [0 1]
+    [1 0]
+
+    [-1  0]
+    [ 0  1]
+```
 
 ## Rational Cherednik algebras
 
 ```
 //Create the rational Cherednik algebra for t and c generic (valued in a
 //polynomial ring)
-> W := TypeBReflectionGroup(2);
+> W := TypeBReflectionGroup(2); //Weyl group of type B2 as above
 > H := RationalCherednikAlgebra(W);
 Rational Cherednik algebra
 Generators:
@@ -103,4 +131,28 @@ c-parameter:
     <1, 2*k1_1>
     <2, 2*k2_1>
 
+//There is quite a bit to discuss now but let's start playing directly.
+//As you can see in the output, there are generators w1, w2, y1, y2, x1, x2.
+//These refer to the generators of the group (the w's), the basis of the space
+//W is acting on (the y's) and its dual space (the x's). You can access the i-th
+//generator in this numbering with H.i.
+> H.3;
+[1 0]
+[0 1]*(y1)
+
+//As a module, the Cherednik algebra is the group ring of W with coefficients
+//in R[V \oplus V^*], where R is the base ring of the parameters. This is how
+//algebra elements are represented also in CHAMP. Let's do some arithmetic.
+> H.5*H.2;
+[ 1  0]
+[ 1 -1]*(x1 + x2)
+> H.5*H.3;
+[-1  0]
+[-1  1]*(2*k2_1)
++
+[-1  2]
+[ 0  1]*(2*k1_1)
++
+[1 0]
+[0 1]*(y1*x1 + t)
 ```
