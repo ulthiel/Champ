@@ -10,14 +10,10 @@ With this package you can:
 * compute Poisson brackets on the center (towards symplectic leaves)
 * compute decomposition matrices and graded characters for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields.
-
-The theory and algorithms is discussed in the following publications:
+The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. In the following we will give a complete overview of the functionality. The theory and algorithms is discussed in the following publications:
 * U. Thiel, CHAMP: A Cherednik Algebra Magma Package
 LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
-
-In the following we will give a complete overview of the functionality.
 
 ## Downloading and running
 
@@ -33,7 +29,7 @@ Models for several complex reflection groups, their character tables, character 
 
 The following examples demonstrate how to use all functions around complex reflection groups:
 
-```
+```C++
 //Load the Weyl group B2 in a reflection representation
 > W := TypeBReflectionGroup(2);
 > W;
@@ -88,7 +84,8 @@ Other types of reflection groups (with connection to data from the database and/
 
 You can also load some special models directly from the database as in the following example:
 
-```
+```C++
+//Particular model of B2 used by Bonnafé-Rouquier in some computation
 > W := CHAMP_GetFromDB("ReflectionGroups/B2_BR", "GrpMat");
 > W;
 MatrixGroup(2, Rational Field)
@@ -102,7 +99,7 @@ Generators:
 
 ## Rational Cherednik algebras
 
-```
+```C++
 //Create the rational Cherednik algebra for t and c generic (valued in a
 //polynomial ring)
 > W := TypeBReflectionGroup(2); //Weyl group of type B2 as above
@@ -155,4 +152,10 @@ c-parameter:
 +
 [1 0]
 [0 1]*(y1*x1 + t)
+
+//IMPORTANT: In Magma, matrices are acting from the *right* on vectors. Hence,
+//to keep everything consistent, I have implemented the *opposite* of the
+//rational Cherednik alebra as usually written on paper. This may be a bit
+//confusing, but in the end it's less confusing than trying to make Magma act on
+//the left.
 ```
