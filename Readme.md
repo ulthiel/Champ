@@ -21,7 +21,8 @@ LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 [Complex reflection groups](#reflgroups)  
 [Rational Cherednik algebras](#che)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Parameters](#params)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)
+&nbsp;&nbsp;&nbsp;&nbsp;[Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
+[Restricted rational Cherednik algebras](#rrca)  
 
 <a name="downloading"></a>
 
@@ -261,6 +262,9 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 
 The rational Cherednik algebra H_{t=0,c} has a big center Z_c: it is a Poisson deformation of the symplectic singularity (V \oplus V^*)/W, where W acts on V. The associated variety is called the *Calogero-Moser space* of W at parameter c. CHAMP can compute algebra generators of Z_c and also a presentation of this algebra (the former works even for large groups like F4, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
 
+The ReflectionGroups database contains generators of Z_0 (undeformed case) and Z_c (c generic) for several cases. Some of the elements are extremely large (for G11 there is one taking up >100MB compressed and >500MB uncompressed)! By default, all functions check the database first and load the data from there if available.
+
+
 ```C++
 > W := TypeBReflectionGroup(2);
 > H := RationalCherednikAlgebra(W,0);
@@ -423,4 +427,19 @@ The rational Cherednik algebra H_{t=0,c} has a big center Z_c: it is a Poisson d
     -4*z1*z3^3 + 4*z1*z3*z8 - 2*z2^2*z3^2 - 2*z2^2*z8 + 8*z2*z3*z7 + 4*z3^2*z6 -
         4*k2_1^2*z3^2 - 4*z6*z8 - 4*z7^2 + 8*k2_1^2*z8
 ]
+//Poisson brackets of elements of Z_c can be computed as well
+> PoissonBracket(H.5,H.3);
+[-1  0]
+[-1  1]*(2*k2_1)
++
+[-1  2]
+[ 0  1]*(2*k1_1)
++
+[1 0]
+[0 1]*(1)
 ```
+
+
+<a name="rrca"></a>
+
+## Restricted rational Cherednik algebras
