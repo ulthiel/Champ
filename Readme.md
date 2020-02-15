@@ -19,15 +19,15 @@ LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 
 [Downloading an running](#downloading)  
 [Complex reflection groups](#reflgroups)  
-[Rational Cherednik algebras](#che)
+[Rational Cherednik algebras](#che)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Parameters](#params)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)
 
 <a name="downloading"></a>
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). It's most convenient to simply download the [latest release](https://github.com/ulthiel/champ/releases/latest). You can start champ by running ```./champ```.
-
-**Important.** For full functionality of CHAMP, you have to download the ReflectionGroups database from the release assets as well and extract it in the ```DB``` directory of CHAMP.
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the release assets as well and extract it in the ```DB``` directory of CHAMP.
 
 Alternatively, you can clone the git repository. This has a minor complication: due to large binary files in the database, it is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
@@ -174,13 +174,15 @@ c-parameter:
 //make Magma act on the left.
 ```
 
+<a name="params"></a>
+
 ### Parameters
 
 There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a t-parameter and a c-parameter. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c_1,...,c_r] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I.
 
 For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R.
 
-[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the parameter space which makes some expressions in the parameters much simpler. I will refer them as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the *k-parameters* have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. **By default, CHAMP uses k-parameters**.
+[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the parameter space which makes some expressions in the parameters much simpler. I will refer them as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the *k-parameters* have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. By default, CHAMP uses k-parameters.
 
 The following examples should make all this clear.
 
@@ -249,3 +251,7 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 //again an array indexed by reflection hyperplanes in this orbit. The entries
 //of this array are the reflections for the corresponding hyperplane.
 ```
+
+<a name="cmspaces"></a>
+
+### Rational Cherednik algebras at t=0 and Calogero-Moser spaces
