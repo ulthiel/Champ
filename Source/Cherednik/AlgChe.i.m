@@ -51,7 +51,7 @@ declare attributes AlgCheElt:
     Element;
 
 //=========================================================================
-intrinsic RationalCherednikAlgebra(G::GrpMat, param::Tup : UseProductTable:=true, Poisson:=true, UseCommutatorsTable:=true, PoissonModtSquare:=true, GroupAlgebraRep:="") -> AlgChe
+intrinsic RationalCherednikAlgebra(G::GrpMat, tparam::RngElt, cparam::Map : UseProductTable:=true, Poisson:=true, UseCommutatorsTable:=true, PoissonModtSquare:=true, GroupAlgebraRep:="") -> AlgChe
 {}
     H := New(AlgChe);
     DualGroup(~G);
@@ -59,8 +59,8 @@ intrinsic RationalCherednikAlgebra(G::GrpMat, param::Tup : UseProductTable:=true
     CherednikCoefficients(~G);
 
     H`Group := G;
-    H`tParameter := param[1];
-    H`cParameter := param[2];
+    H`tParameter := tparam;
+    H`cParameter := cparam;
     H`BaseRing := Codomain(H`cParameter);
     H`GroupDimension := Dimension(G);
     H`NumberOfGroupGenerators := Ngens(G);
@@ -133,12 +133,12 @@ intrinsic RationalCherednikAlgebra(G::GrpMat, param::Tup : UseProductTable:=true
         	H`PoissonBaseRingEmbedding := func< r | T!r >;
         	H`PoissonBaseRingProjection := hom<T->R | [One(R)]>; //extract t-part
         	cPoisson := map<Domain(H`cParameter)->T|[<s,H`PoissonBaseRingEmbedding(H`cParameter(s))> : s in Domain(H`cParameter)]>;
-        	H`PoissonAlgebra := RationalCherednikAlgebra(G,<T.1,cPoisson>);
+        	H`PoissonAlgebra := RationalCherednikAlgebra(G,T.1,cPoisson);
         else
         	H`PoissonBaseRingEmbedding := hom<R->S | [S!(R.i) : i in [1..Ngens(R)]] >;
         	H`PoissonBaseRingProjection := func< f | R!MonomialCoefficient(f,S.1)>;
         	cPoisson := map<Domain(H`cParameter)->S|[<s,H`PoissonBaseRingEmbedding(H`cParameter(s))> : s in Domain(H`cParameter)]>;
-        	H`PoissonAlgebra := RationalCherednikAlgebra(G,<S.1,cPoisson>);
+        	H`PoissonAlgebra := RationalCherednikAlgebra(G,S.1,cPoisson);
         end if;
     end if;
 
@@ -174,7 +174,7 @@ end intrinsic;
 intrinsic RationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable:=true, UseCommutatorsTable:=true, Poisson:=true, PoissonModtSquare:=true, GroupAlgebraRep:="") -> AlgChe
 {}
 
-    return RationalCherednikAlgebra(G, <Zero(Codomain(c)),c> :   UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, Poisson:=Poisson, PoissonModtSquare:=PoissonModtSquare);
+    return RationalCherednikAlgebra(G, Zero(Codomain(c)), c :   UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, Poisson:=Poisson, PoissonModtSquare:=PoissonModtSquare);
 
 end intrinsic;
 
@@ -186,7 +186,7 @@ intrinsic RationalCherednikAlgebra(G::GrpMat : Type:="GGOR", Rational:=false,  U
 */
 {}
     param := FullCherednikParameter(G:Type:=Type,Rational:=Rational);
-    return RationalCherednikAlgebra(G, param:  UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, PoissonModtSquare:=PoissonModtSquare);
+    return RationalCherednikAlgebra(G, param[1], param[2]:  UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, PoissonModtSquare:=PoissonModtSquare);
 
 end intrinsic;
 
@@ -199,7 +199,7 @@ intrinsic RationalCherednikAlgebra(G::GrpMat, t::RngElt : Type:="GGOR", Rational
 {}
     c:=CherednikParameter(G: Type:=Type, Rational:=Rational);
     R:=Codomain(c);
-    H := RationalCherednikAlgebra(G, <R!t,c> :    UseProductTable:=UseProductTable,UseCommutatorsTable:=UseCommutatorsTable,Poisson:=Poisson,PoissonModtSquare:=PoissonModtSquare);
+    H := RationalCherednikAlgebra(G, R!t,c  :    UseProductTable:=UseProductTable,UseCommutatorsTable:=UseCommutatorsTable,Poisson:=Poisson,PoissonModtSquare:=PoissonModtSquare);
     if assigned G`DBDir then
     	H`DBDir := G`DBDir*"Cherednik/"*Type*"/Generic";
     end if;

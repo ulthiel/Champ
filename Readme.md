@@ -176,6 +176,76 @@ c-parameter:
 
 ### Parameters
 
-```C++
+There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a t-parameter and a c-parameter. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c_1,...,c_r] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I.
 
+For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R.
+
+[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the parameter space which makes some expressions in the parameters much simpler. I will refer them as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the *k-parameters* have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. **By default, CHAMP uses k-parameters**.
+
+The following examples should make all this clear.
+
+```C++
+//First, some shortcuts for creating generic rational Cherednik algebras:
+> W:=TypeBReflectionGroup(2);
+> H:=RationalCherednikAlgebra(W); //generic t and generic k-parameter
+> H:=RationalCherednikAlgebra(W : Type:="EG"); //generic t and generic c
+> H:=RationalCherednikAlgebra(W,0); //t=0 and generic k-parameter
+> H:=RationalCherednikAlgebra(W,0 : Type:="EG"); //t=0 and generic c
+
+//Now, let's have a closer look at parameters. Let's create a generic
+//c-parameter.
+> CherednikParameter(W : Type:="EG");
+Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
+    <1, c1>
+    <2, c2>
+
+//This is a map from (labels of) conjugacy classes of reflections of W to the
+//polynomial ring in that many variables. Representatives of the conjugacy
+//classes of reflections can be obtained as follows:
+> W`ReflectionClasses;
+[
+    [-1  2]
+    [ 0  1],
+
+    [ 1  0]
+    [ 1 -1]
+]
+
+//Let's construct the rational Cherednik algebra of W over the rational numbers
+//with t=0 and a c-parameter with values c(1) = -1 and c(2) = 1:
+> c := map<{1,2} -> Rationals() | [<1,-1>, <2,1>] >;
+> H:=RationalCherednikAlgebra(W,0,c);
+
+//Let's create a c-parameter which is generic for the hyperplane c_1 - c_2
+//(this is the generic equal parameter case):
+> c := CherednikParameter(W : Type:="EG");
+> R:=Codomain(c);
+> cH:=SpecializeCherednikParameterInHyperplane(c, R.1-R.2);
+> cH;
+Mapping from: { 1 .. 2 } to Multivariate rational function field of rank 1 over
+Rational Field
+    <1, c2>
+    <2, c2>
+> H := RationalCherednikAlgebra(W,0,cH);
+
+//You can create a generic *rational* c-parameter as follows:
+> CherednikParameter(W : Type:="EG", Rational:=true);
+Mapping from: { 1 .. 2 } to Multivariate rational function field of rank 2 over
+Rational Field
+    <1, c1>
+    <2, c2>
+
+//Now, let's look at k-parameters (the default):
+> W:=TypeBReflectionGroup(2);
+> CherednikParameter(W);
+Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
+    <1, 2*k1_1>
+    <2, 2*k2_1>
+
+//The labeling of orbits of reflection hyperplanes is consistent with what is
+//stored in
+> W`ReflectionLibrary;
+//This is an array indexed by orbits of reflection hyperplanes. Each entry is
+//again an array indexed by reflection hyperplanes in this orbit. The entries
+//of this array are the reflections for the corresponding hyperplane.
 ```

@@ -6,14 +6,14 @@
 */
 /*
     Computation in [BR13], Chapter 6.
-    
+
     This is a very serious test of AlgChe.
 */
 
 /*
-	Timing: 
+	Timing:
 		* Version 1.5-228: 80.820 on Mac
-*/ 
+*/
 
 print "Running self check \"G4_BR\"";
 zeit := Cputime();
@@ -22,7 +22,7 @@ W:=CHAMP_GetFromDB("ReflectionGroups/G4_BR", "GrpMat");
 
 C:=CherednikParameter(W : Type:="BR", Rational:=false);
 
-H:=RationalCherednikAlgebra(W,<0,C> : PoissonModtSquare:=true);
+H:=RationalCherednikAlgebra(W,0,C : PoissonModtSquare:=true);
 
 zeta := RootOfUnity(3);
 

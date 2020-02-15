@@ -6,7 +6,7 @@
 */
 /*
     Computation in [BR13], Section 19.
-    
+
     This is a very serious test of AlgChe.
 */
 //StartProfile();
@@ -17,7 +17,7 @@ G:=CHAMP_GetFromDB("ReflectionGroups/B2_BR", "GrpMat");
 
 C:=CherednikParameter(G : Type:="BR", Rational:=false);
 
-H:=RationalCherednikAlgebra(G,<0,C>);
+H:=RationalCherednikAlgebra(G,0,C);
 
 
 zeit := Cputime();
