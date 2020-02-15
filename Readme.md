@@ -10,10 +10,18 @@ With this package you can:
 * compute Poisson brackets on the center (towards symplectic leaves)
 * compute decomposition matrices and graded characters for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. In the following we will give a complete overview of the functionality. The theory and algorithms is discussed in the following publications:
+The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, CHAMP: A Cherednik Algebra Magma Package
 LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
+
+### Contents
+
+[Downloading an running](#downloading)  
+[Complex reflection groups](#reflgroups)  
+[Rational Cherednik algebras](#che)
+
+<a name="downloading"></a>
 
 ## Downloading and running
 
@@ -23,7 +31,9 @@ You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.
 
 Alternatively, you can clone the git repository. This has a minor complication: due to large binary files in the database, it is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
-## Reflection groups
+<a name="reflgroups"></a>
+
+## Complex reflection groups
 
 Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package. The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
 
@@ -78,14 +88,16 @@ ReflectionGroups/B2_CHEVIE/
   1,
   q^2
 ]
-```
 
-Other types of reflection groups (with connection to data from the database and/or natural choices) can be created with the following functions: ExceptionalComplexReflectionGroup, SymmetricReflectionGroup, TypeBReflectionGroup, TypeDReflectionGroup, DihedralReflectionGroup, CyclicReflectionGroup, ImprimitiveReflectionGroup.
-
-You can also load some special models directly from the database as in the following example:
-
-```C++
-//Particular model of B2 used by Bonnafé-Rouquier in some computation
+//Other types of reflection groups (with connection to data from the database
+//and/or natural choices) can be created with the following functions:
+//ExceptionalComplexReflectionGroup, SymmetricReflectionGroup,
+//TypeBReflectionGroup, TypeDReflectionGroup, DihedralReflectionGroup,
+//CyclicReflectionGroup, ImprimitiveReflectionGroup.
+//
+//You can also load some special models directly from the database as in the
+//following example which loads a particular model of B2 used by Bonnafé-
+//Rouquier in some computation
 > W := CHAMP_GetFromDB("ReflectionGroups/B2_BR", "GrpMat");
 > W;
 MatrixGroup(2, Rational Field)
@@ -96,6 +108,8 @@ Generators:
     [-1  0]
     [ 0  1]
 ```
+
+<a name="che"></a>
 
 ## Rational Cherednik algebras
 
@@ -156,6 +170,12 @@ c-parameter:
 //IMPORTANT: In Magma, matrices are acting from the *right* on vectors. Hence,
 //to keep everything consistent, I have implemented the *opposite* of the
 //rational Cherednik alebra as usually written on paper. This may be a bit
-//confusing, but in the end it's less confusing than trying to make Magma act on
-//the left.
+//confusing, but in the end it's less confusing than trying to make artifically
+//make Magma act on the left.
+```
+
+### Parameters
+
+```C++
+
 ```
