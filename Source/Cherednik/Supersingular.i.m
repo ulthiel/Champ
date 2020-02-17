@@ -6,6 +6,10 @@
   thiel@mathematik.uni-kl.de
 */
 
+/*
+	Supersingular characters (see my counter-example paper)
+*/
+
 declare attributes GrpMat:
 	FakeDegreeResidues,
 	SupersingularRepresentations;

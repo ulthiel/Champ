@@ -6,6 +6,10 @@
   thiel@mathematik.uni-kl.de
 */
 
+/*
+	Rigid representations
+*/
+
 //========================================================================
 intrinsic IsRigid(chi::AlgChtrElt, c::Map) -> BoolElt
 {Checks if chi is a (weakly!) c-rigid character.}

@@ -7,7 +7,7 @@
 */
 
 /*
-	Intrinsics around rational Cherednik algebras
+	Parameters for rational Cherednik algebras
 */
 
 declare attributes GrpMat:

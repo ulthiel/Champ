@@ -7,6 +7,8 @@
 */
 
 /*
+	Compute a presentation of the center of the rational Cherednik algebra at t=0.
+	
 	Joint work with Cédric Bonnafé (Montpellier).
 */
 

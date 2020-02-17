@@ -7,7 +7,7 @@
 */
 
 /*
-	Intrinsics for Verma modules for restricted rational Cherednik algebras
+	Verma modules for restricted rational Cherednik algebras
 */
 
 

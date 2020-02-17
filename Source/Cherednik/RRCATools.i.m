@@ -7,7 +7,7 @@
 */
 
 /*
-Intrinsics around restricted rational Cherednik algebras
+    Some (old) tools for restricted rational Cherednik algebras
 */
 
 

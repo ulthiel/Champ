@@ -7,7 +7,7 @@
 */
 
 /*
-	Intrinsics for symplectic doublings of matrix groups and their invariant rings.
+	Symplectic doublings of matrix groups and their invariant rings.
 */
 
 declare attributes GrpMat:

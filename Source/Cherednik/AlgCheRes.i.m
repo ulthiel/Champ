@@ -662,8 +662,7 @@ intrinsic StructureConstants(H::AlgCheRes) -> SetEnum
 	Basis(~H);
 	structs := {};
 	for i:=1 to #H`Basis do
-		//PrintPercentage(i, #H`Basis);
-		print structs;
+		PrintPercentage(i, #H`Basis);
 		for j:=i to #H`Basis do
 			f := (H`Basis[i]*H`Basis[j])`Element;
 			for g in Support(f) do

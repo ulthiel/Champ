@@ -6,7 +6,10 @@
   thiel@mathematik.uni-kl.de
 */
 
-
+/*
+	Computing Poisson brackets for central elements of the rational Cherednik
+	algebra at t=0.
+*/
 //=========================================================================
 intrinsic LiftElementToPoissonAlgebra(h::AlgCheElt) -> AlgCheElt
 {}

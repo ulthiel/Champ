@@ -8,7 +8,7 @@ With this package you can:
 * compute in rational Cherednik algebras (see [Etingof-Ginzburg](https://arxiv.org/abs/math/0011114))
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space)
 * compute Poisson brackets on the center (towards symplectic leaves)
-* compute decomposition matrices and graded characters for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
+* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
 
 The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, CHAMP: A Cherednik Algebra Magma Package
@@ -30,7 +30,7 @@ LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 
 You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the release assets as well and extract it in the ```DB``` directory of CHAMP.
 
-Alternatively, you can clone the git repository. This has a minor complication: due to large binary files in the database, it is stored with [Git Large File Storage](https://github.com/ulthiel/champ/releases/latest). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
+Alternatively, you can clone the git repository. **Important**: due to large binary files in the database, it is stored with [Git Large File Storage](https://git-lfs.github.com). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
 I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups selfcheck will take a bit of time but if the first few are fine, the rest should be fine as well).
 
@@ -443,3 +443,49 @@ The ReflectionGroups database contains generators of Z_0 (undeformed case) and Z
 <a name="rrca"></a>
 
 ## Restricted rational Cherednik algebras
+
+The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301) or [my paper](https://arxiv.org/abs/1603.05230). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
+
+```Delphi
+> W := TypeBReflectionGroup(2);
+> H := RestrictedRationalCherednikAlgebra(W); //generic k-parameter
+> H;
+Restricted rational Cherednik algebra
+Generators:
+    w1, w2, y1, y2, x1, x2
+Generator degrees:
+    0, 0, -1, -1, 1, 1
+Base ring:
+    Multivariate rational function field of rank 2 over Rational Field
+    Variables: k1_1, k2_1
+Group:
+    MatrixGroup(2, Rational Field) of order 2^3
+    Generators:
+    [-1  2]
+    [ 0  1]
+
+    [ 1  0]
+    [ 1 -1]
+c-parameter:
+    Mapping from: { 1 .. 2 } to Multivariate rational function field of rank 2
+    over Rational Field
+    <1, 2*k1_1>
+    <2, 2*k2_1>
+> H.5*H.2;
+[ 1  0]
+[ 1 -1]*(x1 + x2)
+
+//You can convert H into a matrix algebra
+> A:=MatrixAlgebra(H);
+> A;
+Matrix Algebra of degree 512 with 6 generators over Multivariate rational
+function field of rank 2 over Rational Field
+
+//We compute the Jacobson radical for the equal parameter case k=[1,1]:
+> c := CherednikParameter(W,[1,1]);
+> H := RestrictedRationalCherednikAlgebra(W,c);
+> A := MatrixAlgebra(H);
+> time J:=JacobsonRadical(A); J;
+Time: 182.370
+Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
+```
