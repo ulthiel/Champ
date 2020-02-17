@@ -16,7 +16,7 @@ declare attributes AlgCheRes:
 
 
 //============================================================================
-intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true) -> ModGr
+intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true) -> ModGrOld
 {
 	The Verma module for rho for the restricted rational Cherednik algebra H.
 }
@@ -137,18 +137,7 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
 end intrinsic;
 
 //============================================================================
-//intrinsic VermaModule(W::GrpMat, c::Map, M::ModGrp : Rep:="Sparse", Verbose:=true) -> SeqEnum
-//{}
-
-//    return VermaModule(W, c, Representation(M) : Rep:=Rep, Verbose:=Verbose);
-
-//end intrinsic;
-
-
-
-
-//============================================================================
-intrinsic IsModule(H::AlgCheRes, V::ModGr) -> BoolElt
+intrinsic IsModule(H::AlgCheRes, V::ModGrOld) -> BoolElt
 /*
     Intrinsic: IsModuleForRRCA
 

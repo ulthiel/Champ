@@ -11,8 +11,7 @@ With this package you can:
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
 
 The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
-* U. Thiel, CHAMP: A Cherednik Algebra Magma Package
-LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
+* U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
 
 ### Contents
@@ -23,6 +22,7 @@ LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 &nbsp;&nbsp;&nbsp;&nbsp;[Parameters](#params)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
 [Restricted rational Cherednik algebras](#rrca)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Representation theory](#rrca-rep)
 
 <a name="downloading"></a>
 
@@ -181,11 +181,11 @@ c-parameter:
 
 ### Parameters
 
-This topic is a bit technical but important. There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a *t-parameter* and a *c-parameter*. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c_1,...,c_r] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I. For example, we could take a polynomial ring R=K[t,c] and set c(s)=c for all c. This would be the generic *equal* parameter case.
+This topic is a bit technical but important. There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a *t-parameter* and a *c-parameter*. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c<sub>1</sub>,...,c<sub>r</sub>] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I. For example, we could take a polynomial ring R=K[t,c] and set c(s)=c for all c. This would be the generic *equal* parameter case.
 
 For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R. In particular, you can work with generic parameters, generic parameters on a, say, hyperplane, or special parameters taking values in your base field K. You have complete freedom.
 
-[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero-Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W_H|-1, where W_H is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
+[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero-Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W<sub>H</sub>|-1, where W<sub>H</sub> is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
 
 The following examples should make all of the above discussion clear.
 
@@ -446,7 +446,7 @@ The ReflectionGroups database contains generators of Z_0 (undeformed case) and Z
 
 The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301) or [my paper](https://arxiv.org/abs/1603.05230). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
 
-```Delphi
+```C++
 > W := TypeBReflectionGroup(2);
 > H := RestrictedRationalCherednikAlgebra(W); //generic k-parameter
 > H;
@@ -482,10 +482,27 @@ Matrix Algebra of degree 512 with 6 generators over Multivariate rational
 function field of rank 2 over Rational Field
 
 //We compute the Jacobson radical for the equal parameter case k=[1,1]:
-> c := CherednikParameter(W,[1,1]);
-> H := RestrictedRationalCherednikAlgebra(W,c);
+> k := CherednikParameter(W,[1,1]);
+> H := RestrictedRationalCherednikAlgebra(W,k);
 > A := MatrixAlgebra(H);
-> time J:=JacobsonRadical(A); J;
+> time J := JacobsonRadical(A); J;
 Time: 182.370
 Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 ```
+
+<a name="rrca-rep"></a>
+
+### Representation theory
+
+In CHAMP you can compute baby Verma modules for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of bay Verma modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of Verma modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
+
+**Conventions.** Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>*</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
+
+Note that there are two choices: 1) to put V<sup>*</sup> in degree +1; 2) to inflate λ to a (H^<sup>-</sup> ⊗ KW)-module. You could also put V<sup>*</sup> in degree -1 and/or inflate λ to an (H<sup>+</sup> ⊗ KW)-module. Here is an overview of what is used in the literature:
+
+| Paper | deg V<sup>*</sup> | Δ(λ) |
+| ----- | ----------------- | ---- |
+| [CHAMP](https://arxiv.org/abs/1403.6686) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
+| [Bonnafé-Roquier](https://arxiv.org/pdf/1708.09764.pdf) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
+| [Bellamy-Thiel](https://arxiv.org/abs/1705.08024) | -1 | H ⊗<sub>H<sup>+</sup></sub> λ |
+| [Gordon](https://arxiv.org/abs/math/0202301) | -1 | H ⊗<sub>H<sup>-</sup></sub> λ |
