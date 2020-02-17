@@ -496,11 +496,11 @@ Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 
 In CHAMP you can compute baby Verma modules for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of bay Verma modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of Verma modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
 
-**Conventions.** Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>*</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
+**Conventions.** Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
 
-Note that there are two choices: 1) to put V<sup>*</sup> in degree +1; 2) to inflate λ to a (H^<sup>-</sup> ⊗ KW)-module. You could also put V<sup>*</sup> in degree -1 and/or inflate λ to an (H<sup>+</sup> ⊗ KW)-module. Here is an overview of what is used in the literature:
+Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to inflate λ to a (H^<sup>-</sup> ⊗ KW)-module. You could also put V<sup>&ast;</sup> in degree -1 and/or inflate λ to an (H<sup>+</sup> ⊗ KW)-module. Here is an overview of what is used in the literature:
 
-| Paper | deg V<sup>*</sup> | Δ(λ) |
+| Paper | deg V<sup>&ast;</sup> | Δ(λ) |
 | ----- | ----------------- | ---- |
 | [CHAMP](https://arxiv.org/abs/1403.6686) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
 | [Bonnafé-Roquier](https://arxiv.org/pdf/1708.09764.pdf) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
