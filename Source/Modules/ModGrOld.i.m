@@ -177,7 +177,7 @@ end intrinsic;
 
 
 //==============================================================================
-intrinsic PoincareSeries(M::ModGrOld) -> RngSerLaur
+intrinsic PoincareSeries(M::ModGrOld) -> FldFunRatUElt
 /*
     Intrinsic: PoincareSeries
 
@@ -191,10 +191,10 @@ intrinsic PoincareSeries(M::ModGrOld) -> RngSerLaur
 */
 {}
 
-    R<t> := LaurentSeriesRing(Integers());
+    R<q> := RationalFunctionField(Rationals());
     P := Zero(R);
     for i:=1 to #M`RowDegrees do
-        P +:= t^M`RowDegrees[i];
+        P +:= q^M`RowDegrees[i];
     end for;
 
     return P;

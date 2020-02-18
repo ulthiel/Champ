@@ -16,8 +16,9 @@ declare attributes AlgCheRes:
 	GradedCharactersOfVermas,
 	GradedCharactersOfSimples,
 	GradedDecompositionMatrix,
-	VermaModules, //associative array carrying the Vermas
-	SimpleModules; //associative array carrying the simples
+	VermaModules,
+	SimpleModules,
+	PoincareSeriesOfSimples;
 
 
 
@@ -576,6 +577,51 @@ intrinsic GradedCharactersOfSimples(H::AlgCheRes) -> AlgMat
 	V := KSpace(H`qField, N);
 	CL := Matrix(H`qField, N, N, [V!GradedCharacterOfSimple(H,i) : i in [1..N]]);
 	return CL;
+
+end intrinsic;
+
+//============================================================================
+intrinsic PoincareSeriesOfSimple(~H::AlgCheRes, i::RngIntElt)
+{}
+
+	if not assigned H`PoincareSeriesOfSimples then
+		W := H`Group;
+		CharacterTable(~W);
+		H`PoincareSeriesOfSimples := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`PoincareSeriesOfSimples, i) then
+		SimpleModule(~H,i);
+		H`PoincareSeriesOfSimples[i] := H`qField!(PoincareSeries(H`SimpleModules[i]));
+	end if;
+
+end intrinsic;
+
+intrinsic PoincareSeriesOfSimple(H::AlgCheRes, i::RngIntElt) -> FldElt
+{}
+
+	PoincareSeriesOfSimple(~H,i);
+	return H`PoincareSeriesOfSimples[i];
+
+end intrinsic;
+
+intrinsic PoincareSeriesOfSimples(~H::AlgCheRes)
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		PoincareSeriesOfSimple(~H,i);
+	end for;
+
+end intrinsic;
+
+intrinsic PoincareSeriesOfSimples(H::AlgCheRes) -> SeqEnum
+{}
+
+	PoincareSeriesOfSimples(~H);
+	W := H`Group;
+	CharacterTable(~W);
+	return [ H`PoincareSeriesOfSimples[i] : i in [1..#W`CharacterTable] ];
 
 end intrinsic;
 
