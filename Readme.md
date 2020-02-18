@@ -260,9 +260,9 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 
 ### Rational Cherednik algebras at t=0 and Calogero-Moser spaces
 
-The rational Cherednik algebra H_{t=0,c} has a big center Z_c: it is a Poisson deformation of the symplectic singularity (V \oplus V^*)/W, where W acts on V. The associated variety is called the *Calogero-Moser space* of W at parameter c. CHAMP can compute algebra generators of Z_c and also a presentation of this algebra (the former works even for large groups like F4, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
+The rational Cherednik algebra H<sub>t=0,c</sub> has a big center Z<sub>c</sub>: it is a Poisson deformation of the symplectic singularity (V ⊕ V<sup>&ast;</sup>)/W, where W acts on V. The associated variety is called the *Calogero-Moser space* of W at parameter c. CHAMP can compute algebra generators of Z<sub>c</sub> and also a presentation of this algebra (the former works even for large groups like F<sub>4</sub>, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
 
-The ReflectionGroups database contains generators of Z_0 (undeformed case) and Z_c (c generic) for several cases. Some of the elements are extremely large (for G11 there is one taking up >100MB compressed and >500MB uncompressed)! By default, all functions check the database first and load the data from there if available.
+The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed case) and Z<sub>k</sub> (k generic) for several cases. Some of the elements are extremely large (for G<sub>11</sub> there is one taking up >100MB compressed and >500MB uncompressed)! By default, all functions check the database first and load the data from there if available.
 
 
 ```C++
@@ -502,7 +502,9 @@ Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to
 
 | Paper | deg V<sup>&ast;</sup> | Δ(λ) |
 | ----- | ----------------- | ---- |
-| [CHAMP](https://arxiv.org/abs/1403.6686) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
-| [Bonnafé-Roquier](https://arxiv.org/pdf/1708.09764.pdf) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ |
-| [Bellamy-Thiel](https://arxiv.org/abs/1705.08024) | -1 | H ⊗<sub>H<sup>+</sup></sub> λ |
-| [Gordon](https://arxiv.org/abs/math/0202301) | -1 | H ⊗<sub>H<sup>-</sup></sub> λ |
+| [CHAMP](https://arxiv.org/abs/1403.6686) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ = K[V]<sub>W</sub> ⊗ λ |
+| [Bonnafé-Roquier](https://arxiv.org/pdf/1708.09764.pdf) | +1 | H ⊗<sub>H<sup>-</sup></sub> λ = K[V]<sub>W</sub> ⊗ λ|
+| [Bellamy-Thiel](https://arxiv.org/abs/1705.08024) | -1 | H ⊗<sub>H<sup>+</sup></sub> λ = K[V]<sub>W</sub> ⊗ λ|
+| [Gordon](https://arxiv.org/abs/math/0202301) | -1 | H ⊗<sub>H<sup>-</sup></sub> λ = K[V<sup>&ast;</sup>]<sub>W</sub> ⊗ λ |
+
+So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference between Bonnafé-Roquier and Bellamy-Thiel is only an *opposite grading* on the Δ(λ) (up to the grading the modules are the same!). To make this more precise, consider a ℤ-graded algebra A with *triangular decomposition*, i.e. a triple (A<sup>l</sup>, A<sup>0</sup>, A<sup>r</sup>) of graded subalgebras such that the multiplication map A<sup>l</sup> ⊗ A<sup>0</sup> ⊗ A<sup>r</sup> → A is an isomorphism of vector spaces, and moreover the following holds: A<sup>0</sup> is in degree 0, and A<sup>l</sup> is either in positive or in negative degree, and A<sup>r</sup> is in the opposite degree of A<sup>l</sup>. In any case one can define the standard module Δ(λ) = A ⊗<sub>A<sup>r</sup></sub> λ. The inflation is always through the *right* part of the decomposition, so it is up to the grading independent of the aforementioned choice. In Bellamy-Thiel we assumed that A<sup>l</sup> is in negative degree, Bonnafé-Rouquier assume that it is in positive degree. But we both assume that A<sup>l</sup> = K[V]<sub>W</sub>. The Bonnafé-Rouquier assumption is nicer in the sense that the standard modules live in positive degree, which seems more natural (but it doesn't make much of a difference as explained). Only in Gordon the parts of the triangular decomposition are opposite, i.e. A<sup>l</sup> = K[V<sup>&ast;</sup>]<sub>W</sub>.
