@@ -15,6 +15,7 @@ declare attributes AlgCheRes:
 	CommutatorVectorsTable,
 	GradedCharactersOfVermas,
 	GradedCharactersOfSimples,
+	GradedDecompositionMatrix,
 	VermaModules, //associative array carrying the Vermas
 	SimpleModules; //associative array carrying the simples
 
@@ -599,18 +600,52 @@ end intrinsic;
 
 
 //============================================================================
-intrinsic GradedDecompositionMatrix(H::AlgCheRes, CL::List) -> AlgMat
-{The graded decomposition matrix of the Verma modules for the RRCA of W computed from the graded character matrix CL of the simple modules.}
-/*
-	This uses the formula in my proceedings paper.
-*/
+intrinsic GradedDecompositionMatrix(~H::AlgCheRes, i::RngIntElt)
+{}
+
+	if not assigned H`GradedDecompositionMatrix then
+		W := H`Group;
+		CharacterTable(~W);
+		H`GradedDecompositionMatrix := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`GradedDecompositionMatrix, i) then
+		GradedCharactersOfSimples(~H);
+		N := #H`Group`CharacterTable;
+		V := KSpace(H`qField, N);
+		CLspace := KSpaceWithBasis([ V!(H`GradedCharactersOfSimples[i]) : i in [1..N] ]);
+		H`GradedDecompositionMatrix[i] := V!Coordinates(CLspace, GradedCharacterOfVerma(H,i));
+	end if;
+
+end intrinsic;
+
+intrinsic GradedDecompositionMatrix(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
+{}
+
+	GradedDecompositionMatrix(~H,i);
+	return H`GradedDecompositionMatrix[i];
+
+end intrinsic;
+
+intrinsic GradedDecompositionMatrix(~H::AlgCheRes)
+{}
 
 	W := H`Group;
-	VermaW := GradedCharactersOfVermas(H);
-	K<q> := RationalFunctionField(Rationals());
-	V := KSpace(K, #W`CharacterTable);
-	CLspace := KSpaceWithBasis([ V!CL[i] : i in [1..#CL] ]);
-	VermaDec := [* V!Coordinates(CLspace, VermaW[i]) : i in [1..#CL] *];
-	return VermaDec;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		GradedDecompositionMatrix(~H,i);
+	end for;
+
+end intrinsic;
+
+intrinsic GradedDecompositionMatrix(H::AlgCheRes) -> AlgMat
+{}
+
+	GradedDecompositionMatrix(~H);
+	W := H`Group;
+	CharacterTable(~W);
+	N := #W`CharacterTable;
+	V := KSpace(H`qField, N);
+	D := Matrix(H`qField, N, N, [V!GradedDecompositionMatrix(H,i) : i in [1..N]]);
+	return D;
 
 end intrinsic;
