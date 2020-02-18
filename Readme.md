@@ -508,3 +508,143 @@ Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to
 | [Gordon](https://arxiv.org/abs/math/0202301) | -1 | H ⊗<sub>H<sup>-</sup></sub> λ = K[V<sup>&ast;</sup>]<sub>W</sub> ⊗ λ |
 
 So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference between Bonnafé-Roquier and Bellamy-Thiel is only an *opposite grading* on the Δ(λ) (up to the grading the modules are the same!). To make this more precise, consider a ℤ-graded algebra A with *triangular decomposition*, i.e. a triple (A<sup>l</sup>, A<sup>0</sup>, A<sup>r</sup>) of graded subalgebras such that the multiplication map A<sup>l</sup> ⊗ A<sup>0</sup> ⊗ A<sup>r</sup> → A is an isomorphism of vector spaces, and moreover the following holds: A<sup>0</sup> is in degree 0, and A<sup>l</sup> is either in positive or in negative degree, and A<sup>r</sup> is in the opposite degree of A<sup>l</sup>. In any case one can define the standard module Δ(λ) = A ⊗<sub>A<sup>r</sup></sub> λ. The inflation is always through the *right* part of the decomposition, so it is up to the grading independent of the aforementioned choice. In Bellamy-Thiel we assumed that A<sup>l</sup> is in negative degree, Bonnafé-Rouquier assume that it is in positive degree. But we both assume that A<sup>l</sup> = K[V]<sub>W</sub>. The Bonnafé-Rouquier assumption is nicer in the sense that the standard modules live in positive degree, which seems more natural (but it doesn't make much of a difference as explained). Only in Gordon the parts of the triangular decomposition are opposite, i.e. A<sup>l</sup> = K[V<sup>&ast;</sup>]<sub>W</sub>.
+
+```C++
+> W := TypeBReflectionGroup(2);
+> Representations(~W);
+> W`CharacterNames;
+[ 11., 1.1, .11, 2., .2 ]
+
+//Construct rational Cherednik algebra for W and generic GGOR parameter
+> H:=RestrictedRationalCherednikAlgebra(W);
+
+//We compute the baby Verma module for the W-representation the 2-dimensional
+//representation 1.1:
+> rho := W`Representations[0][2];
+> M:=VermaModule(H, rho);
+Graded module of dimension 16 over an algebra with generator degrees [ 0, 0, -1,
+-1, 1, 1 ] over Multivariate rational function field of rank 2 over Rational
+Field.
+
+//I have implemented an own structure for garded modules that is used.
+//Recall that as a vector space, M is isomorphic to K[V]_W \otimes \lambda.
+//For each algebra generator of H (in this case w1, w2, y1, y2, x1, x2)
+//the action is encoded by a matrix. The chosen basis for the coinvariant
+//algebra can be viewed with
+> W`CoinvariantAlgebra`Basis;
+{@
+    1,
+    x2,
+    x1,
+    x2^2,
+    x1*x2,
+    x2^3,
+    x1*x2^2,
+    x1*x2^3
+@}
+//and the matrices of the generator actions can be viewed with
+> M`Matrices;
+[
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field,
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field,
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field,
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field,
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field,
+    Sparse matrix with 16 rows and 16 columns over Multivariate rational
+    function field of rank 2 over Rational Field
+]
+//Here is an example (describing the action of y1):
+> Matrix(M`Matrices[3]);
+[0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[-4*k1_1   4*k1_1   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   4*k1_1   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[2*k1_1 - 2*k2_1   -2*k1_1   0   0   0   0   0   0   0   0   0   0   0   0   0
+    0]
+[-4*k2_1   -2*k1_1 + 2*k2_1   0   0   0   0   0   0   0   0   0   0   0   0   0
+    0]
+[0   0   -4*k1_1   4*k1_1   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   0   0   4*k1_1   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   0   2*k1_1 - 2*k2_1   -2*k1_1   0   0   0   0   0   0   0   0   0   0   0
+    0]
+[0   0   -4*k2_1   -2*k1_1 + 2*k2_1   0   0   0   0   0   0   0   0   0   0   0
+    0]
+[0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
+[0   0   0   0   0   0   -2*k1_1 - 2*k2_1   2*k1_1   -4*k1_1   4*k1_1   0   0
+    0   0   0   0]
+[0   0   0   0   0   0   -4*k2_1   2*k1_1 + 2*k2_1   0   4*k1_1   0   0   0   0
+    0   0]
+[0   0   0   0   0   0   0   0   0   0   -2*k1_1 - 2*k2_1   2*k1_1   -4*k1_1
+    4*k1_1   0   0]
+[0   0   0   0   0   0   0   0   0   0   -4*k2_1   2*k1_1 + 2*k2_1   0   4*k1_1
+    0   0]
+//The degrees of the basis vectors of M are:
+> M`RowDegrees;
+[ 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 ]
+
+//Let's check if M is really a module for H (check all defining relations):
+> IsModule(H,M);
+true
+
+//Let's compute the a basis of the submodule of M spanned by the 16-th basis
+//vector of M (which is x1*x2^3 \otimes e2), where e2 is the second basis
+//vector of the W-representation rho):
+> Spin(M, M.16);
+[*
+    (0   0   0   0   0   0   1   0   (2*k1_1^2 + 2*k1_1*k2_1)/(k1_1^2 + k2_1^2)
+    -2*k1_1*k2_1/(k1_1^2 + k2_1^2)   0   0   0   0   0   0),
+    (0   0   0   0   0   0   0   1   4*k1_1*k2_1/(k1_1^2 + k2_1^2)   (2*k1_1^2 -
+    2*k1_1*k2_1)/(k1_1^2 + k2_1^2)   0   0   0   0   0   0),
+    (0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0),
+    (0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0),
+    (0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0),
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0),
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0),
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1)
+*]
+//Hence, M.16 spans a non-trivial submodule.
+
+//Let's try to compute the head of M. This will use my modular technique
+//described in the CHAMP paper: specialize parameters, reduce to a finite field,
+//use the MeatAxe, and lift everything back. This methods does not have to work,
+//but it works surprisingly often.
+> res,L,J,P:=HeadOfLocalModule(M);
+//The computation was successful. L is the head and J the radical of M.
+//P describes the finite field specialization that was used.
+//The function HeadOfLocalModule has many parameters to fine-tune the
+//computation.
+> L;
+Graded module of dimension 8 over an algebra with generator degrees [ 0, 0, -1,
+-1, 1, 1 ] over Multivariate rational function field of rank 2 over Rational
+Field.
+> L`Matrices[3];
+[0   0   0   0   0   0   0   0]
+[0   0   0   0   0   0   0   0]
+[-4*k1_1   4*k1_1   0   0   0   0   0   0]
+[0   4*k1_1   0   0   0   0   0   0]
+[2*k1_1 - 2*k2_1   -2*k1_1   0   0   0   0   0   0]
+[-4*k2_1   -2*k1_1 + 2*k2_1   0   0   0   0   0   0]
+[0   0   2*k1_1 - 2*k2_1   -2*k1_1   0   0   0   0]
+[0   0   -4*k2_1   -2*k1_1 + 2*k2_1   0   0   0   0]
+> IsModule(H,L);
+true
+
+//Let's compute the Poincaré series and the graded W-character of L:
+> PoincareSeries(L);
+2 + 4*t + 2*t^2
+> GradedCharacter(H,L);
+(      t t^2 + 1       t       t       t)
+//Hence, L = t*(11.) + (t^2+1)*(1.1) + t*(.11) + t*(2.) + t*(.2)
+//Note that in degree 0 of L there's a unique W-module, namely the 1.1=rho that
+//we started with. This is a general fact and can be used to identify simple
+//modules.
+> IdentifyModule(H,L);
+2   //the second irreducible W-module, i.e. rho=1.1
+
+```

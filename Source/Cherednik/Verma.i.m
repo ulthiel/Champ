@@ -7,7 +7,7 @@
 */
 
 /*
-	Verma modules for restricted rational Cherednik algebras
+	Baby Verma modules for restricted rational Cherednik algebras
 */
 
 
@@ -23,9 +23,9 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
 
 	//We compute here Delta(rho) = K[V]_G \otimes rho as in [BR] or in [Thi15].
 
-    if Rep ne "Sparse" and Rep ne "Dense" then
-    	error "Rep has to be one of \"Sparse\" (default) or \"Dense\".";
-    end if;
+  if Rep ne "Sparse" and Rep ne "Dense" then
+  	error "Rep has to be one of \"Sparse\" (default) or \"Dense\".";
+  end if;
 
 	W := H`Group;
 
@@ -131,8 +131,7 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
 
 	end for;
 
-	return GradedModule(R, alggrading, componentdimensions, opmats : Rep:=Rep);
-
+	return GradedModuleOld(GradedModule(R, alggrading, componentdimensions, opmats : Rep:=Rep));
 
 end intrinsic;
 
@@ -451,5 +450,33 @@ intrinsic GradedDecompositionMatrixOfVermas(W::GrpMat, D::SeqEnum) -> AlgMat
 	V := KSpaceWithBasis([ D[i] : i in [1..#D] ]);
 	VermaDec := [ V!Coordinates(V, VermaW[i]) : i in [1..#D] ];
 	return VermaDec;
+
+end intrinsic;
+
+//============================================================================
+intrinsic GradedCharacter(H::AlgCheRes, M::ModGrOld) -> ModRngElt
+{}
+
+	return DecompositionInGradedGrothendieckGroup(M, H`Group, [1..Ngens(H`Group)]);
+
+end intrinsic;
+
+
+//============================================================================
+intrinsic IdentifyModule(H::AlgCheRes, M::ModGrOld : UseCharacters:=true) -> RngIntElt
+{}
+
+	d := Minimum(SequenceToSet(M`RowDegrees));
+	Md := GModule(H`Group, [ Matrix(M`HomogeneousComponentMatrices[<i,d>]) : i in [1..Ngens(H`Group)]]);
+	ddec := DecompositionInGrothendieckGroup(Md : UseCharacters:=UseCharacters);
+	supp := Support(ddec);
+	if #supp gt 1 then
+		error "No unique lowest component";
+	end if;
+	supp := SetToSequence(supp)[1];
+	if ddec[supp] ne 1 then
+		error "No unique lowest component";
+	end if;
+	return supp;
 
 end intrinsic;
