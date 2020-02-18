@@ -118,6 +118,8 @@ Generators:
 
 ## Rational Cherednik algebras
 
+It's best to begin with an example straightaway.
+
 ```C++
 //Create the rational Cherednik algebra for t and c generic (valued in a
 //polynomial ring)
@@ -657,4 +659,12 @@ true
 > IdentifyModule(H,L);
 2   //the second irreducible W-module, i.e. 1.1=rho
 
+//The graded characters of baby Vermas can be computed directly by a formual
+//involving the fake degrees (this is independent of the parameters):
+> GradedCharactersOfVermas(H);
+[1   q^3 + q   q^2   q^2   q^4]
+[q^3 + q   q^4 + 2*q^2 + 1   q^3 + q   q^3 + q   q^3 + q]
+[q^2   q^3 + q   1   q^4   q^2]
+[q^2   q^3 + q   q^4   1   q^2]
+[q^4   q^3 + q   q^2   q^2   1]
 ```

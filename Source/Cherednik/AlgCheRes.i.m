@@ -39,14 +39,15 @@ declare attributes AlgCheRes:
     DualCoinvariantAlgebraToyAlgebra, //the embedding K[V^*]_G -> R[V^*]_G
     UseProductTable,	//if ProductTable should be used
     ProductTable,	//saves products of monomials in x with monomials in y
-	UseCommutatorsTable,
-	CommutatorsTable, // a nested array such that [i][k][mu] (note the order!) is [y_i, x^\mu]_{s_k} in H_c. Only used if UseTable is true. The numbering of the reflections is as in W`ReflectionLibrary and W`Reflections.
-	ZeroSequenceOfLengthDim, //this will simply carry the sequence [ 0 : r in [1..Dim(W)]] to avoid repeated creation of this function in CherednikCommutator
-	Zero,
-	Basis, //a basis of the restricted rational Cherednik algebra
-	MatrixAlgebra,
-	VectorSpace, //underlying vector space
-	MatrixAlgebraOfDegreeZeroPart;
+		UseCommutatorsTable,
+		CommutatorsTable, // a nested array such that [i][k][mu] (note the order!) is [y_i, x^\mu]_{s_k} in H_c. Only used if UseTable is true. The numbering of the reflections is as in W`ReflectionLibrary and W`Reflections.
+		ZeroSequenceOfLengthDim, //this will simply carry the sequence [ 0 : r in [1..Dim(W)]] to avoid repeated creation of this function in CherednikCommutator
+		Zero,
+		Basis, //a basis of the restricted rational Cherednik algebra
+		MatrixAlgebra,
+		VectorSpace, //underlying vector space
+		MatrixAlgebraOfDegreeZeroPart,
+		qField; //rational function field K(q) for characters etc.
 
 declare attributes AlgCheResElt:
     Parent,
@@ -137,38 +138,38 @@ intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable
     H`xSeq := [H`GroupDimension+1..2*H`GroupDimension];
 
     H`CoinvariantAlgebraToyxAlgebra := hom<G`CoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [H`GroupDimension+1..2*H`GroupDimension]]>;
-	H`DualCoinvariantAlgebraToyxAlgebra := hom<G`DualCoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [1..H`GroupDimension]]>;
+		H`DualCoinvariantAlgebraToyxAlgebra := hom<G`DualCoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [1..H`GroupDimension]]>;
 
-	H`UseProductTable := UseProductTable;
-	if UseProductTable then
-    	H`ProductTable := [ AssociativeArray({[1]}) : i in [1..H`GroupDimension] ];
-		//initialize codomain
-		for i:=1 to H`GroupDimension do
-			H`ProductTable[i][[0 : j in [1..H`GroupDimension]]] := H.(Ngens(H`Group)+i); //this is x^0*y_i = 1*y_i = y_i
-		end for;
-	end if;
+		H`UseProductTable := UseProductTable;
+		if UseProductTable then
+	    	H`ProductTable := [ AssociativeArray({[1]}) : i in [1..H`GroupDimension] ];
+			//initialize codomain
+			for i:=1 to H`GroupDimension do
+				H`ProductTable[i][[0 : j in [1..H`GroupDimension]]] := H.(Ngens(H`Group)+i); //this is x^0*y_i = 1*y_i = y_i
+			end for;
+		end if;
 
-	H`UseCommutatorsTable := UseCommutatorsTable;
+		H`UseCommutatorsTable := UseCommutatorsTable;
 
-	//initialize commutators table
-	if H`UseCommutatorsTable then
-		ReflectionLibrary(~G);
-		CoordinateAlgebra(~G);
-		N := #G`ReflectionLibraryFlat;
-		d := G`Dimension;
+		//initialize commutators table
+		if H`UseCommutatorsTable then
+			ReflectionLibrary(~G);
+			CoordinateAlgebra(~G);
+			N := #G`ReflectionLibraryFlat;
+			d := G`Dimension;
 
-		// just a safe check
-		for k:=1 to N do
-			assert G`ReflectionLibraryFlat[k]`ReflectionNumber eq k;
-		end for;
+			// just a safe check
+			for k:=1 to N do
+				assert G`ReflectionLibraryFlat[k]`ReflectionNumber eq k;
+			end for;
 
-		H`CommutatorsTable := < < AssociativeArray(Universe({[1,1]})) : k in [1..N]> : i in [1..d] >;
-	end if;
+			H`CommutatorsTable := < < AssociativeArray(Universe({[1,1]})) : k in [1..N]> : i in [1..d] >;
+		end if;
 
-	H`ZeroSequenceOfLengthDim := [ 0 : r in [1..H`GroupDimension] ];
+		H`ZeroSequenceOfLengthDim := [ 0 : r in [1..H`GroupDimension] ];
 
-	//attach zero element
-	H`Zero := New(AlgCheResElt);
+		//attach zero element
+		H`Zero := New(AlgCheResElt);
     H`Zero`Parent := H;
     H`Zero`Element := Zero(H`GroupAlgebra);
 
@@ -176,7 +177,7 @@ intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable
     if Verbose then
     	print "Setting basis for coinvariant algebra and dual coinvariant algebra.";
     end if;
-	Basis(~G`CoinvariantAlgebra : SortByDegree:=true);
+		Basis(~G`CoinvariantAlgebra : SortByDegree:=true);
     Basis(~G`DualCoinvariantAlgebra : SortByDegree:=true);
     phi := hom<G`CoinvariantAlgebra -> H`xAlgebra | [ H`xAlgebra.i : i in [1..H`GroupDimension]]>;
     H`CoinvariantAlgebraToxAlgebra := phi;
@@ -186,6 +187,9 @@ intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable
     H`DualCoinvariantAlgebraToyAlgebra := phi;
     H`yAlgebra`Basis := {@ phi(G`DualCoinvariantAlgebra`Basis[i]) : i in [1..#G`DualCoinvariantAlgebra`Basis] @};
     SetBasis(~H`yAlgebra, H`yAlgebra`Basis);
+
+		R<q> := RationalFunctionField(BaseRing(G));
+		H`qField := R;
 
     return H;
 
