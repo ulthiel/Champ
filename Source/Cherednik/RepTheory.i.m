@@ -34,6 +34,8 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
   	error "Rep has to be one of \"Sparse\" (default) or \"Dense\".";
   end if;
 
+	Initialize(~H);
+
 	W := H`Group;
 
 	//we need a monomial basis of the coinvariant algebra which is sorted by degree, otherwise things will mess up. we check this here even though Basis will do this automatically.

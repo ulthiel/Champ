@@ -47,14 +47,16 @@ declare attributes AlgCheRes:
 		MatrixAlgebra,
 		VectorSpace, //underlying vector space
 		MatrixAlgebraOfDegreeZeroPart,
-		qField; //rational function field K(q) for characters etc.
+		qField, //rational function field K(q) for characters etc.
+		Initialized;
 
 declare attributes AlgCheResElt:
     Parent,
     Element;
 
+
 //=========================================================================
-intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable:=true,  UseCommutatorsTable:=true, Verbose:=false) -> AlgCheRes
+intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable:=true, UseCommutatorsTable:=true, Verbose:=false, Init:=false) -> AlgCheRes
 {}
     H := New(AlgCheRes);
     DualGroup(~G);
@@ -81,73 +83,12 @@ intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable
 
     H`NumberOfGenerators := #H`GeneratorDegrees;
 
-    //construct R[V]/m0, R[V^*]/m0 and R[V^*+V]/m0, where m0 is the respective origin
-    //we do a trick here by assigning different weights to the y's and x's. this makes the Groebner basis stuff much more efficient
-    H`yxAlgebra := ChangeOrder(PolynomialRing(H`BaseRing, 2*H`GroupDimension), <"grevlexw", [1: i in [1..H`GroupDimension]] cat [2 : i in [1..H`GroupDimension]]>);
-    AssignNames(~H`yxAlgebra, (["y"*Sprint(i): i in [1..H`GroupDimension]]) cat (["x"*Sprint(i): i in [1..H`GroupDimension]]));
-    Generators(~H`yxAlgebra);
-    H`yxAlgebra`Zero := Zero(H`yxAlgebra);
-    H`yxAlgebra`One := One(H`yxAlgebra);
-
-    CoinvariantAlgebra(~G : Verbose:=Verbose);
-    DualCoinvariantAlgebra(~G : Verbose:=Verbose);
-
-    phi := hom<G`CoordinateAlgebra -> H`yxAlgebra | [ H`yxAlgebra.(H`GroupDimension+i) : i in [1..H`GroupDimension]]>;
-    psi := hom<G`DualCoordinateAlgebra -> H`yxAlgebra | [ H`yxAlgebra.i : i in [1..H`GroupDimension]]>; //for coercion of hilbert ideal
-    I := ideal<H`yxAlgebra|[psi(f) : f in Basis(G`DualHilbertIdeal)] cat [phi(f) : f in Basis(G`HilbertIdeal)]>;
-    H`yxAlgebra := H`yxAlgebra/I;
-    Generators(~H`yxAlgebra);
-    H`yxAlgebra`Zero := Zero(H`yxAlgebra);
-    H`yxAlgebra`One := One(H`yxAlgebra);
-
-    H`xAlgebra := PolynomialRing(H`BaseRing, H`GroupDimension);
-    AssignNames(~H`xAlgebra, ["x"*Sprint(i): i in [1..H`GroupDimension]]);
-    Generators(~H`xAlgebra);
-    H`xAlgebra`Zero := Zero(H`xAlgebra);
-    H`xAlgebra`One := One(H`xAlgebra);
-    phi := hom<G`CoordinateAlgebra -> H`xAlgebra | [ H`xAlgebra.i : i in [1..H`GroupDimension]]>;
-    I := ideal<H`xAlgebra | [phi(f) : f in Basis(G`HilbertIdeal)]>;
-    H`xAlgebra := H`xAlgebra/I;
-    Generators(~H`xAlgebra);
-    H`xAlgebra`Zero := Zero(H`xAlgebra);
-    H`xAlgebra`One := One(H`xAlgebra);
-
-    H`yAlgebra := PolynomialRing(H`BaseRing, H`GroupDimension);
-    AssignNames(~H`yAlgebra, ["y"*Sprint(i): i in [1..H`GroupDimension]]);
-    Generators(~H`yAlgebra);
-    H`yAlgebra`Zero := Zero(H`yAlgebra);
-    H`yAlgebra`One := One(H`yAlgebra);
-    psi := hom<G`DualGroup`CoordinateAlgebra -> H`yAlgebra | [ H`yAlgebra.i : i in [1..H`GroupDimension]]>;
-    I := ideal<H`yAlgebra | [psi(f) : f in Basis(G`DualHilbertIdeal)]>;
-    H`yAlgebra := H`yAlgebra/I;
-    Generators(~H`yAlgebra);
-    H`yAlgebra`Zero := Zero(H`yAlgebra);
-    H`yAlgebra`One := One(H`yAlgebra);
-
-    H`yxAlgebra`xPart := H`xAlgebra;
-    H`yxAlgebra`yPart := H`yAlgebra;
-
-    H`yxAlgebra`xEmbedding := hom<H`xAlgebra -> H`yxAlgebra | [H`yxAlgebra.i : i in [H`GroupDimension+1..2*H`GroupDimension]]>;
-    H`yxAlgebra`yEmbedding := hom<H`yAlgebra -> H`yxAlgebra | [H`yxAlgebra.i : i in [1..H`GroupDimension]]>;
-
-    H`GroupAlgebra := GroupAlgebra(H`yxAlgebra, H`Group : Rep:="Terms");
-
-    H`Generators := [ H.i : i in [1..H`NumberOfGroupGenerators + 2*H`GroupDimension]];
 
     H`ySeq := [1..H`GroupDimension];
     H`xSeq := [H`GroupDimension+1..2*H`GroupDimension];
 
-    H`CoinvariantAlgebraToyxAlgebra := hom<G`CoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [H`GroupDimension+1..2*H`GroupDimension]]>;
-		H`DualCoinvariantAlgebraToyxAlgebra := hom<G`DualCoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [1..H`GroupDimension]]>;
-
 		H`UseProductTable := UseProductTable;
-		if UseProductTable then
-	    	H`ProductTable := [ AssociativeArray({[1]}) : i in [1..H`GroupDimension] ];
-			//initialize codomain
-			for i:=1 to H`GroupDimension do
-				H`ProductTable[i][[0 : j in [1..H`GroupDimension]]] := H.(Ngens(H`Group)+i); //this is x^0*y_i = 1*y_i = y_i
-			end for;
-		end if;
+
 
 		H`UseCommutatorsTable := UseCommutatorsTable;
 
@@ -168,38 +109,117 @@ intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable
 
 		H`ZeroSequenceOfLengthDim := [ 0 : r in [1..H`GroupDimension] ];
 
-		//attach zero element
-		H`Zero := New(AlgCheResElt);
-    H`Zero`Parent := H;
-    H`Zero`Element := Zero(H`GroupAlgebra);
-
-    //set bases
-    if Verbose then
-    	print "Setting basis for coinvariant algebra and dual coinvariant algebra.";
-    end if;
-		Basis(~G`CoinvariantAlgebra : SortByDegree:=true);
-    Basis(~G`DualCoinvariantAlgebra : SortByDegree:=true);
-    phi := hom<G`CoinvariantAlgebra -> H`xAlgebra | [ H`xAlgebra.i : i in [1..H`GroupDimension]]>;
-    H`CoinvariantAlgebraToxAlgebra := phi;
-    H`xAlgebra`Basis := {@ phi(G`CoinvariantAlgebra`Basis[i]) : i in [1..#G`CoinvariantAlgebra`Basis] @};
-    SetBasis(~H`xAlgebra, H`xAlgebra`Basis);
-    phi := hom<G`DualCoinvariantAlgebra -> H`yAlgebra | [ H`yAlgebra.i : i in [1..H`GroupDimension]]>;
-    H`DualCoinvariantAlgebraToyAlgebra := phi;
-    H`yAlgebra`Basis := {@ phi(G`DualCoinvariantAlgebra`Basis[i]) : i in [1..#G`DualCoinvariantAlgebra`Basis] @};
-    SetBasis(~H`yAlgebra, H`yAlgebra`Basis);
 
 		R<q> := RationalFunctionField(BaseRing(G));
 		H`qField := R;
+
+		if Init then
+			Initialize(~H : Verbose:=Verbose);
+		end if;
 
     return H;
 
 end intrinsic;
 
 //=========================================================================
-intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat : Type:="GGOR",   UseProductTable:=true, UseCommutatorsTable:=true, Verbose:=false) -> AlgCheRes
+intrinsic RestrictedRationalCherednikAlgebra(G::GrpMat : Type:="GGOR",   UseProductTable:=true, UseCommutatorsTable:=true, Verbose:=false, Init:=false) -> AlgCheRes
 {}
     param := CherednikParameter(G:Type:=Type,Rational:=true);
-    return RestrictedRationalCherednikAlgebra(G, param:  UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, Verbose:=Verbose);
+    return RestrictedRationalCherednikAlgebra(G, param:  UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, Verbose:=Verbose, Init:=Init);
+
+end intrinsic;
+
+intrinsic Initialize(~H::AlgCheRes : Verbose:=false)
+{}
+
+	if assigned H`Initialized then
+		return;
+	end if;
+
+	G := H`Group;
+
+	//construct R[V]/m0, R[V^*]/m0 and R[V^*+V]/m0, where m0 is the respective origin
+	//we do a trick here by assigning different weights to the y's and x's. this makes the Groebner basis stuff much more efficient
+	H`yxAlgebra := ChangeOrder(PolynomialRing(H`BaseRing, 2*H`GroupDimension), <"grevlexw", [1: i in [1..H`GroupDimension]] cat [2 : i in [1..H`GroupDimension]]>);
+	AssignNames(~H`yxAlgebra, (["y"*Sprint(i): i in [1..H`GroupDimension]]) cat (["x"*Sprint(i): i in [1..H`GroupDimension]]));
+	Generators(~H`yxAlgebra);
+	H`yxAlgebra`Zero := Zero(H`yxAlgebra);
+	H`yxAlgebra`One := One(H`yxAlgebra);
+
+	CoinvariantAlgebra(~G : Verbose:=Verbose);
+	DualCoinvariantAlgebra(~G : Verbose:=Verbose);
+
+	phi := hom<G`CoordinateAlgebra -> H`yxAlgebra | [ H`yxAlgebra.(H`GroupDimension+i) : i in [1..H`GroupDimension]]>;
+	psi := hom<G`DualCoordinateAlgebra -> H`yxAlgebra | [ H`yxAlgebra.i : i in [1..H`GroupDimension]]>; //for coercion of hilbert ideal
+	I := ideal<H`yxAlgebra|[psi(f) : f in Basis(G`DualHilbertIdeal)] cat [phi(f) : f in Basis(G`HilbertIdeal)]>;
+	H`yxAlgebra := H`yxAlgebra/I;
+	Generators(~H`yxAlgebra);
+	H`yxAlgebra`Zero := Zero(H`yxAlgebra);
+	H`yxAlgebra`One := One(H`yxAlgebra);
+
+	H`xAlgebra := PolynomialRing(H`BaseRing, H`GroupDimension);
+	AssignNames(~H`xAlgebra, ["x"*Sprint(i): i in [1..H`GroupDimension]]);
+	Generators(~H`xAlgebra);
+	H`xAlgebra`Zero := Zero(H`xAlgebra);
+	H`xAlgebra`One := One(H`xAlgebra);
+	phi := hom<G`CoordinateAlgebra -> H`xAlgebra | [ H`xAlgebra.i : i in [1..H`GroupDimension]]>;
+	I := ideal<H`xAlgebra | [phi(f) : f in Basis(G`HilbertIdeal)]>;
+	H`xAlgebra := H`xAlgebra/I;
+	Generators(~H`xAlgebra);
+	H`xAlgebra`Zero := Zero(H`xAlgebra);
+	H`xAlgebra`One := One(H`xAlgebra);
+
+	H`yAlgebra := PolynomialRing(H`BaseRing, H`GroupDimension);
+	AssignNames(~H`yAlgebra, ["y"*Sprint(i): i in [1..H`GroupDimension]]);
+	Generators(~H`yAlgebra);
+	H`yAlgebra`Zero := Zero(H`yAlgebra);
+	H`yAlgebra`One := One(H`yAlgebra);
+	psi := hom<G`DualGroup`CoordinateAlgebra -> H`yAlgebra | [ H`yAlgebra.i : i in [1..H`GroupDimension]]>;
+	I := ideal<H`yAlgebra | [psi(f) : f in Basis(G`DualHilbertIdeal)]>;
+	H`yAlgebra := H`yAlgebra/I;
+	Generators(~H`yAlgebra);
+	H`yAlgebra`Zero := Zero(H`yAlgebra);
+	H`yAlgebra`One := One(H`yAlgebra);
+
+	H`yxAlgebra`xPart := H`xAlgebra;
+	H`yxAlgebra`yPart := H`yAlgebra;
+
+	H`yxAlgebra`xEmbedding := hom<H`xAlgebra -> H`yxAlgebra | [H`yxAlgebra.i : i in [H`GroupDimension+1..2*H`GroupDimension]]>;
+	H`yxAlgebra`yEmbedding := hom<H`yAlgebra -> H`yxAlgebra | [H`yxAlgebra.i : i in [1..H`GroupDimension]]>;
+
+	H`CoinvariantAlgebraToyxAlgebra := hom<G`CoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [H`GroupDimension+1..2*H`GroupDimension]]>;
+	H`DualCoinvariantAlgebraToyxAlgebra := hom<G`DualCoinvariantAlgebra-> H`yxAlgebra | [H`yxAlgebra`Generators[i] : i in [1..H`GroupDimension]]>;
+
+	//set bases
+	Basis(~G`CoinvariantAlgebra : SortByDegree:=true);
+	Basis(~G`DualCoinvariantAlgebra : SortByDegree:=true);
+	phi := hom<G`CoinvariantAlgebra -> H`xAlgebra | [ H`xAlgebra.i : i in [1..H`GroupDimension]]>;
+	H`CoinvariantAlgebraToxAlgebra := phi;
+	H`xAlgebra`Basis := {@ phi(G`CoinvariantAlgebra`Basis[i]) : i in [1..#G`CoinvariantAlgebra`Basis] @};
+	SetBasis(~H`xAlgebra, H`xAlgebra`Basis);
+	phi := hom<G`DualCoinvariantAlgebra -> H`yAlgebra | [ H`yAlgebra.i : i in [1..H`GroupDimension]]>;
+	H`DualCoinvariantAlgebraToyAlgebra := phi;
+	H`yAlgebra`Basis := {@ phi(G`DualCoinvariantAlgebra`Basis[i]) : i in [1..#G`DualCoinvariantAlgebra`Basis] @};
+	SetBasis(~H`yAlgebra, H`yAlgebra`Basis);
+
+	H`GroupAlgebra := GroupAlgebra(H`yxAlgebra, H`Group : Rep:="Terms");
+
+	//attach zero element
+	H`Zero := New(AlgCheResElt);
+	H`Zero`Parent := H;
+	H`Zero`Element := Zero(H`GroupAlgebra);
+
+	if H`UseProductTable then
+			H`ProductTable := [ AssociativeArray({[1]}) : i in [1..H`GroupDimension] ];
+		//initialize codomain
+		for i:=1 to H`GroupDimension do
+			H`ProductTable[i][[0 : j in [1..H`GroupDimension]]] := H.(Ngens(H`Group)+i); //this is x^0*y_i = 1*y_i = y_i
+		end for;
+	end if;
+
+	H`Generators := [ H.i : i in [1..H`NumberOfGroupGenerators + 2*H`GroupDimension]];
+
+	H`Initialized := true;
 
 end intrinsic;
 
