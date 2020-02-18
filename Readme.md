@@ -16,19 +16,21 @@ The parameters can always be arbitrary, including generic parameters valued in p
 
 ### Contents
 
-[Downloading an running](#downloading)  
-[Complex reflection groups](#reflgroups)  
-[Rational Cherednik algebras](#che)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Parameters](#params)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
-[Restricted rational Cherednik algebras](#rrca)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Representation theory](#rrca-rep)
+[1. Downloading an running](#downloading)  
+[2. Complex reflection groups](#reflgroups)  
+[3. Rational Cherednik algebras](#che)  
+&nbsp;&nbsp;&nbsp;&nbsp;[3.1 Parameters](#params)  
+&nbsp;&nbsp;&nbsp;&nbsp;[3.2 Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
+[4. Restricted rational Cherednik algebras](#rrca)  
+&nbsp;&nbsp;&nbsp;&nbsp;[4.1 Representation theory](#rrca-rep)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with baby Verma modules](#rrca-verma)
 
 <a name="downloading"></a>
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the release assets as well and extract it in the ```DB``` directory of CHAMP.
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the [release assets](https://github.com/ulthiel/champ/releases/latest) as well and extract it in the ```DB``` directory of CHAMP.
 
 Alternatively, you can clone the git repository. **Important**: due to large binary files in the database, it is stored with [Git Large File Storage](https://git-lfs.github.com). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
@@ -494,9 +496,12 @@ Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 
 ### Representation theory
 
-In CHAMP you can compute baby Verma modules for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of bay Verma modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of Verma modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
+In CHAMP you can compute baby Verma modules for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of baby Verma modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of Verma modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
 
-**Conventions.** Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
+<a name="rrca-conv"></a>
+#### Conventions
+
+Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
 
 Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to inflate λ to a (H^<sup>-</sup> ⊗ KW)-module. You could also put V<sup>&ast;</sup> in degree -1 and/or inflate λ to an (H<sup>+</sup> ⊗ KW)-module. Here is an overview of what is used in the literature:
 
@@ -508,6 +513,11 @@ Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to
 | [Gordon](https://arxiv.org/abs/math/0202301) | -1 | H ⊗<sub>H<sup>-</sup></sub> λ = K[V<sup>&ast;</sup>]<sub>W</sub> ⊗ λ |
 
 So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference between Bonnafé-Roquier and Bellamy-Thiel is only an *opposite grading* on the Δ(λ) (up to the grading the modules are the same!). To make this more precise, consider a ℤ-graded algebra A with *triangular decomposition*, i.e. a triple (A<sup>l</sup>, A<sup>0</sup>, A<sup>r</sup>) of graded subalgebras such that the multiplication map A<sup>l</sup> ⊗ A<sup>0</sup> ⊗ A<sup>r</sup> → A is an isomorphism of vector spaces, and moreover the following holds: A<sup>0</sup> is in degree 0, and A<sup>l</sup> is either in positive or in negative degree, and A<sup>r</sup> is in the opposite degree of A<sup>l</sup>. In any case one can define the standard module Δ(λ) = A ⊗<sub>A<sup>r</sup></sub> λ. The inflation is always through the *right* part of the decomposition, so it is up to the grading independent of the aforementioned choice. In Bellamy-Thiel we assumed that A<sup>l</sup> is in negative degree, Bonnafé-Rouquier assume that it is in positive degree. But we both assume that A<sup>l</sup> = K[V]<sub>W</sub>. The Bonnafé-Rouquier assumption is nicer in the sense that the standard modules live in positive degree, which seems more natural (but it doesn't make much of a difference as explained). Only in Gordon the parts of the triangular decomposition are opposite, i.e. A<sup>l</sup> = K[V<sup>&ast;</sup>]<sub>W</sub>.
+
+
+<a name="rrca-verma"></a>
+
+#### Working with baby Verma modules
 
 ```C++
 > W := TypeBReflectionGroup(2);
@@ -558,7 +568,7 @@ Field.
     Sparse matrix with 16 rows and 16 columns over Multivariate rational
     function field of rank 2 over Rational Field
 ]
-//Here is an example (describing the action of y1):
+//So, the action of y1 is:
 > Matrix(M`Matrices[3]);
 [0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
 [0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0]
@@ -592,7 +602,7 @@ Field.
 > IsModule(H,M);
 true
 
-//Let's compute the a basis of the submodule of M spanned by the 16-th basis
+//Let's compute a basis of the submodule of M spanned by the 16-th basis
 //vector of M (which is x1*x2^3 \otimes e2), where e2 is the second basis
 //vector of the W-representation rho):
 > Spin(M, M.16);
@@ -613,7 +623,7 @@ true
 //Let's try to compute the head of M. This will use my modular technique
 //described in the CHAMP paper: specialize parameters, reduce to a finite field,
 //use the MeatAxe, and lift everything back. This methods does not have to work,
-//but it works surprisingly often.
+//but it works surprisingly often. It's impossible to predict, however.
 > res,L,J,P:=HeadOfLocalModule(M);
 //The computation was successful. L is the head and J the radical of M.
 //P describes the finite field specialization that was used.
@@ -645,6 +655,6 @@ true
 //we started with. This is a general fact and can be used to identify simple
 //modules.
 > IdentifyModule(H,L);
-2   //the second irreducible W-module, i.e. rho=1.1
+2   //the second irreducible W-module, i.e. 1.1=rho
 
 ```
