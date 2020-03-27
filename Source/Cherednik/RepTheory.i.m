@@ -16,6 +16,7 @@ declare attributes AlgCheRes:
 	GradedCharactersOfVermas,
 	GradedCharactersOfSimples,
 	GradedDecompositionMatrix,
+	GradedCartanMatrix,
 	VermaModules,
 	SimpleModules,
 	PoincareSeriesOfSimples;
@@ -695,5 +696,25 @@ intrinsic GradedDecompositionMatrix(H::AlgCheRes) -> AlgMat
 	V := KSpace(H`qField, N);
 	D := Matrix(H`qField, N, N, [V!GradedDecompositionMatrix(H,i) : i in [1..N]]);
 	return D;
+
+end intrinsic;
+
+//=============================================================================
+intrinsic GradedCartanMatrix(~H::AlgCheRes)
+{}
+
+	if not assigned H`GradedCartanMatrix then
+		GradedDecompositionMatrix(~H);
+		D := GradedDecompositionMatrix(H);
+		H`GradedCartanMatrix := Transpose(D)*D;
+	end if;
+
+end intrinsic;
+
+intrinsic GradedCartanMatrix(H::AlgCheRes) -> AlgMat
+{}
+
+	GradedCartanMatrix(~H);
+	return H`GradedCartanMatrix;
 
 end intrinsic;

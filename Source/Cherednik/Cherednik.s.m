@@ -8,7 +8,6 @@
     RepTheory.i.m
 		RepTheory2.i.m
     Poisson.i.m
-    Verma.i.m
     GordonDB.i.m
     CMFamilies.i.m
     RigidRepresentations.i.m
