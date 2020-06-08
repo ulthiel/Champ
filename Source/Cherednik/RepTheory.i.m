@@ -30,6 +30,7 @@ declare attributes AlgCheRes:
 	SimplesGradedDimension,
 	StandardsGradedDimension,
 	ProjectivesGradedDimension,
+	StandardsAtBottomOfProjectives,
 	qCharacterField;
 
 //============================================================================
@@ -873,6 +874,65 @@ intrinsic StandardsInSimplesQuantum(H::AlgCheRes) -> SeqEnum
 		StandardsInSimplesQuantum(~H,i);
 	end for;
 	return [H`StandardsInSimplesQuantum[i] : i in [1..#W`CharacterTable]];
+
+end intrinsic;
+
+//=============================================================================
+intrinsic StandardsAtBottomOfProjectives(~H::AlgCheRes, i::RngIntElt)
+{}
+
+	if not assigned H`StandardsAtBottomOfProjectives then
+		W := H`Group;
+		CharacterTable(~W);
+		H`StandardsAtBottomOfProjectives := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`StandardsAtBottomOfProjectives, i) then
+		f := ProjectivesInStandardsQuantum(H,i);
+		if Denominator(f) ne 1 then
+			error "Some problem with LaurentSeriesRing/RationalFunctionField crap";
+		end if;
+		f:=Numerator(f);
+		lc := LeadingCoefficient(f);
+		deg := Degree(f);
+		//make sure there's really just one at the bottom! Should be true if didn't
+		//mess up the proof!
+		if #Terms(lc) ne 1 or Coefficients(lc) ne [1] then
+			error "Oh no: more than one standard at bottom! You proved nonsense!";
+		end if;
+		num := Eltseq(lc)[1];
+		H`StandardsAtBottomOfProjectives[i] := <num,deg>;
+	end if;
+
+end intrinsic;
+
+intrinsic StandardsAtBottomOfProjectives(H::AlgCheRes, i::RngIntElt) -> Tup
+{}
+
+	StandardsAtBottomOfProjectives(~H,i);
+	return H`StandardsAtBottomOfProjectives[i];
+
+end intrinsic;
+
+intrinsic StandardsAtBottomOfProjectives(~H::AlgCheRes)
+{}
+
+	if not assigned H`StandardsAtBottomOfProjectives then
+		W := H`Group;
+		CharacterTable(~W);
+		for i:=1 to #W`CharacterTable do
+			StandardsAtBottomOfProjectives(~H,i);
+		end for;
+	end if;
+
+end intrinsic;
+
+intrinsic StandardsAtBottomOfProjectives(H::AlgCheRes) -> SeqEnum
+{}
+
+	StandardsAtBottomOfProjectives(~H);
+	W := H`Group;
+	CharacterTable(~W);
+	return [H`StandardsAtBottomOfProjectives[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
 
