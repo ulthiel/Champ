@@ -718,3 +718,68 @@ intrinsic GradedCartanMatrix(H::AlgCheRes) -> AlgMat
 	return H`GradedCartanMatrix;
 
 end intrinsic;
+
+intrinsic RepresentationTheory(H::AlgCheRes)
+{}
+
+	D:=GradedDecompositionMatrix(H);
+	C:=GradedCartanMatrix(H);
+	CDelta:=GradedCharactersOfVermas(H);
+	CL:=GradedCharactersOfSimples(H);
+	fams,sigma := Families(D);
+
+	cparam := "[";
+	counter := 0;
+	for i in Domain(H`cParameter) do
+		cparam *:= Sprint(H`cParameter(i));
+		counter +:= 1;
+		if counter lt #Domain(H`cParameter) then
+			cparam *:= ",";
+		end if;
+	end for;
+	cparam *:= "]";
+	printf "c-parameter: %o\n\n", cparam;
+	printf "==== Families ====\n";
+	for i:=1 to #fams do
+		printf "{";
+		for j:=1 to #fams[i] do
+			printf "%o", H`Group`CharacterNames[fams[i][j]];
+			if j lt #fams[i] then
+				printf ",";
+			end if;
+		end for;
+		printf "}";
+		if i lt #fams then
+			printf ", ";
+		end if;
+	end for;
+	printf "\n\n";
+
+	printf "==== Graded decomposition matrix (family-wise) ====\n";
+	for F in fams do
+		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
+		charnames := [H`Group`CharacterNames[i] : i in F];
+		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+	end for;
+	printf "\n";
+
+	printf "==== Graded Cartan matrix (family-wise) ====\n";
+	for F in fams do
+		CF := Submatrix(C, IndexedSetToSequence(F), IndexedSetToSequence(F));
+		charnames := [H`Group`CharacterNames[i] : i in F];
+		MediaWiki(CF, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+	end for;
+	printf "\n";
+
+	printf "==== Graded characters of simples ====\n";
+	CLsigma := Permute(CL,sigma);
+	charnames := [H`Group`CharacterNames[i] : i in sigma];
+	MediaWiki(CLsigma, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+	printf "\n";
+
+	printf "==== Graded characters of standards ====\n";
+	CDeltasigma := Permute(CDelta,sigma);
+	charnames := [H`Group`CharacterNames[i] : i in sigma];
+	MediaWiki(CDeltasigma, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+
+end intrinsic;

@@ -43,8 +43,22 @@ intrinsic LinkageMatrix(A::Mtrx) -> Mtrx
 
 end intrinsic;
 
+intrinsic LinkageGraph(A::Mtrx) -> GrphUnd
+{}
+
+    L := LinkageMatrix(A);
+    E := {};
+    for i:=1 to Nrows(L) do
+        for j in Support(L[i]) diff {i} do
+            E join:={ {i,j} };
+        end for;
+    end for;
+    return Graph< {1..Nrows(L)} | E>;
+
+end intrinsic;
+
 //==============================================================================
-intrinsic Families(M::Mtrx) -> SetEnum
+intrinsic Families(M::Mtrx) -> SetEnum, SeqEnum
 /*
     Intrinsic: Families
 
@@ -58,23 +72,36 @@ intrinsic Families(M::Mtrx) -> SetEnum
 */
 {}
 
-    fams := {};
+    /*
+    fams := {@@};
     for i:=1 to Nrows(M) do
-        fam := Support(M[i]);
+        fam := SetToIndexedSet(Support(M[i]));
         glued := false;
         for X in fams do
             if not IsEmpty(X meet fam) then
-                fams diff:={X};
-                fams join:={X join fam};
+                Diff(~fams, {@X@});
+                fams join:={@X join fam@};
                 glued := true;
                 break;
             end if;
         end for;
         if not glued then
-            fams join:={fam};
+            fams join:={@fam@};
         end if;
     end for;
+    */
+    famspre := ConnectedComponents(LinkageGraph(M));
+    fams := {@ {@ Index(f) : f in F@} : F in famspre @};
+    sigma := Flat([IndexedSetToSequence(fam) : fam in fams]);
 
-    return fams;
+    return fams,sigma;
+
+end intrinsic;
+
+intrinsic Permute(A::Mtrx, sigma::SeqEnum) -> Mtrx
+{}
+
+    Asigma := [A[sigma[i],sigma[j]] : i in [1..Nrows(A)], j in [1..Ncols(A)]];
+    return Matrix(BaseRing(A), Nrows(A),Ncols(A),Asigma);
 
 end intrinsic;
