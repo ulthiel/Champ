@@ -29,7 +29,8 @@ declare attributes AlgCheRes:
 	ProjectivesInGroupSimplesQuantum,
 	SimplesGradedDimension,
 	StandardsGradedDimension,
-	ProjectivesGradedDimension;
+	ProjectivesGradedDimension,
+	qCharacterField;
 
 //============================================================================
 intrinsic StandardModules(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true) -> ModGrOld
@@ -734,6 +735,144 @@ intrinsic ProjectivesInSimples(H::AlgCheRes) -> AlgMat
 
 	ProjectivesInSimples(~H);
 	return H`ProjectivesInSimples;
+
+end intrinsic;
+
+intrinsic ProjectivesInSimples(H::AlgCheRes,i::RngIntElt) -> ModTupFldElt
+{}
+
+	ProjectivesInSimples(~H);
+	return H`ProjectivesInSimples[i];
+
+end intrinsic;
+
+//=============================================================================
+intrinsic ProjectivesInStandards(~H::AlgCheRes)
+{}
+
+	if not assigned H`ProjectivesInStandards then
+		D := StandardsInSimples(H);
+		H`ProjectivesInStandards := Transpose(D);
+	end if;
+
+end intrinsic;
+
+intrinsic ProjectivesInStandards(H::AlgCheRes) -> AlgMat
+{}
+
+	ProjectivesInStandards(~H);
+	return H`ProjectivesInStandards;
+
+end intrinsic;
+
+intrinsic ProjectivesInStandards(H::AlgCheRes,i::RngIntElt) -> ModTupFldElt
+{}
+
+	ProjectivesInStandards(~H);
+	return H`ProjectivesInStandards[i];
+
+end intrinsic;
+
+//=============================================================================
+procedure qCharacterField(~H)
+
+	if not assigned H`qCharacterField then
+		CharacterNames(~H`Group);
+		R:=PolynomialRing(Integers(), #H`Group`CharacterTable);
+		AssignNames(~R,H`Group`CharacterNames);
+		K:=RationalFunctionField(R,1);
+		AssignNames(~K,["q"]);
+		H`qCharacterField := K;
+	end if;
+
+end procedure;
+
+//=============================================================================
+intrinsic ProjectivesInStandardsQuantum(~H::AlgCheRes,i::RngIntElt)
+{}
+
+	if not assigned H`ProjectivesInStandardsQuantum then
+		W := H`Group;
+		CharacterTable(~W);
+		H`ProjectivesInStandardsQuantum := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`ProjectivesInStandardsQuantum, i) then
+		ProjectivesInStandards(~H);
+		qCharacterField(~H);
+		phi := hom<H`qField -> H`qCharacterField | [H`qCharacterField.1]>;
+		f:=Zero(H`qCharacterField);
+		dec :=  ProjectivesInStandards(H,i);
+		R := BaseRing(H`qCharacterField);
+		for j in Support(dec) do
+			f +:= phi(dec[j])*R.j;
+		end for;
+		H`ProjectivesInStandardsQuantum[i] := f;
+	end if;
+
+end intrinsic;
+
+intrinsic ProjectivesInStandardsQuantum(H::AlgCheRes,i::RngIntElt) -> FldFunratElt
+{}
+
+		ProjectivesInStandardsQuantum(~H,i);
+		return H`ProjectivesInStandardsQuantum[i];
+
+end intrinsic;
+
+intrinsic ProjectivesInStandardsQuantum(H::AlgCheRes) -> SeqEnum
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		ProjectivesInStandardsQuantum(~H,i);
+	end for;
+	return [H`ProjectivesInStandardsQuantum[i] : i in [1..#W`CharacterTable]];
+
+end intrinsic;
+
+//=============================================================================
+intrinsic StandardsInSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
+{}
+
+	if not assigned H`StandardsInSimplesQuantum then
+		W := H`Group;
+		CharacterTable(~W);
+		H`StandardsInSimplesQuantum := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`StandardsInSimplesQuantum, i) then
+		StandardsInSimples(~H);
+		qCharacterField(~H);
+		phi := hom<H`qField -> H`qCharacterField | [H`qCharacterField.1]>;
+		f:=Zero(H`qCharacterField);
+		dec :=  StandardsInSimples(H,i);
+		R := BaseRing(H`qCharacterField);
+		for j in Support(dec) do
+			f +:= phi(dec[j])*R.j;
+		end for;
+		H`StandardsInSimplesQuantum[i] := f;
+	end if;
+
+end intrinsic;
+
+
+intrinsic StandardsInSimplesQuantum(H::AlgCheRes,i::RngIntElt) -> FldFunratElt
+{}
+
+		StandardsInSimplesQuantum(~H,i);
+		return H`StandardsInSimplesQuantum[i];
+
+end intrinsic;
+
+intrinsic StandardsInSimplesQuantum(H::AlgCheRes) -> SeqEnum
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		StandardsInSimplesQuantum(~H,i);
+	end for;
+	return [H`StandardsInSimplesQuantum[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
 
