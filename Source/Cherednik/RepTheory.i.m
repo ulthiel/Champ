@@ -12,21 +12,29 @@
 
 
 declare attributes AlgCheRes:
-	CommutatorVectorsTable,
-	GradedCharactersOfVermas,
-	GradedCharactersOfSimples,
-	GradedDecompositionMatrix,
-	GradedCartanMatrix,
-	VermaModules,
-	SimpleModules,
-	PoincareSeriesOfSimples;
-
-
+	CommutatorVectorsTable, //for computing standard modules
+	StandardModules, //the standard modules
+	SimpleModules, //their simple heads
+	StandardsInSimples,
+	StandardsInSimplesQuantum,
+	StandardsInGroupSimples,
+	StandardsInGroupSimplesQuantum,
+	SimplesInGroupSimples,
+	SimplesInGroupSimplesQuantum,
+	ProjectivesInStandards,
+	ProjectivesInStandardsQuantum,
+	ProjectivesInSimples,
+	ProjectivesInSimplesQuantum,
+	ProjectivesInGroupSimples,
+	ProjectivesInGroupSimplesQuantum,
+	SimplesGradedDimension,
+	StandardsGradedDimension,
+	ProjectivesGradedDimension;
 
 //============================================================================
-intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true) -> ModGrOld
+intrinsic StandardModules(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true) -> ModGrOld
 {
-	The Verma module for rho for the restricted rational Cherednik algebra H.
+	The Standard module for rho for the restricted rational Cherednik algebra H.
 }
 
 	//We compute here Delta(rho) = K[V]_G \otimes rho as in [BR] or in [Thi15].
@@ -78,7 +86,7 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
 		opmats := [* <i,d,SparseMatrix(R,Dimension(AA`ModuleComponents[d])*rhodim,Dimension(AA`ModuleComponents[d+alggrading[i]])*rhodim)> : d in AA`Support, i in [1..#alggrading] | d+alggrading[i] in AA`Support *];
 	end if;
 
-	//component dimensions of Verma module
+	//component dimensions of Standard module
 	componentdimensions := [ <d,Dimension(AA`ModuleComponents[d])*rhodim> : d in AA`Support ];
 
 	//operation matrices of rho in same type as Rep
@@ -93,9 +101,9 @@ intrinsic VermaModule(H::AlgCheRes, rho::HomGrp : Rep:="Sparse",  Verbose:=true)
 	yblock := [Ngens(W)+1..Ngens(W)+Wdim];
 	xblock := [Ngens(W)+Wdim+1..Ngens(W)+2*Wdim];
 
-	//compute action matrices of Verma module
+	//compute action matrices of Standard module
 	if Verbose then
-		print "Computing Verma module.";
+		print "Computing Standard module.";
 	end if;
 
 	for m:=1 to #opmats do
@@ -208,36 +216,36 @@ intrinsic IsModule(H::AlgCheRes, V::ModGrOld) -> BoolElt
         lhs := Eltseq(LHS(rel));
         rhs := Eltseq(RHS(rel));
         if rep eq "Sparse" then
-            vermalhs := IdentitySparseMatrix(BaseRing(V), Dimension(V));
+            Standardlhs := IdentitySparseMatrix(BaseRing(V), Dimension(V));
         else
-            vermalhs := IdentityMatrix(BaseRing(V), Dimension(V));
+            Standardlhs := IdentityMatrix(BaseRing(V), Dimension(V));
         end if;
         for i:=1 to #lhs do
             if lhs[i] gt 0 then
                 j := lhs[i];
-                vermalhs *:= matrices[j];
+                Standardlhs *:= matrices[j];
             else
                 j := Abs(lhs[i]);
-                vermalhs *:= matrices[j]^(Order(G.j)-1);
+                Standardlhs *:= matrices[j]^(Order(G.j)-1);
             end if;
         end for;
 
         if rep eq "Sparse" then
-            vermarhs := IdentitySparseMatrix(BaseRing(V), Dimension(V));
+            Standardrhs := IdentitySparseMatrix(BaseRing(V), Dimension(V));
         else
-            vermarhs := IdentityMatrix(BaseRing(V), Dimension(V));
+            Standardrhs := IdentityMatrix(BaseRing(V), Dimension(V));
         end if;
         for i:=1 to #rhs do
             if rhs[i] gt 0 then
                 j := rhs[i];
-                vermarhs *:= matrices[j];
+                Standardrhs *:= matrices[j];
             else
                 j := Abs(rhs[i]);
-                vermarhs *:= matrices[j]^(Order(G.j)-1);
+                Standardrhs *:= matrices[j]^(Order(G.j)-1);
             end if;
         end for;
 
-        if vermalhs ne vermarhs then
+        if Standardlhs ne Standardrhs then
             print "(IsModuleForRRCA). Group relation "*Sprint(rel)*" not respected.";
             return false;
         end if;
@@ -416,41 +424,41 @@ intrinsic IsModule(H::AlgCheRes, V::ModGrOld) -> BoolElt
 end intrinsic;
 
 //============================================================================
-intrinsic VermaModule(~H::AlgCheRes, i::RngIntElt)
+intrinsic StandardModules(~H::AlgCheRes, i::RngIntElt)
 {}
 
 	W := H`Group;
 	Representations(~W);
-	if not assigned H`VermaModules then
-		H`VermaModules := AssociativeArray({1..#W`Representations[0]});
+	if not assigned H`StandardModules then
+		H`StandardModules := AssociativeArray({1..#W`Representations[0]});
 	end if;
-	if not IsDefined(H`VermaModules, i) then
-		H`VermaModules[i] := VermaModule(H, W`Representations[0][i]);
+	if not IsDefined(H`StandardModules, i) then
+		H`StandardModules[i] := StandardModules(H, W`Representations[0][i]);
 	end if;
 
 end intrinsic;
 
-intrinsic VermaModule(H::AlgCheRes, i::RngIntElt) -> ModGrOld
+intrinsic StandardModules(H::AlgCheRes, i::RngIntElt) -> ModGrOld
 {}
 
-	VermaModule(~H,i);
-	return H`VermaModules[i];
+	StandardModules(~H,i);
+	return H`StandardModules[i];
 
 end intrinsic;
 
-intrinsic VermaModules(~H::AlgCheRes)
+intrinsic StandardModules(~H::AlgCheRes)
 {}
 
 	W := H`Group;
 	Representations(~W);
 	for i:=1 to #W`Representations[0] do
-		VermaModule(~H, i);
+		StandardModules(~H, i);
 	end for;
 
 end intrinsic;
 
 //============================================================================
-intrinsic SimpleModule(~H::AlgCheRes, i::RngIntElt)
+intrinsic SimpleModules(~H::AlgCheRes, i::RngIntElt)
 {}
 
 	W := H`Group;
@@ -459,8 +467,8 @@ intrinsic SimpleModule(~H::AlgCheRes, i::RngIntElt)
 		H`SimpleModules := AssociativeArray({1..#W`Representations[0]});
 	end if;
 	if not IsDefined(H`SimpleModules, i) then
-		VermaModule(~H, i);
-		res,L,J,P := HeadOfLocalModule(H`VermaModules[i] : Rounds:=10);
+		StandardModules(~H, i);
+		res,L,J,P := HeadOfLocalModule(H`StandardModules[i] : Rounds:=10);
 		if res then
 			H`SimpleModules[i] := L;
 		end if;
@@ -468,20 +476,30 @@ intrinsic SimpleModule(~H::AlgCheRes, i::RngIntElt)
 
 end intrinsic;
 
+intrinsic SimpleModules(~H::AlgCheRes)
+{}
+
+	CharacterTable(~H`Group);
+	for i:=1 to #H`Group`CharacterTable do
+		SimpleModules(~H,i);
+	end for;
+
+end intrinsic;
+
+
 //============================================================================
-intrinsic GradedCharacterOfVerma(~H::AlgCheRes, i::RngIntElt)
-/*
-	This uses the formula in my proceedings paper.
-*/
+intrinsic StandardsInGroupSimples(~H::AlgCheRes, i::RngIntElt)
+//
+//	This uses the formula in my proceedings paper.
 {}
 	W := H`Group;
 	CharacterTable(~W);
 	FakeDegrees(~W);
 	N := #W`CharacterTable;
-	if not assigned H`GradedCharactersOfVermas then
-		H`GradedCharactersOfVermas := AssociativeArray({1..N});
+	if not assigned H`StandardsInGroupSimples then
+		H`StandardsInGroupSimples := AssociativeArray({1..N});
 	end if;
-	if not IsDefined(H`GradedCharactersOfVermas, i) then
+	if not IsDefined(H`StandardsInGroupSimples, i) then
 		V := KSpace(H`qField, N);
 		lambda := W`CharacterTable[i];
 		D := Zero(V);
@@ -492,44 +510,43 @@ intrinsic GradedCharacterOfVerma(~H::AlgCheRes, i::RngIntElt)
 			D +:= fmu*muduallambda;
 		end for;
 
-		H`GradedCharactersOfVermas[i] := D;
+		H`StandardsInGroupSimples[i] := D;
 	end if;
 
 end intrinsic;
 
-intrinsic GradedCharacterOfVerma(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
+intrinsic StandardsInGroupSimples(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
 {}
 
-	GradedCharacterOfVerma(~H,i);
-	return H`GradedCharactersOfVermas[i];
+	StandardsInGroupSimples(~H,i);
+	return H`StandardsInGroupSimples[i];
 
 end intrinsic;
 
-intrinsic GradedCharactersOfVermas(~H::AlgCheRes)
+intrinsic StandardsInGroupSimples(~H::AlgCheRes)
 {}
 
 	W := H`Group;
 	CharacterTable(~W);
 	for i:=1 to #W`CharacterTable do
-		GradedCharacterOfVerma(~H,i);
+		StandardsInGroupSimples(~H,i);
 	end for;
 
 end intrinsic;
 
-intrinsic GradedCharactersOfVermas(H::AlgCheRes) -> AlgMatElt
+intrinsic StandardsInGroupSimples(H::AlgCheRes) -> AlgMatElt
 {}
 
-	GradedCharactersOfVermas(~H);
+	StandardsInGroupSimples(~H);
 	N := #H`Group`CharacterTable;
-	CDelta := Matrix(H`qField, N, N, [GradedCharacterOfVerma(H,i) : i in [1..N]]);
+	CDelta := Matrix(H`qField, N, N, [StandardsInGroupSimples(H,i) : i in [1..N]]);
 	return CDelta;
 
 end intrinsic;
 
 
-
 //============================================================================
-intrinsic GradedCharacter(H::AlgCheRes, M::ModGrOld) -> ModRngElt
+intrinsic InGroupSimples(H::AlgCheRes, M::ModGrOld) -> ModRngElt
 {}
 
 	W := H`Group;
@@ -539,94 +556,95 @@ intrinsic GradedCharacter(H::AlgCheRes, M::ModGrOld) -> ModRngElt
 
 end intrinsic;
 
-intrinsic GradedCharacterOfSimple(~H::AlgCheRes, i::RngIntElt)
+intrinsic SimplesInGroupSimples(~H::AlgCheRes, i::RngIntElt)
 {}
 
 	W := H`Group;
-	if not assigned H`GradedCharactersOfSimples then
+	if not assigned H`SimplesInGroupSimples then
 		CharacterTable(~W);
-		H`GradedCharactersOfSimples := AssociativeArray({1..#W`CharacterTable});
+		H`SimplesInGroupSimples := AssociativeArray({1..#W`CharacterTable});
 	end if;
-	if not IsDefined(H`GradedCharactersOfSimples, i) then
-		SimpleModule(~H,i);
-		H`GradedCharactersOfSimples[i] := GradedCharacter(H, H`SimpleModules[i]);
+	if not IsDefined(H`SimplesInGroupSimples, i) then
+		SimpleModules(~H,i);
+		H`SimplesInGroupSimples[i] := InGroupSimples(H, H`SimpleModules[i]);
 	end if;
 
 end intrinsic;
 
-intrinsic GradedCharacterOfSimple(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
+intrinsic SimplesInGroupSimples(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
 {}
 
-	GradedCharacterOfSimple(~H,i);
-	return H`GradedCharactersOfSimples[i];
+	SimplesInGroupSimples(~H,i);
+	return H`SimplesInGroupSimples[i];
 
 end intrinsic;
 
-intrinsic GradedCharactersOfSimples(~H::AlgCheRes)
+intrinsic SimplesInGroupSimples(~H::AlgCheRes)
 {}
 	W := H`Group;
 	CharacterTable(~W);
 	for i:=1 to #W`CharacterTable do
-		GradedCharacterOfSimple(~H, i);
+		SimplesInGroupSimples(~H, i);
 	end for;
 end intrinsic;
 
-intrinsic GradedCharactersOfSimples(H::AlgCheRes) -> AlgMat
+intrinsic SimplesInGroupSimples(H::AlgCheRes) -> AlgMat
 {}
 
-	GradedCharactersOfSimples(~H);
+	SimplesInGroupSimples(~H);
 	W := H`Group;
 	N := #H`Group`CharacterTable;
 	V := KSpace(H`qField, N);
-	CL := Matrix(H`qField, N, N, [V!GradedCharacterOfSimple(H,i) : i in [1..N]]);
+	CL := Matrix(H`qField, N, N, [V!SimplesInGroupSimples(H,i) : i in [1..N]]);
 	return CL;
 
 end intrinsic;
 
 //============================================================================
-intrinsic PoincareSeriesOfSimple(~H::AlgCheRes, i::RngIntElt)
+intrinsic SimplesGradedDimension(~H::AlgCheRes, i::RngIntElt)
 {}
 
-	if not assigned H`PoincareSeriesOfSimples then
+	if not assigned H`SimplesGradedDimension then
 		W := H`Group;
 		CharacterTable(~W);
-		H`PoincareSeriesOfSimples := AssociativeArray({1..#W`CharacterTable});
+		H`SimplesGradedDimension := AssociativeArray({1..#W`CharacterTable});
 	end if;
-	if not IsDefined(H`PoincareSeriesOfSimples, i) then
-		SimpleModule(~H,i);
-		H`PoincareSeriesOfSimples[i] := H`qField!(PoincareSeries(H`SimpleModules[i]));
+	if not IsDefined(H`SimplesGradedDimension, i) then
+		SimpleModules(~H,i);
+		H`SimplesGradedDimension[i] := H`qField!(PoincareSeries(H`SimpleModules[i]));
 	end if;
 
 end intrinsic;
 
-intrinsic PoincareSeriesOfSimple(H::AlgCheRes, i::RngIntElt) -> FldElt
+intrinsic SimplesGradedDimension(H::AlgCheRes, i::RngIntElt) -> FldElt
 {}
 
-	PoincareSeriesOfSimple(~H,i);
-	return H`PoincareSeriesOfSimples[i];
+	SimplesGradedDimension(~H,i);
+	return H`SimplesGradedDimension[i];
 
 end intrinsic;
 
-intrinsic PoincareSeriesOfSimples(~H::AlgCheRes)
+intrinsic SimplesGradedDimension(~H::AlgCheRes)
 {}
 
 	W := H`Group;
 	CharacterTable(~W);
 	for i:=1 to #W`CharacterTable do
-		PoincareSeriesOfSimple(~H,i);
+		SimplesGradedDimension(~H,i);
 	end for;
 
 end intrinsic;
 
-intrinsic PoincareSeriesOfSimples(H::AlgCheRes) -> SeqEnum
+intrinsic SimplesGradedDimension(H::AlgCheRes) -> SeqEnum
 {}
 
-	PoincareSeriesOfSimples(~H);
+	SimplesGradedDimension(~H);
 	W := H`Group;
 	CharacterTable(~W);
-	return [ H`PoincareSeriesOfSimples[i] : i in [1..#W`CharacterTable] ];
+	return [ H`SimplesGradedDimension[i] : i in [1..#W`CharacterTable] ];
 
 end intrinsic;
+
 
 //============================================================================
 intrinsic IdentifyModule(H::AlgCheRes, M::ModGrOld : UseCharacters:=true) -> RngIntElt
@@ -649,82 +667,84 @@ end intrinsic;
 
 
 //============================================================================
-intrinsic GradedDecompositionMatrix(~H::AlgCheRes, i::RngIntElt)
+intrinsic StandardsInSimples(~H::AlgCheRes, i::RngIntElt)
 {}
 
-	if not assigned H`GradedDecompositionMatrix then
+	if not assigned H`StandardsInSimples then
 		W := H`Group;
 		CharacterTable(~W);
-		H`GradedDecompositionMatrix := AssociativeArray({1..#W`CharacterTable});
+		H`StandardsInSimples := AssociativeArray({1..#W`CharacterTable});
 	end if;
-	if not IsDefined(H`GradedDecompositionMatrix, i) then
-		GradedCharactersOfSimples(~H);
+	if not IsDefined(H`StandardsInSimples, i) then
+		SimplesInGroupSimples(~H);
 		N := #H`Group`CharacterTable;
 		V := KSpace(H`qField, N);
-		CLspace := KSpaceWithBasis([ V!(H`GradedCharactersOfSimples[i]) : i in [1..N] ]);
-		H`GradedDecompositionMatrix[i] := V!Coordinates(CLspace, GradedCharacterOfVerma(H,i));
+		CLspace := KSpaceWithBasis([ V!(H`SimplesInGroupSimples[i]) : i in [1..N] ]);
+		H`StandardsInSimples[i] := V!Coordinates(CLspace, StandardsInGroupSimples(H,i));
 	end if;
 
 end intrinsic;
 
-intrinsic GradedDecompositionMatrix(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
+intrinsic StandardsInSimples(H::AlgCheRes, i::RngIntElt) -> ModTupFldElt
 {}
 
-	GradedDecompositionMatrix(~H,i);
-	return H`GradedDecompositionMatrix[i];
+	StandardsInSimples(~H,i);
+	return H`StandardsInSimples[i];
 
 end intrinsic;
 
-intrinsic GradedDecompositionMatrix(~H::AlgCheRes)
+intrinsic StandardsInSimples(~H::AlgCheRes)
 {}
 
 	W := H`Group;
 	CharacterTable(~W);
 	for i:=1 to #W`CharacterTable do
-		GradedDecompositionMatrix(~H,i);
+		StandardsInSimples(~H,i);
 	end for;
 
 end intrinsic;
 
-intrinsic GradedDecompositionMatrix(H::AlgCheRes) -> AlgMat
+intrinsic StandardsInSimples(H::AlgCheRes) -> AlgMat
 {}
 
-	GradedDecompositionMatrix(~H);
+	StandardsInSimples(~H);
 	W := H`Group;
 	CharacterTable(~W);
 	N := #W`CharacterTable;
 	V := KSpace(H`qField, N);
-	D := Matrix(H`qField, N, N, [V!GradedDecompositionMatrix(H,i) : i in [1..N]]);
+	D := Matrix(H`qField, N, N, [V!StandardsInSimples(H,i) : i in [1..N]]);
 	return D;
 
 end intrinsic;
 
+
 //=============================================================================
-intrinsic GradedCartanMatrix(~H::AlgCheRes)
+intrinsic ProjectivesInSimples(~H::AlgCheRes)
 {}
 
-	if not assigned H`GradedCartanMatrix then
-		GradedDecompositionMatrix(~H);
-		D := GradedDecompositionMatrix(H);
-		H`GradedCartanMatrix := Transpose(D)*D;
+	if not assigned H`ProjectivesInSimples then
+		D := StandardsInSimples(H);
+		H`ProjectivesInSimples := Transpose(D)*D;
 	end if;
 
 end intrinsic;
 
-intrinsic GradedCartanMatrix(H::AlgCheRes) -> AlgMat
+intrinsic ProjectivesInSimples(H::AlgCheRes) -> AlgMat
 {}
 
-	GradedCartanMatrix(~H);
-	return H`GradedCartanMatrix;
+	ProjectivesInSimples(~H);
+	return H`ProjectivesInSimples;
 
 end intrinsic;
+
+/*
 
 intrinsic RepresentationTheory(H::AlgCheRes)
 {}
 
 	D:=GradedDecompositionMatrix(H);
 	C:=GradedCartanMatrix(H);
-	CDelta:=GradedCharactersOfVermas(H);
+	CDelta:=GradedCharactersOfStandards(H);
 	CL:=GradedCharactersOfSimples(H);
 	fams,sigma := Families(D);
 
@@ -783,3 +803,4 @@ intrinsic RepresentationTheory(H::AlgCheRes)
 	MediaWiki(CDeltasigma, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
 
 end intrinsic;
+*/
