@@ -833,6 +833,40 @@ intrinsic ProjectivesInStandardsQuantum(H::AlgCheRes) -> SeqEnum
 end intrinsic;
 
 //=============================================================================
+intrinsic ProjectivesInGroupSimples(~H::AlgCheRes)
+{}
+
+	if not assigned H`ProjectivesInGroupSimples then
+		W := H`Group;
+		CharacterTable(~W);
+		H`ProjectivesInGroupSimples := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	C := ProjectivesInSimples(H);
+	CL := SimplesInGroupSimples(H);
+	N := #H`Group`CharacterTable;
+	V := KSpace(H`qField, N);
+	H`ProjectivesInGroupSimples := C*CL;
+
+end intrinsic;
+
+
+intrinsic ProjectivesInGroupSimples(H::AlgCheRes,i::RngIntElt) -> AlgMat
+{}
+
+	ProjectivesInGroupSimples(~H);
+	return H`ProjectivesInGroupSimples[i];
+
+end intrinsic;
+
+intrinsic ProjectivesInGroupSimples(H::AlgCheRes) -> AlgMat
+{}
+
+	ProjectivesInGroupSimples(~H);
+	return H`ProjectivesInGroupSimples;
+
+end intrinsic;
+
+//=============================================================================
 intrinsic StandardsInSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
 {}
 
@@ -876,6 +910,59 @@ intrinsic StandardsInSimplesQuantum(H::AlgCheRes) -> SeqEnum
 	return [H`StandardsInSimplesQuantum[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
+
+
+//=============================================================================
+intrinsic ProjectivesInGroupSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
+{}
+
+	if not assigned H`ProjectivesInGroupSimplesQuantum then
+		W := H`Group;
+		CharacterTable(~W);
+		H`ProjectivesInGroupSimplesQuantum := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`ProjectivesInGroupSimplesQuantum, i) then
+		ProjectivesInGroupSimples(~H);
+		qCharacterField(~H);
+		phi := hom<H`qField -> H`qCharacterField | [H`qCharacterField.1]>;
+		f:=Zero(H`qCharacterField);
+		dec :=  ProjectivesInGroupSimples(H,i);
+		R := BaseRing(H`qCharacterField);
+		for j in Support(dec) do
+			f +:= phi(dec[j])*R.j;
+		end for;
+		H`ProjectivesInGroupSimplesQuantum[i] := f;
+	end if;
+
+end intrinsic;
+
+intrinsic ProjectivesInGroupSimplesQuantum(H::AlgCheRes,i::RngIntElt)
+{}
+
+	ProjectivesInGroupSimplesQuantum(~H,i);
+
+end intrinsic;
+
+intrinsic ProjectivesInGroupSimplesQuantum(~H::AlgCheRes)
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		ProjectivesInGroupSimplesQuantum(~H,i);
+	end for;
+	H`ProjectivesInGroupSimplesQuantum := [H`ProjectivesInGroupSimplesQuantum[i] : i in [1..#W`CharacterTable]];
+
+end intrinsic;
+
+intrinsic ProjectivesInGroupSimplesQuantum(H::AlgCheRes) -> SeqEnum
+{}
+
+	ProjectivesInGroupSimplesQuantum(~H);
+	return H`ProjectivesInGroupSimplesQuantum;
+
+end intrinsic;
+
 
 //=============================================================================
 intrinsic StandardsAtBottomOfProjectives(~H::AlgCheRes, i::RngIntElt)
@@ -935,14 +1022,17 @@ intrinsic StandardsAtBottomOfProjectives(H::AlgCheRes) -> SeqEnum
 	return [H`StandardsAtBottomOfProjectives[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
-
 /*
-
-intrinsic RepresentationTheory(H::AlgCheRes)
+intrinsic PrintRepresentationTheory(H::AlgCheRes)
 {}
 
-	D:=GradedDecompositionMatrix(H);
-	C:=GradedCartanMatrix(H);
+	StandardsInSimples(~H);
+	StandardsInGroupSimples(~H);
+	ProjectivesInStandards(~H);
+	ProjectiveInSimples(~H);
+	ProjectivesInGroupSimples(~H);
+
+	C:=ProjectivesInGroupSimples(H);
 	CDelta:=GradedCharactersOfStandards(H);
 	CL:=GradedCharactersOfSimples(H);
 	fams,sigma := Families(D);
