@@ -28,3 +28,5 @@ print "#########################################################";
 	Environment
 */
 //SetAutoColumns(true);
+
+SetColumns(0);

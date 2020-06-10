@@ -1022,20 +1022,12 @@ intrinsic StandardsAtBottomOfProjectives(H::AlgCheRes) -> SeqEnum
 	return [H`StandardsAtBottomOfProjectives[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
-/*
-intrinsic PrintRepresentationTheory(H::AlgCheRes)
+
+intrinsic MediaWiki(H::AlgCheRes)
 {}
 
 	StandardsInSimples(~H);
-	StandardsInGroupSimples(~H);
-	ProjectivesInStandards(~H);
-	ProjectiveInSimples(~H);
-	ProjectivesInGroupSimples(~H);
-
-	C:=ProjectivesInGroupSimples(H);
-	CDelta:=GradedCharactersOfStandards(H);
-	CL:=GradedCharactersOfSimples(H);
-	fams,sigma := Families(D);
+	fams,sigma := Families(StandardsInSimples(H));
 
 	cparam := "[";
 	counter := 0;
@@ -1047,8 +1039,11 @@ intrinsic PrintRepresentationTheory(H::AlgCheRes)
 		end if;
 	end for;
 	cparam *:= "]";
-	printf "c-parameter: %o\n\n", cparam;
-	printf "==== Families ====\n";
+	print "";
+
+	printf "== Parameter $c=%o$ ==\n\n", cparam;
+
+	printf "=== Families ===\n";
 	for i:=1 to #fams do
 		printf "{";
 		for j:=1 to #fams[i] do
@@ -1059,37 +1054,122 @@ intrinsic PrintRepresentationTheory(H::AlgCheRes)
 		end for;
 		printf "}";
 		if i lt #fams then
-			printf ", ";
+			printf "<br />\n";
 		end if;
 	end for;
 	printf "\n\n";
 
-	printf "==== Graded decomposition matrix (family-wise) ====\n";
+	printf "=== Projectives in standards ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := ProjectivesInStandards(H);
 	for F in fams do
+		if #F eq 1 then
+			continue;
+		end if;
 		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
 		charnames := [H`Group`CharacterNames[i] : i in F];
-		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnames, ScrollingTable:=true);
 	end for;
-	printf "\n";
+	printf "</div>\n\n";
 
-	printf "==== Graded Cartan matrix (family-wise) ====\n";
+	printf "=== Projectives in standards (quantum) ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := ProjectivesInStandardsQuantum(H);
+	R:=PolynomialRing(BaseRing(H`qCharacterField));
 	for F in fams do
-		CF := Submatrix(C, IndexedSetToSequence(F), IndexedSetToSequence(F));
-		charnames := [H`Group`CharacterNames[i] : i in F];
-		MediaWiki(CF, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+		if #F eq 1 then
+			continue;
+		end if;
+		for i in F do
+			if Denominator(D[i]) ne 1 then
+				error "Something wrong with LaurentSeries/RationalFunction crap";
+			end if;
+		end for;
+		DF := [R!(Numerator(D[i])) : i in F];
+		degrees := {};
+		for f in DF do
+			degrees join:=SequenceToSet(Support(f));
+		end for;
+		degrees := SetToSequence(degrees);
+		A := ZeroMatrix(BaseRing(R),#F,#degrees);
+		for i:=1 to #F do
+			for j:=1 to #degrees do
+				A[i,j] := Coefficient(DF[i],degrees[j]);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
 	end for;
-	printf "\n";
+	printf "</div>\n\n";
 
-	printf "==== Graded characters of simples ====\n";
-	CLsigma := Permute(CL,sigma);
-	charnames := [H`Group`CharacterNames[i] : i in sigma];
-	MediaWiki(CLsigma, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
-	printf "\n";
+	printf "=== Standards at bottom of projectives ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	bottom := StandardsAtBottomOfProjectives(H);
+	for F in fams do
+		if #F eq 1 then
+			continue;
+		end if;
+		bottomF := [ [Sprint(H`Group`CharacterNames[x[1]])*"["*Sprint(x[2])*"]"] : x in [bottom[i] : i in F] ];
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(bottomF, "Default" : RowHeader:=charnamesF, ColHeader:=["&lambda;<sup>h</sup>"], Legend:="&lambda;",ScrollingTable:=true);
+	end for;
+	printf "</div>\n\n";
 
-	printf "==== Graded characters of standards ====\n";
-	CDeltasigma := Permute(CDelta,sigma);
-	charnames := [H`Group`CharacterNames[i] : i in sigma];
-	MediaWiki(CDeltasigma, "Latex" : ColHeader:=charnames, RowHeader:=charnames);
+	printf "=== Standards in simples ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := StandardsInSimples(H);
+	for F in fams do
+		if #F eq 1 then
+			continue;
+		end if;
+		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
+		charnames := [H`Group`CharacterNames[i] : i in F];
+		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnames, ScrollingTable:=true);
+	end for;
+	printf "</div>\n\n";
+
+	printf "=== Standards in simples (quantum) ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := StandardsInSimplesQuantum(H);
+	R:=PolynomialRing(BaseRing(H`qCharacterField));
+	for F in fams do
+		if #F eq 1 then
+			continue;
+		end if;
+		for i in F do
+			if Denominator(D[i]) ne 1 then
+				error "Something wrong with LaurentSeries/RationalFunction crap";
+			end if;
+		end for;
+		DF := [R!(Numerator(D[i])) : i in F];
+		degrees := {};
+		for f in DF do
+			degrees join:=SequenceToSet(Support(f));
+		end for;
+		degrees := SetToSequence(degrees);
+		A := ZeroMatrix(BaseRing(R),#F,#degrees);
+		for i:=1 to #F do
+			for j:=1 to #degrees do
+				A[i,j] := Coefficient(DF[i],degrees[j]);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	printf "</div>\n\n";
+
+	printf "=== Simples in group simples ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	Dsigma := Permute(SimplesInGroupSimples(H), sigma);
+	charnamessigma := [ H`Group`CharacterNames[sigma[i]] : i in [1..#sigma] ];
+	MediaWiki(Dsigma, "Latex" : ColHeader:=charnamessigma, RowHeader:=charnamessigma, ScrollingTable:=true);
+	printf "</div>\n\n";
+
+	printf "=== Projectives in group simples ===\n";
+	printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	Dsigma := Permute(ProjectivesInGroupSimples(H), sigma);
+	charnamessigma := [ H`Group`CharacterNames[sigma[i]] : i in [1..#sigma] ];
+	MediaWiki(Dsigma, "Latex" : ColHeader:=charnamessigma, RowHeader:=charnamessigma, ScrollingTable:=true);
+	printf "</div>\n\n";
 
 end intrinsic;
-*/
