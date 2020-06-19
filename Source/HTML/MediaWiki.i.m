@@ -46,7 +46,11 @@ intrinsic MediaWiki(X::SeqEnum[SeqEnum], L::MonStgElt : ColHeader:=[], RowHeader
 				if L eq "Latex" then
 					str *:= "$";
 				end if;
-				str *:= Sprint(X[i][j], L);
+				if L eq "HTML" then
+					str *:= HTML(X[i][j]);
+				else
+					str *:= Sprint(X[i][j], L);
+				end if;
 				if L eq "Latex" then
 					str *:= "$";
 				end if;

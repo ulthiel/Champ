@@ -163,12 +163,25 @@ intrinsic HTML(f::RngSerLaurElt) -> MonStgElt
 
 end intrinsic;
 
+intrinsic HTML(f::FldFunRatUElt) -> MonStgElt
+{}
+
+	R := Parent(f);
+	S := PolynomialRing(BaseRing(R));
+	AssignNames(~S, Names(R));
+	if IsOne(Denominator(f)) then
+		return HTML(S!Numerator(f));
+	else
+		return "("*Sprint(S!Numerator(f))*")/("*Sprint(S!Denominator(f))*")";
+	end if;
+
+end intrinsic;
 
 //============================================================================
 intrinsic HTML(f::RngUPolElt) -> MonStgElt
 {}
 
-    K := BaseRing(Parent(f));
+    /*K := BaseRing(Parent(f));
 
     if Type(K) eq FldCyc then
         oldname := [ Sprint(K.1) ];
@@ -185,10 +198,21 @@ intrinsic HTML(f::RngUPolElt) -> MonStgElt
 
     //replace powers
     for p in Exponents(f) do
-        str := Replace(str, "\\^"*Sprint(p), "^<sup>"*Sprint(p)*"</sup>");
+        str := Replace(str, "\\^"*Sprint(p), "<sup>"*Sprint(p)*"<\\/sup>");
     end for;
 
-    return str;
+    return str;*/
+
+		str := Sprint(f, "Latex");
+		for p in Exponents(f) do
+			str := Replace(str, "\\^"*Sprint(p), "<sup>"*Sprint(p)*"<\\/sup>");
+			str := Replace(str, "\\^{"*Sprint(p)*"}", "<sup>"*Sprint(p)*"<\\/sup>");
+		end for;
+
+		//name := Names(Parent(f))[1];
+		//str := Replace(str, name, "<i>"*name*"<\\/i>");
+
+		return str;
 
 
 end intrinsic;

@@ -47,37 +47,37 @@ intrinsic CherednikParameter(G::GrpMat : Type:="GGOR", Rational:=false) -> Map
         AssignNames(~K, [ "C"*Sprint(i) : i in [1..N] ]);
         c := map<{1..N} -> K | [ <i,(G`ReflectionLibraryClasses[i]`Eigenvalue-1)*K.i> : i in [1..N]]>;
         return c;
-    elif Type eq "completed" then
-        //the GGOR parameters but without setting k_{\Omega,0} = 0
-        ReflectionLibrary(~G);
-        N := #G`ReflectionClasses;
-        eOmega := [ #G`ReflectionLibrary[i][1] + 1 : i in [1..#G`ReflectionLibrary] ];
-        if not Rational then
-            K := PolynomialRing(BaseRing(G), &+[ eOmega[i] : i in [1..#eOmega] ]);
-        else
-            K := RationalFunctionField(BaseRing(G), &+[ eOmega[i] : i in [1..#eOmega] ]);
-        end if;
-        names := [];
-        for i:=1 to #eOmega do
-            for j:=0 to eOmega[i]-1 do
-                Append(~names, "k"*Sprint(i)*"_"*Sprint(j)*"");
-            end for;
-        end for;
-        AssignNames(~K, names);
-        cvalues := [ Zero(K) : i in [1..N] ];
-        for i:=1 to N do
-            s := G`ReflectionLibraryClasses[i];
-            Omega := s`ID[1]; //Omega_s
-            det := Determinant(s`Element);
-
-            for j:=0 to eOmega[Omega]-1 do
-                kj := K.Position(names, "k"*Sprint(Omega)*"_"*Sprint(j mod eOmega[Omega])*""); //k_{Omega_s,j}
-                cvalues[i] +:= det^j*kj;
-            end for;
-            cvalues[i] *:= (det^-1-1);
-        end for;
-        c := map<{1..N} -> K | [ <i,cvalues[i]> : i in [1..#cvalues]]>;
-        return c;
+    // elif Type eq "completed" then
+    //     //the GGOR parameters but without setting k_{\Omega,0} = 0
+    //     ReflectionLibrary(~G);
+    //     N := #G`ReflectionClasses;
+    //     eOmega := [ #G`ReflectionLibrary[i][1] + 1 : i in [1..#G`ReflectionLibrary] ];
+    //     if not Rational then
+    //         K := PolynomialRing(BaseRing(G), &+[ eOmega[i] : i in [1..#eOmega] ]);
+    //     else
+    //         K := RationalFunctionField(BaseRing(G), &+[ eOmega[i] : i in [1..#eOmega] ]);
+    //     end if;
+    //     names := [];
+    //     for i:=1 to #eOmega do
+    //         for j:=0 to eOmega[i]-1 do
+    //             Append(~names, "k"*Sprint(i)*"_"*Sprint(j)*"");
+    //         end for;
+    //     end for;
+    //     AssignNames(~K, names);
+    //     cvalues := [ Zero(K) : i in [1..N] ];
+    //     for i:=1 to N do
+    //         s := G`ReflectionLibraryClasses[i];
+    //         Omega := s`ID[1]; //Omega_s
+    //         det := Determinant(s`Element);
+		//
+    //         for j:=0 to eOmega[Omega]-1 do
+    //             kj := K.Position(names, "k"*Sprint(Omega)*"_"*Sprint(j mod eOmega[Omega])*""); //k_{Omega_s,j}
+    //             cvalues[i] +:= det^j*kj;
+    //         end for;
+    //         cvalues[i] *:= (det^-1-1);
+    //     end for;
+    //     c := map<{1..N} -> K | [ <i,cvalues[i]> : i in [1..#cvalues]]>;
+    //     return c;
     elif Type eq "GGOR" then
         ReflectionLibrary(~G);
         N := #G`ReflectionClasses;
