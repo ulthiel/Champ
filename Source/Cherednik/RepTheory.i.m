@@ -1148,7 +1148,9 @@ intrinsic MediaWiki(H::AlgCheRes)
 
 	printf "== Representation theory ==\n\n";
 
-	printf "=== Families ===\n";
+	printf "=== Block structure ===\n";
+
+	printf "==== Families ====\n";
 	famtable := [];
 	for i:=1 to #fams do
 		famstr := "";
@@ -1165,8 +1167,23 @@ intrinsic MediaWiki(H::AlgCheRes)
 	MediaWiki(famtable, "Default" : ColHeader:=["Size", "Characters"], RowHeader:=[Sprint(i) : i in [1..#fams]], Legend:="#", ScrollingTable:=true);
 	printf "\n";
 
-	printf "=== Projectives in standards ===\n";
-	printf "==== By character ====\n";
+	printf "==== Tilting permutation ====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	bottom := StandardsAtBottomOfProjectives(H);
+	for F in fams do
+		bottomF := [ [Sprint(H`Group`CharacterNames[x[1]])*"["*Sprint(x[2])*"]"] : x in [bottom[i] : i in F] ];
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(bottomF, "Default" : RowHeader:=charnamesF, ColHeader:=["&lambda;<sup>h</sup>"], Legend:="&lambda;",ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+
+	printf "=== Projectives ===\n";
+
+	printf "==== in standards ====\n";
+
+	printf "===== by character =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	D := ProjectivesInStandards(H);
 	for F in fams do
@@ -1177,7 +1194,7 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";
 
-	printf "==== By degree ====\n";
+	printf "===== by degree =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	D := ProjectivesInStandardsQuantum(H);
 	R:=PolynomialRing(BaseRing(H`qCharacterField));
@@ -1205,121 +1222,9 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";
 
-	printf "=== Standards at bottom of projectives ===\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	bottom := StandardsAtBottomOfProjectives(H);
-	for F in fams do
-		bottomF := [ [Sprint(H`Group`CharacterNames[x[1]])*"["*Sprint(x[2])*"]"] : x in [bottom[i] : i in F] ];
-		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
-		MediaWiki(bottomF, "Default" : RowHeader:=charnamesF, ColHeader:=["&lambda;<sup>h</sup>"], Legend:="&lambda;",ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
+	printf "==== in group simples ====\n";
 
-	printf "=== Standards in simples ===\n";
-	printf "==== By character ====\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	D := StandardsInSimples(H);
-	for F in fams do
-		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
-		charnamesF := [H`Group`CharacterNames[i] : i in F];
-		MediaWiki(DF, "Latex" : ColHeader:=charnamesF, RowHeader:=charnamesF, ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
-
-	printf "==== By degree ====\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	D := StandardsInSimplesQuantum(H);
-	R:=PolynomialRing(BaseRing(H`qCharacterField));
-	for F in fams do
-		for i in F do
-			if Denominator(D[i]) ne 1 then
-				error "Something wrong with LaurentSeries/RationalFunction crap";
-			end if;
-		end for;
-		DF := [R!(Numerator(D[i])) : i in F];
-		degrees := {};
-		for f in DF do
-			degrees join:=SequenceToSet(Support(f));
-		end for;
-		degrees := SetToSequence(degrees);
-		A := ZeroMatrix(BaseRing(R),#F,#degrees);
-		for i:=1 to #F do
-			for j:=1 to #degrees do
-				A[i,j] := Coefficient(DF[i],degrees[j]);
-			end for;
-		end for;
-		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
-		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
-
-	printf "=== Simples in group simples ===\n";
-	printf "==== By character ====\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	for F in fams do
-		DF := [ Eltseq(SimplesInGroupSimples(H,i)) : i in F ];
-		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
-		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnamesF, ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
-
-	printf "==== By degree ====\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	D := SimplesInGroupSimplesQuantum(H);
-	R:=PolynomialRing(BaseRing(H`qCharacterField));
-	for F in fams do
-		for i in F do
-			if Denominator(D[i]) ne 1 then
-				error "Something wrong with LaurentSeries/RationalFunction crap";
-			end if;
-		end for;
-		DF := [R!(Numerator(D[i])) : i in F];
-		degrees := {};
-		for f in DF do
-			degrees join:=SequenceToSet(Support(f));
-		end for;
-		degrees := SetToSequence(degrees);
-		A := ZeroMatrix(BaseRing(R),#F,#degrees);
-		for i:=1 to #F do
-			for j:=1 to #degrees do
-				A[i,j] := Coefficient(DF[i],degrees[j]);
-			end for;
-		end for;
-		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
-		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
-
-	printf "=== Graded dimension of simples (by degree) ===\n";
-	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	dims:=SimplesGradedDimension(H);
-	for F in fams do
-		dimsF := [ Numerator(dims[i]) : i in F ];
-		maxdeg := 0;
-		for f in dimsF do
-			if Degree(f) gt maxdeg then
-				maxdeg := Degree(f);
-			end if;
-		end for;
-		A := ZeroMatrix(Integers(),#F, maxdeg+1);
-		for i:=1 to #F do
-			for j:=0 to maxdeg do
-				A[i][j+1] := Coefficient(dimsF[i],j);
-			end for;
-		end for;
-		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
-		MediaWiki(A, "Default" : ColHeader:=[Sprint(i) : i in [0..maxdeg]], RowHeader:=charnamesF, ScrollingTable:=true);
-	end for;
-	//printf "</div>\n";
-	printf "\n";
-
-	printf "=== Projectives in group simples ===\n";
-	printf "==== By character ====\n";
+	printf "===== by character =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	for F in fams do
 		DF := [ Eltseq(ProjectivesInGroupSimples(H,i)) : i in F ];
@@ -1329,7 +1234,7 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";printf "</div>\n\n";
 
-	printf "==== By degree ====\n";
+	printf "===== by degree =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	D := ProjectivesInGroupSimplesQuantum(H);
 	R:=PolynomialRing(BaseRing(H`qCharacterField));
@@ -1357,9 +1262,114 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";
 
-	printf "=== Graded dimension of projectives (by degree) ===\n";
+	printf "==== Graded dimension ====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	dims:=ProjectivesGradedDimension(H);
+	for F in fams do
+		dimsF := [ Numerator(dims[i]) : i in F ];
+		maxdeg := 0;
+		for f in dimsF do
+			if Degree(f) gt maxdeg then
+				maxdeg := Degree(f);
+			end if;
+		end for;
+		A := ZeroMatrix(Integers(),#F, maxdeg+1);
+		for i:=1 to #F do
+			for j:=0 to maxdeg do
+				A[i][j+1] := Coefficient(dimsF[i],j);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(i) : i in [0..maxdeg]], RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "=== Standards ===\n";
+
+	printf "==== in simples ====\n";
+
+	printf "===== by character =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := StandardsInSimples(H);
+	for F in fams do
+		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
+		charnamesF := [H`Group`CharacterNames[i] : i in F];
+		MediaWiki(DF, "Latex" : ColHeader:=charnamesF, RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "===== by degree =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := StandardsInSimplesQuantum(H);
+	R:=PolynomialRing(BaseRing(H`qCharacterField));
+	for F in fams do
+		for i in F do
+			if Denominator(D[i]) ne 1 then
+				error "Something wrong with LaurentSeries/RationalFunction crap";
+			end if;
+		end for;
+		DF := [R!(Numerator(D[i])) : i in F];
+		degrees := {};
+		for f in DF do
+			degrees join:=SequenceToSet(Support(f));
+		end for;
+		degrees := SetToSequence(degrees);
+		A := ZeroMatrix(BaseRing(R),#F,#degrees);
+		for i:=1 to #F do
+			for j:=1 to #degrees do
+				A[i,j] := Coefficient(DF[i],degrees[j]);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "==== in group simples ====\n";
+	printf "===== by character =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	for F in fams do
+		DF := [ Eltseq(SimplesInGroupSimples(H,i)) : i in F ];
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "===== by degree =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := SimplesInGroupSimplesQuantum(H);
+	R:=PolynomialRing(BaseRing(H`qCharacterField));
+	for F in fams do
+		for i in F do
+			if Denominator(D[i]) ne 1 then
+				error "Something wrong with LaurentSeries/RationalFunction crap";
+			end if;
+		end for;
+		DF := [R!(Numerator(D[i])) : i in F];
+		degrees := {};
+		for f in DF do
+			degrees join:=SequenceToSet(Support(f));
+		end for;
+		degrees := SetToSequence(degrees);
+		A := ZeroMatrix(BaseRing(R),#F,#degrees);
+		for i:=1 to #F do
+			for j:=1 to #degrees do
+				A[i,j] := Coefficient(DF[i],degrees[j]);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "==== Graded dimension ====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	dims:=SimplesGradedDimension(H);
 	for F in fams do
 		dimsF := [ Numerator(dims[i]) : i in F ];
 		maxdeg := 0;
