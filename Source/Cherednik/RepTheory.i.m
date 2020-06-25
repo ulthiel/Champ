@@ -546,6 +546,50 @@ intrinsic StandardsInGroupSimples(H::AlgCheRes) -> AlgMatElt
 
 end intrinsic;
 
+//============================================================================
+intrinsic StandardsGradedDimension(~H::AlgCheRes, i::RngIntElt)
+{}
+
+	if not assigned H`StandardsGradedDimension then
+		W := H`Group;
+		CharacterTable(~W);
+		H`StandardsGradedDimension := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`StandardsGradedDimension, i) then
+		StandardModules(~H,i);
+		H`StandardsGradedDimension[i] := H`qField!(PoincareSeries(H`StandardModules[i]));
+	end if;
+
+end intrinsic;
+
+intrinsic StandardsGradedDimension(H::AlgCheRes, i::RngIntElt) -> FldElt
+{}
+
+	StandardsGradedDimension(~H,i);
+	return H`StandardsGradedDimension[i];
+
+end intrinsic;
+
+intrinsic StandardsGradedDimension(~H::AlgCheRes)
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		StandardsGradedDimension(~H,i);
+	end for;
+
+end intrinsic;
+
+intrinsic StandardsGradedDimension(H::AlgCheRes) -> SeqEnum
+{}
+
+	StandardsGradedDimension(~H);
+	W := H`Group;
+	CharacterTable(~W);
+	return [ H`StandardsGradedDimension[i] : i in [1..#W`CharacterTable] ];
+
+end intrinsic;
 
 //============================================================================
 intrinsic InGroupSimples(H::AlgCheRes, M::ModGrOld) -> ModRngElt
@@ -558,6 +602,7 @@ intrinsic InGroupSimples(H::AlgCheRes, M::ModGrOld) -> ModRngElt
 
 end intrinsic;
 
+//============================================================================
 intrinsic SimplesInGroupSimples(~H::AlgCheRes, i::RngIntElt)
 {}
 
@@ -883,6 +928,59 @@ intrinsic ProjectivesInStandardsQuantum(H::AlgCheRes) -> SeqEnum
 
 end intrinsic;
 
+
+//=============================================================================
+intrinsic StandardsInGroupSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
+{}
+
+	if not assigned H`StandardsInGroupSimplesQuantum then
+		W := H`Group;
+		CharacterTable(~W);
+		H`StandardsInGroupSimplesQuantum := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`StandardsInGroupSimplesQuantum, i) then
+		StandardsInGroupSimples(~H);
+		qCharacterField(~H);
+		phi := hom<H`qField -> H`qCharacterField | [H`qCharacterField.1]>;
+		f:=Zero(H`qCharacterField);
+		dec :=  StandardsInGroupSimples(H,i);
+		R := BaseRing(H`qCharacterField);
+		for j in Support(dec) do
+			f +:= phi(dec[j])*R.j;
+		end for;
+		H`StandardsInGroupSimplesQuantum[i] := f;
+	end if;
+
+end intrinsic;
+
+intrinsic StandardsInGroupSimplesQuantum(H::AlgCheRes,i::RngIntElt)
+{}
+
+	StandardsInGroupSimplesQuantum(~H,i);
+
+end intrinsic;
+
+intrinsic StandardsInGroupSimplesQuantum(~H::AlgCheRes)
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		StandardsInGroupSimplesQuantum(~H,i);
+	end for;
+	H`StandardsInGroupSimplesQuantum := [H`StandardsInGroupSimplesQuantum[i] : i in [1..#W`CharacterTable]];
+
+end intrinsic;
+
+intrinsic StandardsInGroupSimplesQuantum(H::AlgCheRes) -> SeqEnum
+{}
+
+	StandardsInGroupSimplesQuantum(~H);
+	return H`StandardsInGroupSimplesQuantum;
+
+end intrinsic;
+
+
 //=============================================================================
 intrinsic ProjectivesInGroupSimples(~H::AlgCheRes)
 {}
@@ -1065,6 +1163,56 @@ intrinsic SimplesInGroupSimplesQuantum(H::AlgCheRes) -> SeqEnum
 
 end intrinsic;
 
+//=============================================================================
+intrinsic ProjectivesInSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
+{}
+
+	if not assigned H`ProjectivesInSimplesQuantum then
+		W := H`Group;
+		CharacterTable(~W);
+		H`ProjectivesInSimplesQuantum := AssociativeArray({1..#W`CharacterTable});
+	end if;
+	if not IsDefined(H`ProjectivesInSimplesQuantum, i) then
+		ProjectivesInSimples(~H);
+		qCharacterField(~H);
+		phi := hom<H`qField -> H`qCharacterField | [H`qCharacterField.1]>;
+		f:=Zero(H`qCharacterField);
+		dec :=  ProjectivesInSimples(H,i);
+		R := BaseRing(H`qCharacterField);
+		for j in Support(dec) do
+			f +:= phi(dec[j])*R.j;
+		end for;
+		H`ProjectivesInSimplesQuantum[i] := f;
+	end if;
+
+end intrinsic;
+
+intrinsic ProjectivesInSimplesQuantum(H::AlgCheRes,i::RngIntElt)
+{}
+
+	ProjectivesInSimplesQuantum(~H,i);
+
+end intrinsic;
+
+intrinsic ProjectivesInSimplesQuantum(~H::AlgCheRes)
+{}
+
+	W := H`Group;
+	CharacterTable(~W);
+	for i:=1 to #W`CharacterTable do
+		ProjectivesInSimplesQuantum(~H,i);
+	end for;
+	H`ProjectivesInSimplesQuantum := [H`ProjectivesInSimplesQuantum[i] : i in [1..#W`CharacterTable]];
+
+end intrinsic;
+
+intrinsic ProjectivesInSimplesQuantum(H::AlgCheRes) -> SeqEnum
+{}
+
+	ProjectivesInSimplesQuantum(~H);
+	return H`ProjectivesInSimplesQuantum;
+
+end intrinsic;
 
 //=============================================================================
 intrinsic StandardsAtBottomOfProjectives(~H::AlgCheRes, i::RngIntElt)
@@ -1148,6 +1296,11 @@ intrinsic MediaWiki(H::AlgCheRes)
 
 	printf "== Representation theory ==\n\n";
 
+
+	/////////////////
+	//Block structure
+	/////////////////
+
 	printf "=== Block structure ===\n";
 
 	printf "==== Families ====\n";
@@ -1179,6 +1332,9 @@ intrinsic MediaWiki(H::AlgCheRes)
 	printf "\n";
 
 
+	/////////////////
+	//Projectives
+	/////////////////
 	printf "=== Projectives ===\n";
 
 	printf "==== in standards ====\n";
@@ -1221,6 +1377,48 @@ intrinsic MediaWiki(H::AlgCheRes)
 	end for;
 	//printf "</div>\n";
 	printf "\n";
+
+	printf "==== in simples ====\n";
+
+	printf "===== by character =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := ProjectivesInSimples(H);
+	for F in fams do
+		DF := Submatrix(D, IndexedSetToSequence(F), IndexedSetToSequence(F));
+		charnamesF := [H`Group`CharacterNames[i] : i in F];
+		MediaWiki(DF, "Latex" : ColHeader:=charnamesF, RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
+	printf "===== by degree =====\n";
+	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
+	D := ProjectivesInSimplesQuantum(H);
+	R:=PolynomialRing(BaseRing(H`qCharacterField));
+	for F in fams do
+		for i in F do
+			if Denominator(D[i]) ne 1 then
+				error "Something wrong with LaurentSeries/RationalFunction crap";
+			end if;
+		end for;
+		DF := [R!(Numerator(D[i])) : i in F];
+		degrees := {};
+		for f in DF do
+			degrees join:=SequenceToSet(Support(f));
+		end for;
+		degrees := SetToSequence(degrees);
+		A := ZeroMatrix(BaseRing(R),#F,#degrees);
+		for i:=1 to #F do
+			for j:=1 to #degrees do
+				A[i,j] := Coefficient(DF[i],degrees[j]);
+			end for;
+		end for;
+		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
+		MediaWiki(A, "Default" : ColHeader:=[Sprint(degrees[i]) : i in [1..#degrees]], RowHeader:=charnamesF, ScrollingTable:=true);
+	end for;
+	//printf "</div>\n";
+	printf "\n";
+
 
 	printf "==== in group simples ====\n";
 
@@ -1285,6 +1483,10 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";
 
+
+	/////////////////
+	//Standards
+	/////////////////
 	printf "=== Standards ===\n";
 
 	printf "==== in simples ====\n";
@@ -1329,10 +1531,11 @@ intrinsic MediaWiki(H::AlgCheRes)
 	printf "\n";
 
 	printf "==== in group simples ====\n";
+
 	printf "===== by character =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
 	for F in fams do
-		DF := [ Eltseq(SimplesInGroupSimples(H,i)) : i in F ];
+		DF := [ Eltseq(StandardsInGroupSimples(H,i)) : i in F ];
 		charnamesF := [ H`Group`CharacterNames[i] : i in F ];
 		MediaWiki(DF, "Latex" : ColHeader:=charnames, RowHeader:=charnamesF, ScrollingTable:=true);
 	end for;
@@ -1341,7 +1544,7 @@ intrinsic MediaWiki(H::AlgCheRes)
 
 	printf "===== by degree =====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	D := SimplesInGroupSimplesQuantum(H);
+	D := StandardsInGroupSimplesQuantum(H);
 	R:=PolynomialRing(BaseRing(H`qCharacterField));
 	for F in fams do
 		for i in F do
@@ -1369,7 +1572,7 @@ intrinsic MediaWiki(H::AlgCheRes)
 
 	printf "==== Graded dimension ====\n";
 	//printf "<div class=\"mw-collapsible mw-collapsed\">\n";
-	dims:=SimplesGradedDimension(H);
+	dims:=StandardsGradedDimension(H);
 	for F in fams do
 		dimsF := [ Numerator(dims[i]) : i in F ];
 		maxdeg := 0;
@@ -1390,6 +1593,10 @@ intrinsic MediaWiki(H::AlgCheRes)
 	//printf "</div>\n";
 	printf "\n";
 
+
+	/////////////////
+	//Simples
+	/////////////////
 	printf "=== Simples ===\n";
 
 	printf "==== in group simples ====\n";
