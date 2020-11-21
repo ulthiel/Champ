@@ -5,12 +5,12 @@ A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 
 ## Scope
 
 With this package you can:
-* compute in rational Cherednik algebras (see [Etingof-Ginzburg](https://arxiv.org/abs/math/0011114))
+* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114))
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space)
-* compute Poisson brackets on the center (towards symplectic leaves)
-* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (see [Gordon](https://arxiv.org/abs/math/0202301)).
+* compute Poisson brackets on the center
+* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The parameters can always be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
+The underlying reflection groups can arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
 
@@ -24,7 +24,8 @@ The parameters can always be arbitrary, including generic parameters valued in p
 [4. Restricted rational Cherednik algebras](#rrca)  
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1 Representation theory](#rrca-rep)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with baby Verma modules](#rrca-verma)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)
 
 <a name="downloading"></a>
 
@@ -95,11 +96,7 @@ ReflectionGroups/B2_CHEVIE/
 ]
 
 //Other types of reflection groups (with connection to data from the database
-//and/or natural choices) can be created with the following functions:
-//ExceptionalComplexReflectionGroup, SymmetricReflectionGroup,
-//TypeBReflectionGroup, TypeDReflectionGroup, DihedralReflectionGroup,
-//CyclicReflectionGroup, ImprimitiveReflectionGroup.
-//
+//and/or natural choices) can be created with the functions listed below.
 //You can also load some special models directly from the database as in the
 //following example which loads a particular model of B2 used by Bonnafé-
 //Rouquier in some computation
@@ -114,11 +111,21 @@ Generators:
     [ 0  1]
 ```
 
+You can load all sorts of reflections groups with the following commands:
+
+* ExceptionalComplexReflectionGroup (groups G4 to G37 in Shephard–Todd notation)
+* SymmetricReflectionGroup
+* TypeBReflectionGroup
+* TypeDReflectionGroup
+* DihedralReflectionGroup
+* CyclicReflectionGroup
+* ImprimitiveReflectionGroup (groups G(m,p,n) in Shephard–Todd notation)
+
 <a name="che"></a>
 
 ## Rational Cherednik algebras
 
-It's best to begin with an example straightaway.
+The definitition of rational Cherednik algebras used in Champ is exactly the one by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114). It's best to begin with an example straightaway.
 
 ```C++
 //Create the rational Cherednik algebra for t and c generic (valued in a
@@ -185,7 +192,7 @@ c-parameter:
 
 ### Parameters
 
-This topic is a bit technical but important. There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a *t-parameter* and a *c-parameter*. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W -> R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c<sub>1</sub>,...,c<sub>r</sub>] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I. For example, we could take a polynomial ring R=K[t,c] and set c(s)=c for all c. This would be the generic *equal* parameter case.
+This topic is a bit technical but important. There are two kinds of parameters involved in the relations for the rational Cherednik algebra: a *t-parameter* and a *c-parameter*. Let's take a commutative ring R as base ring. The t-parameter is some fixed element of R; the c-parameter is a function c:Refl(W)/W → R from the conjugacy classes of reflections of W to R. For example, we can let R be a polynomial ring K[t,c<sub>1</sub>,...,c<sub>r</sub>] and define the parameters t and c in the obvious way. In this case we say the parameters are *generic*. If I is an ideal of R, we can also consider R/I as new base ring and get parameters with are *generic for the subscheme* defined by I. For example, we could take a polynomial ring R=K[t,c] and set c(s)=c for all c. This would be the generic *equal* parameter case.
 
 For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R. In particular, you can work with generic parameters, generic parameters on a, say, hyperplane, or special parameters taking values in your base field K. You have complete freedom.
 
@@ -475,6 +482,9 @@ c-parameter:
     over Rational Field
     <1, 2*k1_1>
     <2, 2*k2_1>
+//Here's one caveat: before you can do actual computations in the RRCA, you need to initialize it, which means here that the coinvariant algebra etc. is computed. This can be quite complex and not all of this is necessary when you are just interested in the representation theory, that's why I added an initialize function.
+> Initialize(~H);
+//Now, we're ready to do computations
 > H.5*H.2;
 [ 1  0]
 [ 1 -1]*(x1 + x2)
@@ -488,6 +498,7 @@ function field of rank 2 over Rational Field
 //We compute the Jacobson radical for the equal parameter case k=[1,1]:
 > k := CherednikParameter(W,[1,1]);
 > H := RestrictedRationalCherednikAlgebra(W,k);
+> Initialize(~H);
 > A := MatrixAlgebra(H);
 > time J := JacobsonRadical(A); J;
 Time: 182.370
@@ -498,12 +509,13 @@ Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 
 ### Representation theory
 
-In CHAMP you can compute baby Verma modules for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of baby Verma modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of Verma modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
+In CHAMP you can compute baby Verma modules (also called standard modules) for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of standard modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of standard modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
 
 <a name="rrca-conv"></a>
+
 #### Conventions
 
-Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The baby Verma module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
+Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The standard module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
 
 Note that there are two choices: 1) to put V<sup>&ast;</sup> in degree +1; 2) to inflate λ to a (H^<sup>-</sup> ⊗ KW)-module. You could also put V<sup>&ast;</sup> in degree -1 and/or inflate λ to an (H<sup>+</sup> ⊗ KW)-module. Here is an overview of what is used in the literature:
 
@@ -519,7 +531,7 @@ So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference betwe
 
 <a name="rrca-verma"></a>
 
-#### Working with baby Verma modules
+#### Working with modules
 
 ```C++
 > W := TypeBReflectionGroup(2);
@@ -533,12 +545,14 @@ So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference betwe
 //We compute the baby Verma module for the W-representation the 2-dimensional
 //representation 1.1:
 > rho := W`Representations[0][2];
-> M:=VermaModule(H, rho);
+> M:=StandardModules(H, rho);
 Graded module of dimension 16 over an algebra with generator degrees [ 0, 0, -1,
 -1, 1, 1 ] over Multivariate rational function field of rank 2 over Rational
 Field.
 
-//I have implemented an own structure for garded modules that is used.
+//I have implemented an own structure for garded modules that is used. 
+//It's called ModGrOld (I started implementing a new type but this isn't fully 
+//integrated right now.)
 //Recall that as a vector space, M is isomorphic to K[V]_W \otimes \lambda.
 //For each algebra generator of H (in this case w1, w2, y1, y2, x1, x2)
 //the action is encoded by a matrix. The chosen basis for the coinvariant
@@ -625,7 +639,7 @@ true
 //Let's try to compute the head of M. This will use my modular technique
 //described in the CHAMP paper: specialize parameters, reduce to a finite field,
 //use the MeatAxe, and lift everything back. This methods does not have to work,
-//but it works surprisingly often. It's impossible to predict, however.
+//but it works surprisingly often. It's impossible to predict, however.K;
 > res,L,J,P:=HeadOfLocalModule(M);
 //The computation was successful. L is the head and J the radical of M.
 //P describes the finite field specialization that was used.
@@ -650,7 +664,9 @@ true
 //Let's compute the Poincaré series and the graded W-character of L:
 > PoincareSeries(L);
 2 + 4*t + 2*t^2
-> GradedCharacter(H,L);
+// Every H-module is also a W-module. We can compute the corresponding (graded)
+// decomposition as follows:
+> InGroupSimples(H,M);
 (      t t^2 + 1       t       t       t)
 //Hence, L = t*(11.) + (t^2+1)*(1.1) + t*(.11) + t*(2.) + t*(.2)
 //Note that in degree 0 of L there's a unique W-module, namely the 1.1=rho that
@@ -658,13 +674,74 @@ true
 //modules.
 > IdentifyModule(H,L);
 2   //the second irreducible W-module, i.e. 1.1=rho
-
-//The graded characters of baby Vermas can be computed directly by a formual
-//involving the fake degrees (this is independent of the parameters):
-> GradedCharactersOfVermas(H);
-[1   q^3 + q   q^2   q^2   q^4]
-[q^3 + q   q^4 + 2*q^2 + 1   q^3 + q   q^3 + q   q^3 + q]
-[q^2   q^3 + q   1   q^4   q^2]
-[q^2   q^3 + q   q^4   1   q^2]
-[q^4   q^3 + q   q^2   q^2   1]
 ```
+<a name="rrca-mults"></a>
+
+### Computing multiplicities
+
+The standard module theory of the restricted rational Cherednik algebra leads to the following multiplicity problems:
+
+* [P(λ) : Δ(μ)], function ProjectivesInSimples and ProjectivesInSimplesQuantum
+* [Δ(λ) : L(μ)], function StandardsInSimples and StandardsInSimplesQuantum
+* [L(λ) : μ], function SimplesInGroupSimples and SimplesInGroupSimplesQuantum
+* [Δ(λ) : μ], function StandardsInGroupSimples and StandardsInGroupSimplesQuantum
+
+In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm primarily targeting the *graded* multiplicities—from which you can of course immediately obtainen the ungraded ones—and this what the above mentioned functions are doing. To represent the graded multiplicities, we can fix a system of representatives of the simples *up to grading shift* and then there are *two* ways to represent the graded multiplicities:
+
+1. You collect for each simple of your system of representatives with which degree shift this occurs. We encode this information as a vector of size the number of simples in the system, and the entries are are (Laurent) polynomials in q. This is what the first named functions above are returning.
+2. You fix a grading shift [n] and collect all simples of your system of representatives occuring with this grading shift. We encode this as a (Laurent) polynomial in q with coefficients a polynomial (actually just a linear expression) in the numner of simples in the system. This is what the "Quantum" functions are returning.  
+
+So, these two ways of representing multiplicities is just about what to put first: simple module or grading shift. All this becomes clear in the examples below.
+
+Before going to examples, I want to note that there are some relations between the multiplicities. Brauer reciprocity (combined with the [Δ(λ)] = [∇(λ)] result by Bellamy and myself) says that [P(λ) : Δ(μ)] = [Δ(λ) : L(μ)]. The multiplicities [Δ(λ) : μ] can be computed directly with a fake degree formula by Gordon. If you compute all the [Δ(λ) : μ] and manage to compute *all* the graded modules L(λ), then you know the [L(λ) : μ] and (by a result by Bellamy and myself) you can directly compute the [Δ(λ) : L(μ)] from the *matrix* formula ([Δ(λ) : μ]) = ([Δ(λ) : L(μ)])([L(λ) : μ]). I've built in many convenience functions that allow all these computations automatically. As I will explain allow, it's not always possible to get everything automatically because it's very complicated. For this reason, I'm not using matrices to store the multiplicities but associative arrays which are allowed to have undefined entries. If a method fails, you could still try to build the (irreducible) module in another way and if you succeed you can attach it to the corresponding array and keep computing. 
+
+The ideal and simplest use case is illustrated in the following example:
+
+```c++
+> W := TypeBReflectionGroup(2);
+> H:=RestrictedRationalCherednikAlgebra(W);
+> StandardModules(~H); //computes all the standard modules
+> H`StandardModules; //carries all the standard modules; numbering as in W`Representations[0]
+Associative Array with index universe { 1 .. 5 }
+> SimpleModules(~H); //(tries!) to compute all the simple modules by the method as described above
+> H`SimpleModules;
+Associative Array with index universe { 1 .. 5 }
+> SimplesInGroupSimplesQuantum(~H);
+> H`SimplesInGroupSimplesQuantum; 
+Associative Array with index universe { 1 .. 5 }
+// Let's look how these multiplicities are encoded
+> f := H`SimplesInGroupSimplesQuantum[5]; f;
+11.*q^4 + 1.1*q^3 + (.11 + 2.)*q^2 + 1.1*q + .2
+//This means in L(5) we have the W-module 11. in with grading shift 4, the W-module .11 + 2. with grading shift 2 etc.
+> Parent(f);
+Multivariate rational function field of rank 1 over Polynomial ring of rank 5 over Integer Ring
+Variables: q
+// Let's look at the other way to represent multiplicities.
+> SimplesInGroupSimples(~H);
+> H`SimplesInGroupSimples;
+Associative Array with index universe { 1 .. 5 }
+> H`SimplesInGroupSimples[5];
+(    q^4 q^3 + q     q^2     q^2       1)
+//The 2nd simple W-module occurs with multiplicity 1 in degrees 3 and 1 in L(5). 
+//When we have all the information, we can also determine which standard module occurs at the bottom of a projective (this gives the tilting permutation introduced by Bellamy and myself)
+> StandardsAtBottomOfProjectives(~H);
+> H`StandardsAtBottomOfProjectives;
+Associative Array with index universe { 1 .. 5 }
+> H`StandardsAtBottomOfProjectives[5];
+<5,0>
+//This means that Delta(5)[0] is at the bottom of P(5)
+```
+
+You can also cann all of the above multiplicity functions with an additional integer argument (standing for a simple W-module λ in the fixed ordering) so that you just compute/get the information for the module corresponding to λ.
+
+#### Things that can go wrong
+
+1. The multiplicity computations are extremely complicated. They use the function HeadOfLocalModule to compute the unique irreducible quotient of a standard (which, just to remind you, is a huge module over a multivariate rational function field in characteristic zero). This uses a Las Vegas algorithm that I've presented in my original Champ paper. For some reason, it performs exceptionally well. But sometimes, you're just not lucky (like playing in Las Vegas). In this case, you could try to run the function manually a few more times or tweak its (complicated and unpredictable) parameters or you could try other things. 
+
+2. The base field of the simple W-modules is not always the same as the base field of the group. I've simply taken the models from CHEVIE and took the minimal cyclotomic field containing all the entries of the matrices. Now, when you mix several representations—e.g. when you compute decompositon matrices with the above automatic methods—these varying base fields will cause problems (mathematically this is all trivial but the computer complains). So, *before* you do any kind of multiplicity computations, I advise doing
+
+   ~~~c++
+   > LiftRepresentationsToCommonBaseField(~W);
+   ~~~
+
+   This changes the base fields of all the simple W-modules to *one* common base field.

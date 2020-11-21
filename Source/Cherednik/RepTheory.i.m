@@ -748,6 +748,7 @@ end intrinsic;
 intrinsic IdentifyModule(H::AlgCheRes, M::ModGrOld : UseCharacters:=true) -> RngIntElt
 {}
 
+	HomogeneousData(~M);
 	d := Minimum(SequenceToSet(M`RowDegrees));
 	Md := GModule(H`Group, [ Matrix(M`HomogeneousComponentMatrices[<i,d>]) : i in [1..Ngens(H`Group)]]);
 	ddec := DecompositionInGrothendieckGroup(Md : UseCharacters:=UseCharacters);
@@ -1040,7 +1041,7 @@ intrinsic StandardsInSimplesQuantum(~H::AlgCheRes,i::RngIntElt)
 end intrinsic;
 
 
-intrinsic StandardsInSimplesQuantum(H::AlgCheRes,i::RngIntElt) -> FldFunratElt
+intrinsic StandardsInSimplesQuantum(H::AlgCheRes,i::RngIntElt) -> FldFunRatElt
 {}
 
 		StandardsInSimplesQuantum(~H,i);
@@ -1151,7 +1152,7 @@ intrinsic SimplesInGroupSimplesQuantum(~H::AlgCheRes)
 	for i:=1 to #W`CharacterTable do
 		SimplesInGroupSimplesQuantum(~H,i);
 	end for;
-	H`SimplesInGroupSimplesQuantum := [H`SimplesInGroupSimplesQuantum[i] : i in [1..#W`CharacterTable]];
+	//H`SimplesInGroupSimplesQuantum := [H`SimplesInGroupSimplesQuantum[i] : i in [1..#W`CharacterTable]];
 
 end intrinsic;
 
