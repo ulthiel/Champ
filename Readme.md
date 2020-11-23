@@ -14,17 +14,18 @@ The underlying reflection groups can arbitrary and also the parameters can be ar
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
 
-### Contents
+## Contents
 
 [1. Downloading an running](#downloading)  
 [2. Complex reflection groups](#reflgroups)  
 [3. Rational Cherednik algebras](#che)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.1 Parameters](#params)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.2 Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
+&nbsp;&nbsp;&nbsp;&nbsp;[3.3 Poisson brackets](#poisson-brackets)  
 [4. Restricted rational Cherednik algebras](#rrca)  
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1 Representation theory](#rrca-rep)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)
 
 <a name="downloading"></a>
@@ -438,7 +439,16 @@ The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed c
     -4*z1*z3^3 + 4*z1*z3*z8 - 2*z2^2*z3^2 - 2*z2^2*z8 + 8*z2*z3*z7 + 4*z3^2*z6 -
         4*k2_1^2*z3^2 - 4*z6*z8 - 4*z7^2 + 8*k2_1^2*z8
 ]
-//Poisson brackets of elements of Z_c can be computed as well
+```
+
+<a name="poisson-brackets"></a> 
+### Poisson brackets
+
+You can compute Poisson brackets between elements in the Cherednik algebra.
+
+```
+> W := TypeBReflectionGroup(2);
+> H := RationalCherednikAlgebra(W,0);
 > PoissonBracket(H.5,H.3);
 [-1  0]
 [-1  1]*(2*k2_1)
@@ -450,9 +460,7 @@ The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed c
 [0 1]*(1)
 ```
 
-
 <a name="rrca"></a>
-
 ## Restricted rational Cherednik algebras
 
 The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301) or [my paper](https://arxiv.org/abs/1603.05230). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
@@ -681,10 +689,10 @@ true
 
 The standard module theory of the restricted rational Cherednik algebra leads to the following multiplicity problems:
 
-* [P(λ) : Δ(μ)], function ProjectivesInSimples and ProjectivesInSimplesQuantum
-* [Δ(λ) : L(μ)], function StandardsInSimples and StandardsInSimplesQuantum
-* [L(λ) : μ], function SimplesInGroupSimples and SimplesInGroupSimplesQuantum
-* [Δ(λ) : μ], function StandardsInGroupSimples and StandardsInGroupSimplesQuantum
+* [P(λ) : Δ(μ)], functions ProjectivesInSimples and ProjectivesInSimplesQuantum
+* [Δ(λ) : L(μ)], functions StandardsInSimples and StandardsInSimplesQuantum
+* [L(λ) : μ], functions SimplesInGroupSimples and SimplesInGroupSimplesQuantum
+* [Δ(λ) : μ], functions StandardsInGroupSimples and StandardsInGroupSimplesQuantum
 
 In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm primarily targeting the *graded* multiplicities—from which you can of course immediately obtainen the ungraded ones—and this what the above mentioned functions are doing. To represent the graded multiplicities, we can fix a system of representatives of the simples *up to grading shift* and then there are *two* ways to represent the graded multiplicities:
 
@@ -703,7 +711,8 @@ The ideal and simplest use case is illustrated in the following example:
 > StandardModules(~H); //computes all the standard modules
 > H`StandardModules; //carries all the standard modules; numbering as in W`Representations[0]
 Associative Array with index universe { 1 .. 5 }
-> SimpleModules(~H); //(tries!) to compute all the simple modules by the method as described above
+> SimpleModules(~H); //(tries!) to compute all the simple modules by the method
+//as described above
 > H`SimpleModules;
 Associative Array with index universe { 1 .. 5 }
 > SimplesInGroupSimplesQuantum(~H);
@@ -712,7 +721,8 @@ Associative Array with index universe { 1 .. 5 }
 // Let's look how these multiplicities are encoded
 > f := H`SimplesInGroupSimplesQuantum[5]; f;
 11.*q^4 + 1.1*q^3 + (.11 + 2.)*q^2 + 1.1*q + .2
-//This means in L(5) we have the W-module 11. in with grading shift 4, the W-module .11 + 2. with grading shift 2 etc.
+//This means in L(5) we have the W-module 11. in with grading shift 4, the 
+//W-module .11 + 2. with grading shift 2 etc.
 > Parent(f);
 Multivariate rational function field of rank 1 over Polynomial ring of rank 5 over Integer Ring
 Variables: q
@@ -723,7 +733,9 @@ Associative Array with index universe { 1 .. 5 }
 > H`SimplesInGroupSimples[5];
 (    q^4 q^3 + q     q^2     q^2       1)
 //The 2nd simple W-module occurs with multiplicity 1 in degrees 3 and 1 in L(5). 
-//When we have all the information, we can also determine which standard module occurs at the bottom of a projective (this gives the tilting permutation introduced by Bellamy and myself)
+//When we have all the information, we can also determine which standard module occurs 
+//at the bottom of a projective (this gives the tilting permutation introduced by Bellamy
+//and myself)
 > StandardsAtBottomOfProjectives(~H);
 > H`StandardsAtBottomOfProjectives;
 Associative Array with index universe { 1 .. 5 }
@@ -732,13 +744,19 @@ Associative Array with index universe { 1 .. 5 }
 //This means that Delta(5)[0] is at the bottom of P(5)
 ```
 
-You can also cann all of the above multiplicity functions with an additional integer argument (standing for a simple W-module λ in the fixed ordering) so that you just compute/get the information for the module corresponding to λ.
+You can also can all of the above multiplicity functions with an additional integer argument (standing for a simple W-module λ in the fixed ordering) so that you just compute/get the information for the module corresponding to λ. 
+
+I have implemented a function that produces MediaWiki code of all the representation-theoretic information.
+
+```C++
+MediaWiki(H);
+```
 
 #### Things that can go wrong
 
 1. The multiplicity computations are extremely complicated. They use the function HeadOfLocalModule to compute the unique irreducible quotient of a standard (which, just to remind you, is a huge module over a multivariate rational function field in characteristic zero). This uses a Las Vegas algorithm that I've presented in my original Champ paper. For some reason, it performs exceptionally well. But sometimes, you're just not lucky (like playing in Las Vegas). In this case, you could try to run the function manually a few more times or tweak its (complicated and unpredictable) parameters or you could try other things. 
 
-2. The base field of the simple W-modules is not always the same as the base field of the group. I've simply taken the models from CHEVIE and took the minimal cyclotomic field containing all the entries of the matrices. Now, when you mix several representations—e.g. when you compute decompositon matrices with the above automatic methods—these varying base fields will cause problems (mathematically this is all trivial but the computer complains). So, *before* you do any kind of multiplicity computations, I advise doing
+2. The base field of the simple W-modules is not always the same as the base field of the group. I've simply taken the models from CHEVIE and took the minimal cyclotomic field containing all the entries of the matrices. Now, when you mix several representations—e.g. when you compute decompositon matrices with the above automatic methods—these varying base fields will cause problems (mathematically this is all trivial but the computer complains). So, *before* you do any kind of mixing computations, I advise doing
 
    ~~~c++
    > LiftRepresentationsToCommonBaseField(~W);

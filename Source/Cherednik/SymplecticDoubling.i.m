@@ -219,7 +219,7 @@ end intrinsic;
 //===========================================================================
 intrinsic Bidegree(f::RngMPolElt) -> Tup
 {
-	Suppose f is an element of a polynomial ring R of even rank r. We can refine the natural N-grading on R into an (N,N)-grading, where the first component is the degree of the first r/2 variables and the second component is the degree of the last r/2 variables. We assume here that f is bi-homogeneous.
+	Suppose f is an element of a polynomial ring R of even rank r. We can refine the natural N-grading on R into an (N,N)-grading, where the second component is the degree of the first r/2 variables and the first component is the degree of the last r/2 variables. Note the order! This is because we'll turn around everything in Magma. We assume here that f is bi-homogeneous.
 }
 
     mon := Monomials(f)[1];
@@ -229,7 +229,7 @@ intrinsic Bidegree(f::RngMPolElt) -> Tup
     end if;
     n := N div 2;
     exp := Exponents(mon);
-    return <&+[exp[i] : i in [1..n]], &+[exp[i] : i in [n+1..N]]>;
+    return <&+[exp[i] : i in [n+1..N]], &+[exp[i] : i in [1..n]]>;
 
 end intrinsic;
 
@@ -246,7 +246,7 @@ intrinsic Bidegree(f::RngMPolResElt) -> Tup
     end if;
     n := N div 2;
     exp := Exponents(mon);
-    return <&+[exp[i] : i in [1..n]], &+[exp[i] : i in [n+1..N]]>;
+    return <&+[exp[i] : i in [n+1..N]], &+[exp[i] : i in [1..n]]>;
 
 end intrinsic;
 
