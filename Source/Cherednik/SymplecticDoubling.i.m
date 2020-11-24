@@ -364,21 +364,21 @@ intrinsic PrintSymplecticDoublingFundamentalInvariantsData(W)
 
 	inv := SymplecticDoublingFundamentalInvariants(W);
 	bidegs := [ Bidegree(f) : f in inv ];
-	degs := [ Degree(f) : f in inv ];
+	Zdegs := [ Bidegree(f)[1]-Bidegree(f)[2] : f in inv ];
+	Ndegs := [ Degree(f) : f in inv ];
 
 	print("|-");
 	print("! scope=\"row\"| Group");
 
 	str  := "| "*Sprint(#inv)*"\n";
-	str *:= "| "*Sprint(#[f : f in degs | f eq 0 ])*"\n";
 
 	str *:= "| ";
-	for i:=1 to #degs do
-		str *:= Sprint(degs[i]);
-		if i lt #degs then
+	for i:=1 to #Ndegs do
+		str *:= Sprint(Ndegs[i]);
+		if i lt #Ndegs then
 			str *:= ", ";
 		end if;
-		if i mod 12 eq 0 and i lt #degs then
+		if i mod 12 eq 0 and i lt #Ndegs then
 			str *:= "<br> ";
 		end if;
 	end for;
@@ -397,6 +397,8 @@ intrinsic PrintSymplecticDoublingFundamentalInvariantsData(W)
 	end for;
 
 	str *:= "\n";
+
+	str *:= "| "*Sprint(#[f : f in Zdegs | f eq 0 ])*"\n";
 
 	// size := Round(&+[ #Terms(f) : f in inv ]/#inv);
 	// str *:= "| "*Sprint(size)*"\n";
