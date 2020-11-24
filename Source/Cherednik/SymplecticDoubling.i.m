@@ -364,7 +364,7 @@ intrinsic PrintSymplecticDoublingFundamentalInvariantsData(W)
 
 	inv := SymplecticDoublingFundamentalInvariants(W);
 	bidegs := [ Bidegree(f) : f in inv ];
-	degs := [ d[1]-d[2] : d in bidegs];
+	degs := [ Degree(f) : f in inv ];
 
 	print("|-");
 	print("! scope=\"row\"| Group");
