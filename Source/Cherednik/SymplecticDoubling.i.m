@@ -222,6 +222,8 @@ intrinsic Bidegree(f::RngMPolElt) -> Tup
 	Suppose f is an element of a polynomial ring R of even rank r. We can refine the natural N-grading on R into an (N,N)-grading, where the second component is the degree of the first r/2 variables and the first component is the degree of the last r/2 variables. Note the order! This is because we'll turn around everything in Magma. We assume here that f is bi-homogeneous.
 }
 
+		//Nov 23, 2020: Changed the order! Hope it's now correct and doesn't break anything.
+
     mon := Monomials(f)[1];
     N := Rank(Parent(f));
     if N mod 2 ne 0 then
@@ -239,6 +241,7 @@ intrinsic Bidegree(f::RngMPolResElt) -> Tup
 
 }
 
+		//Nov 23, 2020: Changed the order! Hope it's now correct and doesn't break anything.
     mon := Monomials(f)[1];
     N := Rank(Parent(f));
     if N mod 2 ne 0 then
@@ -351,5 +354,55 @@ intrinsic SympecticDoublingCoordinateAlgebraHilbertSeries(~G::GrpMat)
 	ser *:= 1/Order(G);
 
 	G`SympecticDoublingCoordinateAlgebraHilbertSeries := ser;
+
+end intrinsic;
+
+
+
+intrinsic PrintSymplecticDoublingFundamentalInvariantsData(W)
+{Print MediaWiki-style summary of SymplecticDoublingFundamentalInvariants.}
+
+	inv := SymplecticDoublingFundamentalInvariants(W);
+	bidegs := [ Bidegree(f) : f in inv ];
+	degs := [ d[1]-d[2] : d in bidegs];
+
+	print("|-");
+	print("! scope=\"row\"| Group");
+
+	str  := "| "*Sprint(#inv)*"\n";
+	str *:= "| "*Sprint(#[f : f in degs | f eq 0 ])*"\n";
+
+	str *:= "| ";
+	for i:=1 to #degs do
+		str *:= Sprint(degs[i]);
+		if i lt #degs then
+			str *:= ", ";
+		end if;
+		if i mod 12 eq 0 and i lt #degs then
+			str *:= "<br> ";
+		end if;
+	end for;
+
+	str *:="\n";
+	str *:="| ";
+
+	for i:=1 to #bidegs do
+		str *:= "("*Sprint(bidegs[i][1])*","*Sprint(bidegs[i][2])*")";
+		if i lt #bidegs then
+			str *:= ", ";
+		end if;
+		if i mod 12 eq 0 and i lt #bidegs then
+			str *:= "<br> ";
+		end if;
+	end for;
+
+	str *:= "\n";
+
+	// size := Round(&+[ #Terms(f) : f in inv ]/#inv);
+	// str *:= "| "*Sprint(size)*"\n";
+
+	str *:= "|-";
+
+	print str;
 
 end intrinsic;
