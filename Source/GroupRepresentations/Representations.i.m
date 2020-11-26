@@ -75,8 +75,8 @@ intrinsic Representations(~G::Grp, p::RngIntElt : UseDB:=true, Check:=false)
 
     //first try to find representations in the database
     foundindb := false;
-    if UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Representations/Representations_"*Sprint(p)) then
-        reps := CHAMP_GetFromDB(G`DBDir, "Representations/Representations_"*Sprint(p));
+    if UseDB and assigned G`DBName and p eq 0 and CHAMP_ExistsInDB("Representations", G`DBName) then
+        reps := CHAMP_GetFromDB("Representations", G`DBName);
         G`Representations[p] := [* *];
         for i:=1 to #reps do
             K := BaseRing(reps[i][1]);
@@ -172,8 +172,8 @@ intrinsic RepresentationNames(~G::Grp, p::RngIntElt)
         G`ModuleNames := AssociativeArray(Integers());
     end if;
 
-    if assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Representations/RepresentationNames_"*Sprint(p)) then
-        G`RepresentationNames[p] := CHAMP_GetFromDB(G`DBDir, "Representations/RepresentationNames_"*Sprint(p));
+    if assigned G`DBName and p eq 0 and CHAMP_ExistsInDB("Representations", G`DBName) then
+        G`RepresentationNames[p] := CHAMP_GetFromDB("Representations", G`DBName);
         G`ModuleNames[p] := G`RepresentationNames[p];
     end if;
 

@@ -17,7 +17,7 @@ intrinsic ExceptionalComplexReflectionGroup(n::RngIntElt : Realization:="CHEVIE"
 }
 
     if Realization eq "CHEVIE" then
-    	G := CHAMP_GetFromDB("ReflectionGroups/G"*Sprint(n)*"_CHEVIE", "GrpMat"); //automatically sets DBDir
+    	G := CHAMP_GetFromDB("ReflectionGroups", "G"*Sprint(n)*"_CHEVIE"); //automatically sets DBDir
         DualGroup(~G);
         Degrees(~G);
         G`DualGroup`Degrees := G`Degrees;

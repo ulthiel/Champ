@@ -248,10 +248,10 @@ intrinsic Classes(~G::Grp : Method:="PermutationGroup", UseDB:=true, Check:=fals
 
     //first, check the DB if asked to
     foundindb := false;
-    if UseDB and assigned G`DBDir then
+    if UseDB and assigned G`DBName then
         vprint Characters, 5: "(Classes). Querying database.";
-        if CHAMP_ExistsInDB(G`DBDir, "Representations/CharacterData") then
-            Data := CHAMP_GetFromDB(G`DBDir, "Representations/CharacterData");
+        if CHAMP_ExistsInDB("CharacterTables", G`DBName) then
+            Data := CHAMP_GetFromDB("CharacterTables", G`DBName);
             vprint Characters, 5: "(Classes). Loaded classes from database.";
             CharacterData(~G, Data:Check:=Check); //this might automatically load character table and character names!
             G`ClassMap := ClassMap(G);
