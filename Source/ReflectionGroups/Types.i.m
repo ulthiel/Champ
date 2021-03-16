@@ -61,7 +61,7 @@ intrinsic SymmetricReflectionGroup(n::RngIntElt, K::Fld : UseDB:=true) -> GrpMat
     S := SymmetricGroup(n);
 
 	if n le 22 and Type(K) eq FldRat and UseDB then
-		G := CHAMP_GetFromDB("ReflectionGroups/S"*Sprint(n)*"_CHEVIE", "GrpMat");
+		G := CHAMP_GetFromDB("ReflectionGroups", "S"*Sprint(n)*"_CHEVIE");
 		DualGroup(~G);
     else
     	mats := [ ];
@@ -149,7 +149,7 @@ intrinsic TypeBReflectionGroup(n::RngIntElt, K::Fld : UseDB:=true) -> GrpMat
 }
 
 	if n le 12 and Type(K) eq FldRat and UseDB then
-		G := CHAMP_GetFromDB("ReflectionGroups/B"*Sprint(n)*"_CHEVIE", "GrpMat");
+		G := CHAMP_GetFromDB("ReflectionGroups", "B"*Sprint(n)*"_CHEVIE");
 		DualGroup(~G);
         G`IsReflectionGroup := true;
     	DualGroup(~G);
@@ -179,7 +179,7 @@ intrinsic TypeDReflectionGroup(n::RngIntElt, K::Fld : UseDB:=true) -> GrpMat
 }
 
 	if n le 12 and Type(K) eq FldRat and UseDB then
-		G := CHAMP_GetFromDB("ReflectionGroups/D"*Sprint(n)*"_CHEVIE", "GrpMat");
+		G := CHAMP_GetFromDB("ReflectionGroups", "D"*Sprint(n)*"_CHEVIE");
 		DualGroup(~G);
         G`IsReflectionGroup := true;
     	DualGroup(~G);
