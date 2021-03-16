@@ -23,17 +23,3 @@ Degrees of the elements of a system of fundamental invariants of a matrix group.
 | G*n*_CHEVIE | Degrees of the exceptional complex reflection groups (*n*=4..37) |
 
 ## FakeDegrees
-
-
-
-## ReflectionGroups
-
-Particular models of complex reflection groups.
-
-| Name         | Description                                                  |
-| ------------ | ------------------------------------------------------------ |
-| G*n*_CHEVIE  | Models of the exceptional complex reflection groups from CHEVIE (*n*=4..37) |
-| B2_BR        | Model of B2 used by Bonnafé–Rouquier                         |
-| G*n*_Bonnafe | Model of G*n* by Bonnafé (*n*=23,24,28,30)                   |
-
-
