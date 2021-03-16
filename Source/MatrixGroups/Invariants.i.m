@@ -82,7 +82,7 @@ intrinsic DualGroup(~G::GrpMat)
     G`DualCoordinateAlgebra`One := One(G`DualCoordinateAlgebra);
 
     if assigned G`IsReflectionGroup then
-    	G`DualGroup`IsReflectionGroup;
+    	G`DualGroup`IsReflectionGroup := G`IsReflectionGroup;
     end if;
 
 end intrinsic;

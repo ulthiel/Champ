@@ -1,2 +1,2 @@
 DB/** filter=lfs diff=lfs merge=lfs -text
-DB/Readme.md filter= diff= merge= text
+Readme.md filter= diff= merge= text
