@@ -7,6 +7,7 @@
   +../Combinatorics/Combinatorics.s.m
   +../DB/DB.s.m
   +../Extensions/Extensions.s.m
+  +../GAP/GAP.s.m
   +../GroupRepresentations/GroupRepresentations.s.m
   +../Groups/Groups.s.m
   +../HTML/HTML.s.m
