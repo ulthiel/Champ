@@ -81,7 +81,7 @@ end intrinsic;
 //==============================================================================
 // G4..G37
 //==============================================================================
-intrinsic ExceptionalComplexReflectionGroup(n::RngIntElt : Model:="CHEVIE") -> GrpMat
+intrinsic ExceptionalReflectionGroup(n::RngIntElt : Model:="CHEVIE") -> GrpMat
 {
 	Returns an explicit model of the Shephard–Todd exceptional complex reflection group G_n. The default model is "CHEVIE". The Model "LT" (Lehrer-Taylor) is the one used in Magma.
 }
