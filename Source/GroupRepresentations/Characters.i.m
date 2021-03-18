@@ -19,21 +19,6 @@
 declare verbose Characters, 5;
 
 
-//===================================================================
-/*
-    Namespace: Grp
-
-    Additions to the category +Grp+.
-*/
-declare attributes Grp:
-    CharacterNames, //Names of the irreducible complex characters.
-    Classes, //Sequence containing the conjugacy classes of the group (in Magma format).
-    ClassWords, //Sequence containing presentations of the conjugacy class representatives in the generators of the group.
-    ClassMap, //Maps a group element to the conjugacy class number of this element.
-    CharacterTable, //Table of the irreducible complex characters.
-    CharacterRing; //Complex character ring (Magma type).
-
-
 //============================================================================
 intrinsic CharacterData(~G::Grp, Data::Tup : Check:=false)
 /*

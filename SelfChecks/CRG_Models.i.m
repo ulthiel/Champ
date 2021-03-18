@@ -11,52 +11,38 @@
 //==============================================================================
 
 print("Testing type A");
-for n:= 2 to 25 do
+for n:= 1 to 10 do
 	W := TypeAReflectionGroup(n);
-	W_GAP := GAP3_ComplexReflectionGroup(1,1,n);
-	assert [ W.i : i in [1..Ngens(W)] ] eq [ W_GAP.i : i in [1..Ngens(W_GAP)] ];
-	if n le 10 then
-		assert IsIsomorphic(W, ShephardTodd(1,1,n));
-	end if;
+	assert IsIsomorphic(W, ShephardTodd(1,1,n+1));
 end for;
 
 print("Testing type B");
-for n:= 2 to 25 do
+for n:= 2 to 10 do
 	W := TypeBReflectionGroup(n);
-	W_GAP := GAP3_ComplexReflectionGroup(2,1,n);
-	assert [ W.i : i in [1..Ngens(W)] ] eq [ W_GAP.i : i in [1..Ngens(W_GAP)] ];
-	if n le 10 then
-		assert IsIsomorphic(W, ShephardTodd(2,1,n));
-	end if;
+	assert IsIsomorphic(W, ShephardTodd(2,1,n));
 end for;
 
 print("Testing type D");
-for n:= 2 to 25 do
+for n:= 4 to 10 do
 	W := TypeDReflectionGroup(n);
-	W_GAP := GAP3_ComplexReflectionGroup(2,2,n);
-	assert [ W.i : i in [1..Ngens(W)] ] eq [ W_GAP.i : i in [1..Ngens(W_GAP)] ];
-	if n le 10 then
-		assert IsIsomorphic(W, ShephardTodd(2,2,n));
-	end if;
+	assert IsIsomorphic(W, ShephardTodd(2,2,n));
 end for;
 
 print("Testing dihedrals");
-for n:= 3 to 12 do
-	W := DihedralReflectionGroup(n);
-	assert IsIsomorphic(W, ShephardTodd(n,n,2));
+for m:= 5 to 25 do
+	W := DihedralReflectionGroup(m);
+	assert IsIsomorphic(W, ShephardTodd(m,m,2));
 end for;
 
 print("Testing cyclic");
-for n:= 3 to 12 do
-	W := CyclicReflectionGroup(n);
-	assert IsIsomorphic(W, ShephardTodd(n,1,1));
+for m:= 3 to 25 do
+	W := CyclicReflectionGroup(m);
+	assert IsIsomorphic(W, ShephardTodd(m,1,1));
 end for;
 
 print("Testing exceptionals");
 for n:= 4 to 37 do
-	W := ExceptionalReflectionGroup(n);
-	W_GAP := GAP3_ComplexReflectionGroup(n);
-	assert [ W.i : i in [1..Ngens(W)] ] eq [ W_GAP.i : i in [1..Ngens(W_GAP)] ];
+	W := ComplexReflectionGroup(n);
 	assert IsIsomorphic(W, ShephardTodd(n));
 end for;
 
