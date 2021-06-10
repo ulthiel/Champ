@@ -127,8 +127,11 @@ intrinsic GAP3_ImportComplexReflectionGroup(m::RngIntElt, p::RngIntElt, n::RngIn
 
 end intrinsic;
 
-intrinsic GAP3_ChevieClassData(~W::GrpMat)
-{This function assumes that W is a ComplexReflectionGroup and assigns the class data that is in ChevieClassInfo to the corresponding attributes of W.}
+//==============================================================================
+// Wrapper for ChevieClassInfo
+//==============================================================================
+intrinsic GAP3_ChevieClassInfo(~W::GrpMat)
+{This function assumes that W is a ComplexReflectionGroup and assigns the information about conjugacy classes that is in ChevieClassInfo to the corresponding attributes of W.}
 
 	if not assigned W`GAP3_Code then
 		error "Group needs to have attribute GAP3_Code assigned to construct it";
@@ -137,12 +140,13 @@ intrinsic GAP3_ChevieClassData(~W::GrpMat)
 	GAP3_Code := "W:="*W`GAP3_Code*"\n";
 	class_words := eval GAP3(GAP3_Code*"\nChevieClassInfo(W).classtext;");
 	class_names := eval GAP3(GAP3_Code*"\nChevieClassInfo(W).classnames;");
-
+	class_lengths := eval GAP3(GAP3_Code*"\nChevieClassInfo(W).classes;");
+	class_orders := eval GAP3(GAP3_Code*"\nChevieClassInfo(W).orders;");
 	class_reps := [ WordToElement(W,x) : x in class_words ];
 
 	if not assigned W`Classes then
-		class_reps := [ WordToElement(W,x) : x in class_words ];
-		W`Classes := class_reps;
+		Q := [ <class_orders[i], class_lengths[i], class_reps[i]> : i in [1..#class_reps] ];
+		W`Classes := Q;
 	end if;
 
 	sigma := ClassPermutation(W, class_words);
