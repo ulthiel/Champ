@@ -26,7 +26,7 @@ The underlying reflection groups can be arbitrary and also the parameters can be
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1 Representation theory](#rrca-rep)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4 Database](#rrca-db)
 
 <a name="downloading"></a>
@@ -770,7 +770,6 @@ The multiplicity computations are extremely complicated. There are some things t
    > Representations(~W,0);
    > LiftRepresentationsToCommonBaseField(~W);
    ~~~
-   
 
 <a name="rrca-db"></a>
 
