@@ -684,7 +684,7 @@ intrinsic Rprint(h::AlgCheElt) -> MonStgElt
 	str *:= "//the group\n";
 	str *:= "W := MatrixGroup<"*Sprint(Dimension(W))*", "*fieldstr*" | ";
 	for i:=1 to Ngens(W) do
-		str *:= Replace(Sprint(Eltseq(W.i)), "\n", "");
+		str *:= Sprint(Eltseq(W.i)); 
 		if i lt Ngens(W) then
 			str *:= " , ";
 		end if;
