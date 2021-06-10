@@ -19,6 +19,21 @@
 declare verbose Characters, 5;
 
 
+//===================================================================
+/*
+    Namespace: Grp
+
+    Additions to the category +Grp+.
+*/
+declare attributes Grp:
+    CharacterNames, //Names of the irreducible complex characters.
+    Classes, //Sequence containing the conjugacy classes of the group (in Magma format).
+    ClassWords, //Sequence containing presentations of the conjugacy class representatives in the generators of the group.
+    ClassMap, //Maps a group element to the conjugacy class number of this element.
+    CharacterTable, //Table of the irreducible complex characters.
+    CharacterRing; //Complex character ring (Magma type).
+
+
 //============================================================================
 intrinsic CharacterData(~G::Grp, Data::Tup : Check:=false)
 /*
@@ -233,10 +248,10 @@ intrinsic Classes(~G::Grp : Method:="PermutationGroup", UseDB:=true, Check:=fals
 
     //first, check the DB if asked to
     foundindb := false;
-    if UseDB and assigned G`DBName then
+    if UseDB and assigned G`DBDir then
         vprint Characters, 5: "(Classes). Querying database.";
-        if CHAMP_ExistsInDB("CharacterTables", G`DBName) then
-            Data := CHAMP_GetFromDB("CharacterTables", G`DBName);
+        if CHAMP_ExistsInDB(G`DBDir, "Representations/CharacterData") then
+            Data := CHAMP_GetFromDB(G`DBDir, "Representations/CharacterData");
             vprint Characters, 5: "(Classes). Loaded classes from database.";
             CharacterData(~G, Data:Check:=Check); //this might automatically load character table and character names!
             G`ClassMap := ClassMap(G);

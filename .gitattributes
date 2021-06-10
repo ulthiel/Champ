@@ -1,2 +1,1 @@
-DB/** filter=lfs diff=lfs merge=lfs -text
-Readme.md filter= diff= merge= text
+DB/ReflectionGroups/** filter=lfs diff=lfs merge=lfs -text

@@ -149,8 +149,8 @@ intrinsic SymplecticDoublingFundamentalInvariants(~G::GrpMat : UseDB:=true, Save
 	SymplecticDoubling(~G);
 
 	if not assigned G`SymplecticDoublingFundamentalInvariants then
-		if not SaveToDB and UseDB and assigned G`DBName and CHAMP_ExistsInDB("SymplecticDoublingFundamentalInvariants", G`DBName) then
-			G`SymplecticDoublingFundamentalInvariants := CHAMP_GetFromDB("SymplecticDoublingFundamentalInvariants", G`DBName);
+		if not SaveToDB and UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants") then
+			G`SymplecticDoublingFundamentalInvariants := CHAMP_GetFromDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants");
 			print "Fetched from DB";
 		else
     		G`SymplecticDoublingFundamentalInvariants := FundamentalInvariants(G`SymplecticDoubling`InvariantRing);
@@ -158,7 +158,7 @@ intrinsic SymplecticDoublingFundamentalInvariants(~G::GrpMat : UseDB:=true, Save
     end if;
 
     if SaveToDB then
-    	if not assigned G`DBName then
+    	if not assigned G`DBDir then
     		error "No database directory assigned to group.";
     	end if;
     	str := "/*\n\tSymplectic doubling fundamental invariants\n\tVersion: "*CHAMP_GetVersion()*"\n\tDate: "*Date()*"\n*/\n";
@@ -201,7 +201,7 @@ intrinsic SymplecticDoublingFundamentalInvariants(~G::GrpMat : UseDB:=true, Save
     		end if;
     	end for;
     	str *:= "]";
-    	CHAMP_SaveToDB(str, "SymplecticDoublingFundamentalInvariants", G`DBName);
+    	CHAMP_SaveToDB(str, G`DBDir, "SymplecticDoublingFundamentalInvariants");
     	print "Saved";
     end if;
 

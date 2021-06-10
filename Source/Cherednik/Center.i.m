@@ -8,7 +8,7 @@
 
 /*
 	Compute the center of the rational Cherednik algebra at t=0.
-
+	
 	Joint work with Cédric Bonnafé (Montpellier).
 */
 
@@ -179,10 +179,9 @@ intrinsic CenterGenerator(~H::AlgChe, i::RngIntElt : UseDB:=true, SaveToDB:=fals
 
 	if H`CenterGenerators[i] eq Zero(H) then
 		gotfromdb := false;
-		if UseDB and not SaveToDB and assigned W`DBName then
-			gen, type := IsGeneric(H);
-			if gen and CHAMP_ExistsInDB("CalogeroMoser/CenterGenerators", W`DBName*"_"*type*"_"*Sprint(i)) then
-				z := CHAMP_GetFromDB("CalogeroMoser/CenterGenerators", W`DBName*"_"*type*"_"*Sprint(i));
+		if UseDB and not SaveToDB and assigned H`DBDir then
+			if CHAMP_ExistsInDB(H`DBDir, "CenterGenerators/"*Sprint(i)) then
+				z := CHAMP_GetFromDB(H`DBDir, "CenterGenerators/"*Sprint(i));
 				H`CenterGenerators[i] := H!z;
 				delete z;	//perhaps not necessary
 				print "Found center generator in DB.";
@@ -199,7 +198,7 @@ intrinsic CenterGenerator(~H::AlgChe, i::RngIntElt : UseDB:=true, SaveToDB:=fals
 			error "Algebra has no database directory assigned (needed for saving). Cannot save.";
 		end if;
 		gen, type := IsGeneric(H);
-		CHAMP_SaveToDB(Rprint(H`CenterGenerators[i]), "CalogeroMoser/CenterGenerators", W`DBName*"_"*type*"_"*Sprint(i));
+		CHAMP_SaveToDB(Rprint(H`CenterGenerators[i]), H`DBDir, "CenterGenerators/"*Sprint(i));
 	end if;
 
 end intrinsic;

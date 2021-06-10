@@ -12,7 +12,7 @@ intrinsic EssentialHyperplanes(G::GrpMat) -> SeqEnum
 {}
 
     CherednikParameterSpace(~G);
-    return ChangeUniverse(Sort(SetToSequence(Keys(CHAMP_GetFromDB("RouquierFamilies", G`DBName)) diff {1})), G`CherednikParameterSpace);
+    return ChangeUniverse(Sort(SetToSequence(Keys(CHAMP_GetFromDB(G`DBDir, "Hecke/RouquierFamilies")) diff {1})), G`CherednikParameterSpace);
 
 end intrinsic;
 
@@ -20,6 +20,6 @@ end intrinsic;
 intrinsic RouquierFamilies(G::GrpMat) -> Assoc
 {}
     CherednikParameterSpace(~G);
-    return CHAMP_GetFromDB("RouquierFamilies", G`DBName);
+    return CHAMP_GetFromDB(G`DBDir, "Hecke/RouquierFamilies");
 
 end intrinsic;

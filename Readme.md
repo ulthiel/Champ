@@ -1,18 +1,18 @@
 # CHAMP
 
-A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2013–2021.
+A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2013–2020.
 
 ## Scope
 
 With this package you can:
-* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114)),
-* compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space),
-* compute Poisson brackets on the center,
+* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114))
+* compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space)
+* compute Poisson brackets on the center
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
+The underlying reflection groups can arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
-* C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
+* C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
 
 ## Contents
 

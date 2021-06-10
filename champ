@@ -1,32 +1,32 @@
-#!/usr/bin/env bash
-################################################################################
-# CHAMP (CHerednik Algebra Magma Package)
-# Copyright (C) 2013–2018 Ulrich Thiel
-# Licensed under GNU GPLv3, see COPYING.
-# http://ulthiel.com/math/champ
-# math@ulthiel.com
+#!/bin/bash
 #
-# Start CHAMP (and automatically set the necessary environment variables)
+#  CHAMP (CHerednik Algebra Magma Package)
+#  Copyright (C) 2013–2020 Ulrich Thiel
+#  Licensed under GNU GPLv3, see COPYING.
+#  https://github.com/ulthiel/champ
+#  thiel@mathematik.uni-kl.de
 #
-################################################################################
 
 ################################################################################
-# You can define the Magma installation directory here if Magma
-# cannot be found or you want to use some specific installation.
-# Don't put a slash at the end of the name.
+# Set CHAMP directory
 ################################################################################
-MAGMA_DIR="..."
+CHAMP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export CHAMP_DIR=$CHAMP_DIR
 
+################################################################################
+# Set OS Type
+################################################################################
+export CHAMP_OS="Unix"
 
 ################################################################################
 # Find Magma (first user defined path, then environment path, then trying
 # some directories, then give up).
 ################################################################################
 MAGMA_EXEC=""
-if [ "$MAGMA_DIR" != "..." ]; then
-	if [ -f "$MAGMA_DIR/magma" ]; then
-		MAGMA_EXEC="$MAGMA_DIR/magma"
-	fi
+
+if [ ! -z ${CHAMP_MAGMA_DIR+x} ]; then
+  export MAGMA_DIR=$CHAMP_MAGMA_DIR
+  export MAGMA_EXEC=$MAGMA_DIR/magma
 fi
 
 if [ "$MAGMA_EXEC" == "" ]; then
@@ -61,78 +61,13 @@ fi
 
 if [ "$MAGMA_EXEC" == "" ]; then
     echo -e "\033[0;31mError: cannot find Magma."
-    echo -e "Either add Magma installation directory in the champ script or in the PATH environment variable.\033[0m"
+    echo -e "Either add Magma installation directory in the Config file or in the PATH environment variable.\033[0m"
     exit 1
 fi
 
-
 ################################################################################
-# Set up all the environment variables for CHAMP
+# Now, start Magma with the Startup script from the Config directory
 ################################################################################
-
-# CHAMP base directory (neat trick)
-CHAMP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export CHAMP_DIR=$CHAMP_DIR
-
-# OS type is always Unix here
-export CHAMP_OS_TYPE="Unix"
-export CHAMP_OS=`uname -s`
-
-# Get CHAMP version. I'll cd into the CHAMP directory to avoid git -C since this
-# didn't exist before Git 1.8.5 (Nov 2013).
-curdir=`pwd`
-cd "$CHAMP_DIR"
-git describe >/dev/null 2>/dev/null
-if [ $? -eq 0 ]; then
-    export CHAMP_VER=`git describe`
-else
-    cat version.txt >/dev/null 2>/dev/null
-    if [ $? -eq 0 ]; then
-        export CHAMP_VER=`cat version.txt`
-    fi
-fi
-cd "$curdir"
-
-# Get the OS version (more detailed than CHAMP_OS)
-if [ "$CHAMP_OS" == "Darwin" ]; then
-    #Mac OS
-    OS=`sw_vers -productName`
-    VER=`sw_vers -productVersion`
-elif [ -f /etc/os-release ]; then
-    # freedesktop.org and systemd
-    . /etc/os-release
-    OS=$NAME
-    VER=$VERSION_ID
-elif type lsb_release >/dev/null 2>&1; then
-    # linuxbase.org
-    OS=$(lsb_release -si)
-    VER=$(lsb_release -sr)
-elif [ -f /etc/lsb-release ]; then
-    # For some versions of Debian/Ubuntu without lsb_release command
-    . /etc/lsb-release
-    OS=$DISTRIB_ID
-    VER=$DISTRIB_RELEASE
-elif [ -f /etc/debian_version ]; then
-    # Older Debian/Ubuntu/etc.
-    OS=Debian
-    VER=$(cat /etc/debian_version)
-else
-    # Fall back to uname
-    OS=$(uname -s)
-    VER=$(uname -r)
-fi
-
-export CHAMP_OS_VER="$OS $VER"
-
-export CHAMP_HOSTNAME=`hostname`
-
-if [ "$CHAMP_OS" == "Darwin" ]; then
-    export CHAMP_CPU=`sysctl -n machdep.cpu.brand_string`
-else
-    export CHAMP_CPU=`cat /proc/cpuinfo | grep 'model name' | tail -n 1 | awk -v FS=': ' '{print $2}'`
-fi
-
-export CHAMP_OS_ARCH=`uname -m`
 
 # Add the CHAMP spec file to the Magma startup spec variable
 export MAGMA_USER_SPEC=$CHAMP_DIR/Source/CHAMP/CHAMP.s.m:$MAGMA_USER_SPEC
@@ -140,7 +75,4 @@ export MAGMA_USER_SPEC=$CHAMP_DIR/Source/CHAMP/CHAMP.s.m:$MAGMA_USER_SPEC
 # Set the CHAMP startup file as Magma startup file
 export MAGMA_STARTUP_FILE=$CHAMP_DIR/Source/CHAMP/CHAMP.m
 
-################################################################################
-# Now, start Magma with the Startup script from the Config directory
-################################################################################
 $MAGMA_EXEC -b "$@"

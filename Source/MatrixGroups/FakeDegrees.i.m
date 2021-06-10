@@ -32,10 +32,10 @@ intrinsic FakeDegree(chi::AlgChtrElt : UseFormula:=true, UseDB:=true) -> RngUPol
     	error "Character has to be irreducible.";
     end if;
 
-    if UseDB and assigned G`DBName and CHAMP_ExistsInDB("FakeDegrees", G`DBName) then
+    if UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/FakeDegrees") then
         CharacterTable(~G);
         vprint RngInvar, 5: "(FakeDegrees). Loaded from DB.";
-        G`FakeDegrees := CHAMP_GetFromDB("FakeDegrees", G`DBName);
+        G`FakeDegrees := CHAMP_GetFromDB(G`DBDir, "Invariants/FakeDegrees");
         return G`FakeDegrees[Position(G`CharacterTable, chi)];
     end if;
 
@@ -69,11 +69,11 @@ intrinsic FakeDegrees(~G::GrpMat : Method := "Formula", SaveToDB:=false, UseDB:=
         return;
     end if;
 
-    if not Method eq "Direct" and UseDB and assigned G`DBName and CHAMP_ExistsInDB("FakeDegrees", G`DBName) then
+    if not Method eq "Direct" and UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/FakeDegrees") then
     	if Characteristic(BaseRing(G)) eq 0 then
     		CharacterTable(~G);
     	end if;
-        G`FakeDegrees := CHAMP_GetFromDB("FakeDegrees", G`DBName);
+        G`FakeDegrees := CHAMP_GetFromDB(G`DBDir, "Invariants/FakeDegrees");
         return;
     end if;
 

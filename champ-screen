@@ -1,0 +1,3 @@
+#!/bin/bash
+#Runs champ in screen with session title as given by argument
+screen -S "$1" ./champ

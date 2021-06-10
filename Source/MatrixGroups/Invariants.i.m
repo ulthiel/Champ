@@ -82,7 +82,7 @@ intrinsic DualGroup(~G::GrpMat)
     G`DualCoordinateAlgebra`One := One(G`DualCoordinateAlgebra);
 
     if assigned G`IsReflectionGroup then
-    	G`DualGroup`IsReflectionGroup := G`IsReflectionGroup;
+    	G`DualGroup`IsReflectionGroup;
     end if;
 
 end intrinsic;
@@ -260,8 +260,8 @@ intrinsic Degrees(~G::GrpMat : UseDB:=true)
 
     DualGroup(~G);
     foundindb := false;
-    if UseDB and assigned G`DBName and CHAMP_ExistsInDB("Degrees", G`DBName) then
-        G`Degrees := CHAMP_GetFromDB("Degrees", G`DBName);
+    if UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/Degrees") then
+        G`Degrees := CHAMP_GetFromDB(G`DBDir, "Invariants/Degrees");
         return;
     end if;
 
@@ -280,8 +280,8 @@ end intrinsic;
 intrinsic Degrees(G::GrpMat) -> SeqEnum
 {}
 
-    Degrees(~G);
-    return G`Degrees;
+    Degrees(~R);
+    return R`Degrees;
 
 end intrinsic;
 
