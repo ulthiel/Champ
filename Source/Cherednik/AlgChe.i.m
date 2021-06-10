@@ -179,6 +179,18 @@ intrinsic RationalCherednikAlgebra(G::GrpMat, c::Map : UseProductTable:=true, Us
 end intrinsic;
 
 //=========================================================================
+intrinsic RationalCherednikAlgebra(G::GrpMat, param::Tup : Type:="GGOR", Rational:=false,  UseProductTable:=true, UseCommutatorsTable:=true, PoissonModtSquare:=true, GroupAlgebraRep:="") -> AlgChe
+/*
+    History:
+        Sunday, October 27, 2013 16:51:05: Initial.
+*/
+{}
+
+    return RationalCherednikAlgebra(G, param[1], param[2]:  UseProductTable:=UseProductTable, UseCommutatorsTable:=UseCommutatorsTable, PoissonModtSquare:=PoissonModtSquare);
+
+end intrinsic;
+
+//=========================================================================
 intrinsic RationalCherednikAlgebra(G::GrpMat : Type:="GGOR", Rational:=false,  UseProductTable:=true, UseCommutatorsTable:=true, PoissonModtSquare:=true, GroupAlgebraRep:="") -> AlgChe
 /*
     History:
@@ -684,7 +696,7 @@ intrinsic Rprint(h::AlgCheElt) -> MonStgElt
 	str *:= "//the group\n";
 	str *:= "W := MatrixGroup<"*Sprint(Dimension(W))*", "*fieldstr*" | ";
 	for i:=1 to Ngens(W) do
-		str *:= Sprint(Eltseq(W.i)); 
+		str *:= Sprint(Eltseq(W.i));
 		if i lt Ngens(W) then
 			str *:= " , ";
 		end if;
