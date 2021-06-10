@@ -10,7 +10,7 @@ With this package you can:
 * compute Poisson brackets on the center;
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. I cannot cover every single detail here but you will get the general picture and can experiment on your own. The theory and algorithms are discussed in the following publications:
+The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
 
@@ -37,7 +37,7 @@ You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.
 
 Alternatively, you can clone the git repository. **Important**: due to large binary files in the database, it is stored with [Git Large File Storage](https://git-lfs.github.com). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
-I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups selfcheck will take a bit of time but if the first few are fine, the rest should be fine as well).
+I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups and G5_Verma selfcheck will take a bit of time but if the first few are fine, the rest should be fine as well).
 
 <a name="reflgroups"></a>
 

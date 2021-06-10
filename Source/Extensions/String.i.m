@@ -30,6 +30,6 @@ intrinsic Replace(str::MonStgElt, reg::MonStgElt, rep::MonStgElt) -> MonStgElt
 	*/
 
 	str := Pipe("sed -e \"s/"*reg*"/"*rep*"/g\"", str);
-	return str[1..#str-1];
+	return str;
 
 end intrinsic;
