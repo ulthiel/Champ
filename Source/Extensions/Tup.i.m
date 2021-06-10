@@ -1,9 +1,9 @@
 /*
-  CHAMP (CHerednik Algebra Magma Package)
-  Copyright (C) 2013–2020 Ulrich Thiel
-  Licensed under GNU GPLv3, see COPYING.
-  https://github.com/ulthiel/champ
-  thiel@mathematik.uni-kl.de
+	CHAMP (CHerednik Algebra Magma Package)
+	Copyright (C) 2013-2021 Ulrich Thiel
+	Licensed under GNU GPLv3, see COPYING.
+	thiel@mathematik.uni-kl.de
+	https://ulthiel.com/math
 */
 
 intrinsic '&+'(x::Tup) -> .

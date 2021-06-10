@@ -1,28 +1,34 @@
 /*
-    CHAMP (CHerednik Algebra Magma Package)
-    Copyright (C) 2013, 2014 Ulrich Thiel
-    Licensed under GNU GPLv3, see COPYING.
-    thiel@mathematik.uni-stuttgart.de
+	CHAMP (CHerednik Algebra Magma Package)
+	Copyright (C) 2013-2021 Ulrich Thiel
+	Licensed under GNU GPLv3, see COPYING.
+	thiel@mathematik.uni-kl.de
+	https://ulthiel.com/math
 */
 
 /*
-    Testing if Verma modules work for restricted generic rational Cherednik algebra of G5.
+    Testing if Verma modules work for restricted generic rational Cherednik algebra of G5. This takes some time.
 */
 print "Running self check \"G5_Verma\"";
 zeit := Cputime();
 
-G:=ExceptionalComplexReflectionGroup(5); c:=CherednikParameter(G); Representations(~G,0);
-DiagonalizeRepresentations(~G,0,1); LiftRepresentationsToCommonBaseField(~G,0);
-V:=[* VermaModule(G,c,G`Representations[0][i]) : i in [19,20,21] *];
+G1:=ExceptionalComplexReflectionGroup(5);
+G := ChangeRing(G, CyclotomicField(12));
+G`DBDir := G1`DBDir;
+Representations(~G,0);
+LiftRepresentationsToCommonBaseField(~G,0);
+H:=RestrictedRationalCherednikAlgebra(G);
+StandardModules(~H);
+V:=[*H`StandardModules[i] : i in [19,20,21]*];
 
 for i:=1 to 3 do
-    assert IsModuleForRRCA(G,c,V[i]);
+    assert IsModule(H,V[i]);
 end for;
 
 res,L,D:=HeadsOfLocalModules(V:pRange:={10^5..10^6});
 
 for i:=1 to 3 do
-    assert IsModuleForRRCA(G,c,L[i]);
+    assert IsModule(H,L[i]);
 end for;
 
 IndentPush();

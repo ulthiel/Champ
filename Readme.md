@@ -1,18 +1,18 @@
 # CHAMP
 
-A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2013–2020.
+A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2013–2021.
 
 ## Scope
 
 With this package you can:
-* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114))
-* compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space)
-* compute Poisson brackets on the center
+* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114));
+* compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space);
+* compute Poisson brackets on the center;
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301)).
 
-The underlying reflection groups can arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
+The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. I cannot cover every single detail here but you will get the general picture and can experiment on your own. The theory and algorithms are discussed in the following publications:
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
-* C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2020).
+* C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
 
 ## Contents
 
@@ -27,12 +27,13 @@ The underlying reflection groups can arbitrary and also the parameters can be ar
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4 Database](#rrca-db)
 
 <a name="downloading"></a>
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.25). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the [release assets](https://github.com/ulthiel/champ/releases/latest) as well and extract it in the ```DB``` directory of CHAMP.
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the [release assets](https://github.com/ulthiel/champ/releases/latest) as well and extract it in the ```DB``` directory of CHAMP.
 
 Alternatively, you can clone the git repository. **Important**: due to large binary files in the database, it is stored with [Git Large File Storage](https://git-lfs.github.com). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
 
@@ -133,6 +134,7 @@ The definitition of rational Cherednik algebras used in Champ is exactly the one
 //polynomial ring)
 > W := TypeBReflectionGroup(2); //Weyl group of type B2 as above
 > H := RationalCherednikAlgebra(W : Type:="EG"); //I will explain the EG below
+> H;
 Rational Cherednik algebra
 Generators:
     w1, w2, y1, y2, x1, x2
@@ -377,7 +379,7 @@ The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed c
 //On V \oplus V^* we have a natural N^2-grading. We are especially interested in
 //algebra generators of N^2-degree (d,d), i.e. of Z-degree 0.
 > [ Bidegree(f) : f in W`SymplecticDoublingFundamentalInvariants ];
-[ <2, 0>, <1, 1>, <0, 2>, <4, 0>, <3, 1>, <2, 2>, <1, 3>, <0, 4> ]
+[ <0, 2>, <1, 1>, <2, 0>, <0, 4>, <1, 3>, <2, 2>, <3, 1>, <4, 0> ]
 //We see there are only 2 generators of Z-degree 0.
 //You can also directly compute only the degree-0 generators of Z_c as follows
 > CenterGeneratorsOfDegreeZero(H);
@@ -754,12 +756,127 @@ MediaWiki(H);
 
 #### Things that can go wrong
 
-1. The multiplicity computations are extremely complicated. They use the function HeadOfLocalModule to compute the unique irreducible quotient of a standard (which, just to remind you, is a huge module over a multivariate rational function field in characteristic zero). This uses a Las Vegas algorithm that I've presented in my original Champ paper. For some reason, it performs exceptionally well. But sometimes, you're just not lucky (like playing in Las Vegas). In this case, you could try to run the function manually a few more times or tweak its (complicated and unpredictable) parameters or you could try other things. 
+The multiplicity computations are extremely complicated. There are some things that can go wrong generically and that will require manual fiddling.
 
-2. The base field of the simple W-modules is not always the same as the base field of the group. I've simply taken the models from CHEVIE and took the minimal cyclotomic field containing all the entries of the matrices. Now, when you mix several representations—e.g. when you compute decompositon matrices with the above automatic methods—these varying base fields will cause problems (mathematically this is all trivial but the computer complains). So, *before* you do any kind of mixing computations, I advise doing
+1. The function HeadOfLocalModule computes the unique irreducible quotient of a standard (which, just to remind you, is a huge module over a multivariate rational function field in characteristic zero). This uses a Las Vegas algorithm that I've presented in my original Champ paper. For some reason, it performs exceptionally well. But sometimes, you're just not lucky (like playing in Las Vegas). In this case, you could try to run the function manually a few more times or tweak its (complicated and unpredictable) parameters or you could try other things. 
+
+2. The base field of the simple W-modules is not always the same as the base field of the group. I've simply taken the models from CHEVIE and took the minimal cyclotomic field containing all the entries of the matrices. Now, when you mix several representations—e.g. when you compute decompositon matrices with the above automatic methods—these varying base fields will cause problems (mathematically this is all trivial but the computer complains). So, *before* you do any kind of mixing computations, I advise changing all base rings to a common base ring. Here's an example:
 
    ~~~c++
+   > W1:=ExceptionalComplexReflectionGroup(5); 
+   //This model is defined over CyclotomicField(3). But there are representations defined over CyclotomicField(12). So, we'll change base rings to CyclotomicField(12) everywhere.
+   > W := ChangeRing(W, CyclotomicField(12));
+   > W`DBDir := W1`DBDir; //Needed for loading reps (and everything else) from the database.
+   > Representations(~W,0);
    > LiftRepresentationsToCommonBaseField(~W);
    ~~~
+   
 
-   This changes the base fields of all the simple W-modules to *one* common base field.
+<a name="rrca-db"></a>
+
+### Database
+
+In the database I have stored a lot of data about the representation theory of restricted rational Cherednik algebras, especially decomposition matrices and Calogero–Moser families. Here's how to access this data:
+
+```c++
+//The following loads the database record for the exceptional complex reflection group G4. I've called this data "Gordon" because I. Gordon introduced the baby Verma modules and posed the problem of determining their decomposition matrices. 
+> gord := CHAMP_GetFromDB("ReflectionGroups/G4_CHEVIE/Cherednik", "Gordon"); 
+> gord;
+rec<recformat<ParameterRing, BlGen, DecGenStratification, Data> |
+ParameterRing := Polynomial ring of rank 2 over Rational Field
+Order: Lexicographical
+Variables: k1_1, k1_2,
+BlGen := [
+k1_2,
+k1_1,
+k1_1 - 2*k1_2,
+k1_1 - k1_2,
+k1_1 + k1_2,
+2*k1_1 - k1_2
+],
+Data := Associative Array with index universe Set of subsets of Polynomial ring of rank 2 over Rational Field>
+//The most important entry is Data. This is an associative array indexed by a set of equations in GGOR parameters:
+> Keys(gord`Data);
+{
+{
+k1_2
+},
+{
+k1_1 - k1_2
+},
+{
+k1_1 + k1_2
+},
+{
+k1_1
+},
+{
+2*k1_1 - k1_2
+},
+{
+k1_1 - 2*k1_2
+},
+{
+1
+}
+}
+//Let's look at the data for generic parameters, described by the entry {1}:
+> gord`Data[{1}];
+rec<recformat<SimpleDims, SimplePSeries, SimpleGModStruct, SimpleGradedGModStruct, VermaDecomposition, CMFamilies, CuspidalCMFamilies, VermaGradedDecomposition> |
+SimpleDims := [ 24, 24, 24, 24, 24, 24, 24 ],
+SimplePSeries := [
+q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
+q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
+q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
+2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
+2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
+2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
+3*q^4 + 6*q^3 + 6*q^2 + 6*q + 3
+],
+SimpleGModStruct := [
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3),
+(1 1 1 2 2 2 3)
+],
+SimpleGradedGModStruct := [
+(1   q^8   q^4   q^7 + q^5   q^3 + q   q^5 + q^3   q^6 + q^4 + q^2),
+(q^4   1   q^8   q^5 + q^3   q^7 + q^5   q^3 + q   q^6 + q^4 + q^2),
+(q^8   q^4   1   q^3 + q   q^5 + q^3   q^7 + q^5   q^6 + q^4 + q^2),
+(          q^5             q           q^3       q^4 + 1     q^6 + q^2     q^4 + q^2 q^5 + q^3 + q),
+(          q^3           q^5             q     q^4 + q^2       q^4 + 1     q^6 + q^2 q^5 + q^3 + q),
+(            q           q^3           q^5     q^6 + q^2     q^4 + q^2       q^4 + 1 q^5 + q^3 + q),
+(          q^2           q^2           q^2       q^3 + q       q^3 + q       q^3 + q q^4 + q^2 + 1)
+],
+VermaDecomposition := [
+(1 0 0 0 0 0 0),
+(0 1 0 0 0 0 0),
+(0 0 1 0 0 0 0),
+(0 0 0 2 0 0 0),
+(0 0 0 0 2 0 0),
+(0 0 0 0 0 2 0),
+(0 0 0 0 0 0 3)
+],
+CMFamilies := {
+{ 1 },
+{ 2 },
+{ 3 },
+{ 4 },
+{ 7 },
+{ 5 },
+{ 6 }
+},
+VermaGradedDecomposition := [
+(1 0 0 0 0 0 0),
+(0 1 0 0 0 0 0),
+(0 0 1 0 0 0 0),
+(      0       0       0 q^2 + 1       0       0       0),
+(      0       0       0       0 q^2 + 1       0       0),
+(      0       0       0       0       0 q^2 + 1       0),
+(            0             0             0             0             0             0 q^4 + q^2 + 1)
+]>
+```
+

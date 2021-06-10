@@ -1,15 +1,15 @@
 /*
-  CHAMP (CHerednik Algebra Magma Package)
-  Copyright (C) 2013–2020 Ulrich Thiel
-  Licensed under GNU GPLv3, see COPYING.
-  https://github.com/ulthiel/champ
-  thiel@mathematik.uni-kl.de
+	CHAMP (CHerednik Algebra Magma Package)
+	Copyright (C) 2013-2021 Ulrich Thiel
+	Licensed under GNU GPLv3, see COPYING.
+	thiel@mathematik.uni-kl.de
+	https://ulthiel.com/math
 */
 
 
 /*
     Database functions.
- 
+
     The CHAMP database consists of files inside the directory +DB+ of the base directory of CHAMP. Each file defines some object (for example a group) and its content can be evaluated in Magma with the +eval+ command. If such a file is loaded with the intrinsic +CHAMP_LoadFromDB+, then the attributes +DBDir+ and +DBFile+ of this object are set accordingly. The philosophy is that inside the database directory +DBDir+ of this object there can be stored additional data about this object (for example character data or irreducible representations) which can later be loaded by the appropriate function by checking if this data exists in +DBDir+. This prevents heavy calculations (like the invariant degrees for the reflection group E8 or G31 which are known anyways) and allows to use data consistently (like labelings of the irreducible characters).
 
     So far, the database only works properly with matrix groups and associated data (this also being the main motivation for implementing the database). Realizations of specific matrix groups (like exceptional complex reflection groups) are stored inside specific directories inside the directory +GrpMat+ of the CHAMP database directory. In each such subdirectory the group is defined in the file +GrpMat.m+. Character data (see <GrpRep.i.m>) is stored inside +CharacterData.m+, explicit realizations of the irreducible representations in characteristic zero are stored in +Representations_0.m+. The invariant degrees are stored in +Degrees.m+. The following data is stored so far

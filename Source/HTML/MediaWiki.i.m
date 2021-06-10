@@ -1,16 +1,10 @@
-//##############################################################################
-//
-//  Magma-UT
-//  Copyright (C) 2020 Ulrich Thiel
-//  Licensed under GNU GPLv3, see License.md
-//  https://github.com/ulthiel/magma-ut
-//  thiel@mathematik.uni-kl.de, https://ulthiel.com/math
-//
-//
-//  Produce MediaWiki output.
-//
-//##############################################################################
-
+/*
+	CHAMP (CHerednik Algebra Magma Package)
+	Copyright (C) 2013-2021 Ulrich Thiel
+	Licensed under GNU GPLv3, see COPYING.
+	thiel@mathematik.uni-kl.de
+	https://ulthiel.com/math
+*/
 
 intrinsic MediaWiki(A::Mtrx, L::MonStgElt : ColHeader:=[], RowHeader:=[], Legend:="", ScrollingTable:=false) -> MonStgElt
 {}
