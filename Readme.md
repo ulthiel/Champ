@@ -819,10 +819,12 @@ The multiplicity computations are extremely complicated. There are some things t
 
 ### Database
 
-In the database I have stored a lot of data about the representation theory of restricted rational Cherednik algebras, especially decomposition matrices and Calogero–Moser families. Here's how to access this data:
+In the database I have stored a lot of data about the representation theory of restricted rational Cherednik algebras, especially decomposition matrices, Calogero–Moser hyperplanes and families. Here's how to access this data:
 
 ```c++
-//The following loads the database record for the exceptional complex reflection group G4. I've called this data "Gordon" because I. Gordon introduced the baby Verma modules and posed the problem of determining their decomposition matrices. 
+//The following loads the database record for the exceptional complex reflection group G4. I've called this 
+//data "Gordon" because Gordon introduced the baby Verma modules and posed the problem of determining their
+//decomposition matrices. 
 > gord := CHAMP_GetFromDB("ReflectionGroups/G4_CHEVIE/Cherednik", "Gordon"); 
 > gord;
 rec<recformat<ParameterRing, BlGen, DecGenStratification, Data> |
@@ -838,7 +840,8 @@ k1_1 + k1_2,
 2*k1_1 - k1_2
 ],
 Data := Associative Array with index universe Set of subsets of Polynomial ring of rank 2 over Rational Field>
-//The most important entry is Data. This is an associative array indexed by a set of equations in GGOR parameters:
+//The most important entry is Data. This is an associative array indexed by a set of equations in GGOR 
+//parameters. 
 > Keys(gord`Data);
 {
 {
@@ -863,6 +866,9 @@ k1_1 - 2*k1_2
 1
 }
 }
+//The data for a set of equations gives the data for the algebra when specialized to the subscheme defined by
+//the equations.
+//The entry BlGen gives the Calogero-Moser hyperplanes!
 //Let's look at the data for generic parameters, described by the entry {1}:
 > gord`Data[{1}];
 rec<recformat<SimpleDims, SimplePSeries, SimpleGModStruct, SimpleGradedGModStruct, VermaDecomposition, CMFamilies, CuspidalCMFamilies, VermaGradedDecomposition> |
@@ -923,3 +929,4 @@ VermaGradedDecomposition := [
 ]>
 ```
 
+There could be more convenient access functions for the data but I didn't want to put more work into this.
