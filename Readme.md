@@ -33,17 +33,20 @@ The underlying reflection groups can be arbitrary and also the parameters can be
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26). You can then download the [latest CHAMP release](https://github.com/ulthiel/champ/releases/latest) and start it by running ```./champ```. **Important:** for full functionality of CHAMP, you have to download the ReflectionGroups database from the [release assets](https://github.com/ulthiel/champ/releases/latest) as well and extract it in the ```DB``` directory of CHAMP.
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26). CHAMP comes along with a large database (~350MB) containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored with [Git Large File Storage](https://git-lfs.github.com). So, to get CHAMP you can either:
 
-Alternatively, you can clone the git repository. **Important**: due to large binary files in the database, it is stored with [Git Large File Storage](https://git-lfs.github.com). You first have to install this extension as described in the link. Then you can do a ```git clone https://ulthiel.github.com/champ/``` as usual and this will also clone the database.
+* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) along with the ReflectionGroups database that you can find under the release assets. The database needs to be extracted in the ```DB``` directory of CHAMP.
+* Clone the Git repository. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com). Then you can do the usual ```git clone https://github.com/ulthiel/champ``` and the database will be cloned as well.
 
-I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups and G5_Verma selfcheck will take a bit of time but if the first few are fine, the rest should be fine as well).
+You can then run CHAMP via ```./champ```. 
+
+I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups and G5_Verma selfcheck will take a bit of time).
 
 <a name="reflgroups"></a>
 
 ## Complex reflection groups
 
-Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package. The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
+Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package from 2014 (there were some character label changes afterwards but this is not dramatic). The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
 
 The following examples demonstrate how to use all functions around complex reflection groups:
 
@@ -123,6 +126,8 @@ You can load all sorts of reflections groups with the following commands:
 * CyclicReflectionGroup
 * ImprimitiveReflectionGroup (groups G(m,p,n) in Shephard–Todd notation)
 
+Note: I have not imported all the data for all possible groups; my main focus were the exceptional groups. More data can always be added to the database of course.
+
 <a name="che"></a>
 
 ## Rational Cherednik algebras
@@ -189,6 +194,45 @@ c-parameter:
 //rational Cherednik alebra as usually written on paper. This may be a bit
 //confusing, but in the end it's less confusing than trying to make artifically
 //make Magma act on the left.
+```
+
+The database contains (some) generators of the center of the rational Cherednik algebra at t=0 (see below). These elements are huge and the computation takes a lot of time, so one really wants to store them. I have implemented a function ```Rprint``` (for "reversible print") that returns program code for an element of an arbitrary Cherednik algebra allowing to reconstruct this element. Here's an example:
+
+```
+> W := TypeBReflectionGroup(2);
+> H := RationalCherednikAlgebra(W : Type:="EG");
+> Rprint(H.1);
+/*
+	Code for a Cherednik algebra element
+	Version: v1.6.0-alpha-66-g295f039
+	Date: Fri Jun 11 08:28:16 CEST 2021
+*/
+//base ring of the group
+K := RationalField();
+//the group
+W := MatrixGroup<2, RationalField() | [ -1, 2, 0, 1 ] , [ 1, 0, 1, -1 ]>;
+//the parameters of the Cherednik algebra
+R := PolynomialRing(RationalField(), 3);
+t := R.1;
+c1 := R.2;
+c2 := R.3;
+t := t;
+c := map<{ 1 .. 2 }-> R |[<1,c1>,<2,c2>]>;
+//the Cherednik algebra
+H := RationalCherednikAlgebra(W,<t,c>);
+A := H`GroupAlgebra;
+y1 := H`yxAlgebra.1;
+y2 := H`yxAlgebra.2;
+x1 := H`yxAlgebra.3;
+x2 := H`yxAlgebra.4;
+//the support of the Cherednik algebra element (as words in the generators)
+supp := [[ 1 ]];
+//the coefficients of the Cherednik algebra element (these are elements of S)
+coeff1 := 1;
+hA := Zero(A);
+hA +:= coeff1*(A!WordToElement(W,supp[1]));
+h := Zero(H); h`Element := hA;
+return h
 ```
 
 <a name="params"></a>
