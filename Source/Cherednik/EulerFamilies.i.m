@@ -143,7 +143,7 @@ intrinsic EulerScalar(G::GrpMat, c::Map, chi::AlgChtrElt : Reversed:=false) -> R
         eps := s`Eigenvalue;
         term := R!(K!(1/(eps-1))*K!chi(s`Element))*R!c(s`ReflectionClass);
         if not Reversed then
-            term *:= eps;
+            term *:= R!eps;
         end if;
         val +:= term;
     end for;

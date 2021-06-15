@@ -905,37 +905,87 @@ k1_1 + 2*k2_1,
 ]
 ```
 
-In some exceptional cases, one can determine the CM families by using the *Euler families* (families one gets by evaluating the central characters only at the Euler element) and then using supersingularity (see my paper "A Counter-Example to Martino’s Conjecture About Generic Calogero–Moser Families", 2014). Here's an example:
+In some exceptional cases, one can determine the CM families by using the *Euler families* (families one gets by evaluating the central characters only at the Euler element) combined with *supersingularity* and *rigidity* (see my papers "A Counter-Example to Martino’s Conjecture About Generic Calogero–Moser Families" and "Restricted Rational Cherednik Algebras"). Here's an example:
 
-```
-> W:=TypeBReflectionGroup(2);
-> c:=CherednikParameter(W,[1,1]);
-> c;
-Mapping from: { 1 .. 2 } to Rational Field
-<1, 2>
-<2, 2>
-> EulerFamilies(W,c);
+```c++
+> W:=ExceptionalComplexReflectionGroup(23); //H3
+> c:=CherednikParameter(W);
+//The following gives the Euler families together with the value of the central character
 {@
-<{@ 3 @}, -4>,
-<{@ 1, 2, 5 @}, 0>,
-<{@ 4 @}, 4>
+<{@ 9, 10 @}, 0>,
+<{@ 7, 8 @}, 5*k1_1>,
+<{@ 2 @}, 15*k1_1>,
+<{@ 3 @}, -3*k1_1>,
+<{@ 1 @}, -15*k1_1>,
+<{@ 4 @}, 3*k1_1>,
+<{@ 5, 6 @}, -5*k1_1>
 @}
+//Rigid representations
+> RigidRepresentations(W,c);
+{}
+//Supersingular representations
+> SupersingularRepresentations(W);
+[ 5, 7, 9, 10 ]
+//Try to determine the CM families by using Euler families and supersingularity.
+//In this case we're lucky!
 > CalogeroMoserFamiliesTry(W,c);
 The Euler families are:
-{@ 1, 2, 5 @}, {@ 3 @}, {@ 4 @}
+{@ 1 @}, {@ 2 @}, {@ 3 @}, {@ 4 @}, {@ 5, 6 @}, {@ 7, 8 @}, {@ 9, 10 @}
 
 Singleton Euler families are CM families, so the following are already CM families:
-{@ 3 @}, {@ 4 @}
+{@ 1 @}, {@ 2 @}, {@ 3 @}, {@ 4 @}
 
 The supersingular characters are:
-
+5, 7, 9, 10
 
 The following Euler families are CM families due to supersingularity:
+{@ 5, 6 @}, {@ 7, 8 @}, {@ 9, 10 @}
 
+Sucessfully determined the CM families. They are:
+{@ 1 @}, {@ 2 @}, {@ 3 @}, {@ 4 @}, {@ 5, 6 @}, {@ 7, 8 @}, {@ 9, 10 @}
 {@
+{@ 1 @},
+{@ 2 @},
 {@ 3 @},
-{@ 4 @}
+{@ 4 @},
+{@ 5, 6 @},
+{@ 7, 8 @},
+{@ 9, 10 @}
 @}
+//For H4 we can determine many CM families but there's something left open:
+> W:=ExceptionalComplexReflectionGroup(30);
+> c:=CherednikParameter(W);
+> c;
+Mapping from: { 1 } to Polynomial ring of rank 1 over Cyclotomic Field of order 5 and degree 4
+<1, 2*k1_1>
+> CalogeroMoserFamiliesTry(W,c);
+The Euler families are:
+{@ 1 @}, {@ 2 @}, {@ 3, 5 @}, {@ 4, 6 @}, {@ 7, 8, 9, 10, 15, 16, 17, 22, 23, 24, 25, 26, 29, 30, 33, 34 @}, {@ 11, 13 @}, {@ 12, 14 @}, {@ 18, 20 @}, {@ 19, 21 @}, {@ 27 @}, {@ 28 @}, {@ 31 @}, {@ 32 @}
+
+Singleton Euler families are CM families, so the following are already CM families:
+{@ 1 @}, {@ 2 @}, {@ 27 @}, {@ 28 @}, {@ 31 @}, {@ 32 @}
+
+The supersingular characters are:
+3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 33, 34
+
+The following Euler families are CM families due to supersingularity:
+{@ 3, 5 @}, {@ 4, 6 @}, {@ 11, 13 @}, {@ 12, 14 @}, {@ 18, 20 @}, {@ 19, 21 @}
+{@
+{@ 1 @},
+{@ 2 @},
+{@ 27 @},
+{@ 28 @},
+{@ 31 @},
+{@ 32 @},
+{@ 3, 5 @},
+{@ 4, 6 @},
+{@ 11, 13 @},
+{@ 12, 14 @},
+{@ 18, 20 @},
+{@ 19, 21 @}
+@}
+//Only the big Euler family {@ 7, 8, 9, 10, 15, 16, 17, 22, 23, 24, 25, 26, 29, 30, 33, 34 @} remains.
+//I believe it's a CM family as well but I'm not sure.
 ```
 
 
