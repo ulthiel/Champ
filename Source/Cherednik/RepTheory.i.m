@@ -1664,3 +1664,11 @@ intrinsic MediaWiki(H::AlgCheRes)
 	printf "\n";
 
 end intrinsic;
+
+intrinsic RestrictedRationalCherednikAlgebraRepresentationTheory(W::GrpMat) -> Rec
+{}
+
+	gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
+	return gord;
+
+end intrinsic;

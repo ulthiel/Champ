@@ -37,8 +37,8 @@ function FamiliesString(W, F)
 end function;
 
 //============================================================================
-intrinsic CalogeroMoserFamilies(W::GrpMat, c::Map) -> SetEnum
-{}
+intrinsic CalogeroMoserFamiliesTry(W::GrpMat, c::Map) -> SetEnum
+{Tries to determine the CM families by simple tricks (using Euler element and supersingularity).}
 
 	eu := {@ f[1] : f in EulerFamilies(W,c) @};
 
@@ -178,8 +178,12 @@ end intrinsic;
 //============================================================================
 intrinsic CalogeroMoserFamilies(~H::AlgChe : SaveToDB:=false, UseDB:=true)
 {
-	The Calogero-Moser families of H. The result is an assocaitive array indexed by the equations for the varieties of the exceptional locus, and by 1 for the generic situation.
+	The Calogero-Moser families of H, determined via central characters evaluated at degree-0 center generators. The result is an assocaitive array indexed by the equations for the varieties of the exceptional locus, and by 1 for the generic situation.
 }
+
+	if assigned H`CalogeroMoserFamilies then
+		return;
+	end if;
 
 	W := H`Group;
 	R := H`BaseRing;
@@ -335,5 +339,21 @@ intrinsic CalogeroMoserFamilies(~H::AlgChe : SaveToDB:=false, UseDB:=true)
 		WriteGordonRecord(W, gordon);
 
 	end if;
+
+end intrinsic;
+
+intrinsic CalogeroMoserHyperplanes(H::AlgChe) -> SetEnum
+{}
+
+	CalogeroMoserFamilies(~H);
+	return Keys(H`CalogeroMoserFamilies);
+
+end intrinsic;
+
+intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SeqEnum
+{}
+
+	gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
+	return gord`BlGen;
 
 end intrinsic;

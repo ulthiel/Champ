@@ -8,9 +8,10 @@ With this package you can:
 * compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114));
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space);
 * compute Poisson brackets on the center;
-* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301)).
+* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
+* compute Calogero–Moser families and hyperplanes.
 
-The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including generic parameters valued in polynomial rings or rational function fields. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
+The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including t≠0 and generic parameters valued in polynomial rings or rational function fields. An accompanying database contains many computational results. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
 
@@ -20,14 +21,15 @@ The underlying reflection groups can be arbitrary and also the parameters can be
 [2. Complex reflection groups](#reflgroups)  
 [3. Rational Cherednik algebras](#che)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.1 Parameters](#params)  
-&nbsp;&nbsp;&nbsp;&nbsp;[3.2 Rational Cherednik algebras at t=0 and Calogero-Moser spaces](#cmspaces)  
+&nbsp;&nbsp;&nbsp;&nbsp;[3.2 Rational Cherednik algebras at t=0 and Calogero–Moser spaces](#cmspaces)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.3 Poisson brackets](#poisson-brackets)  
 [4. Restricted rational Cherednik algebras](#rrca)  
-&nbsp;&nbsp;&nbsp;&nbsp;[4.1 Representation theory](#rrca-rep)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Conventions](#rrca-conv)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Working with modules](#rrca-verma)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.3 Computing multiplicities](#rrca-mults)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1.4 Database](#rrca-db)
+[5 Representation theory of restricted rational Cherednik algebras](#rrca-rep)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1 Conventions](#rrca-conv)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2 Working with modules](#rrca-verma)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3 Computing multiplicities](#rrca-mults)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4 Calogero–Moser hyperplanes and families](#rrca-cmhyperplanes)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5 Database](#rrca-db)
 
 <a name="downloading"></a>
 
@@ -35,7 +37,7 @@ The underlying reflection groups can be arbitrary and also the parameters can be
 
 You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26). CHAMP comes along with a large database (~350MB) containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored with [Git Large File Storage](https://git-lfs.github.com). So, to get CHAMP you can either:
 
-* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) along with the ReflectionGroups database that you can find under the release assets. The database needs to be extracted in the ```DB``` directory of CHAMP.
+* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP along with the database that you can find under the release assets. The database needs to be extracted in the directory of CHAMP.
 * Clone the Git repository. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com). Then you can do the usual ```git clone https://github.com/ulthiel/champ``` and the database will be cloned as well.
 
 You can then run CHAMP via ```./champ```. 
@@ -46,7 +48,7 @@ I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The Re
 
 ## Complex reflection groups
 
-Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package from 2014 (there were some character label changes afterwards but this is not dramatic). The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
+Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package from 2014 (there were some character label changes afterwards but this is not dramatic; everything in CHAMP is consistent). The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
 
 The following examples demonstrate how to use all functions around complex reflection groups:
 
@@ -132,7 +134,7 @@ Note: I have not imported all the data for all possible groups; my main focus we
 
 ## Rational Cherednik algebras
 
-The definitition of rational Cherednik algebras used in Champ is exactly the one by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114). It's best to begin with an example straightaway.
+The definitition of rational Cherednik algebras used in CHAMP is exactly the one by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114). It's best to begin with an example straightaway.
 
 ```C++
 //Create the rational Cherednik algebra for t and c generic (valued in a
@@ -243,7 +245,7 @@ This topic is a bit technical but important. There are two kinds of parameters i
 
 For the construction of the rational Cherednik algebra in CHAMP you can take as base ring R any K-algebra that can be defined in Magma, where K is the base field of the reflection group W, and as parameters you can take any t and maps c with values in R. In particular, you can work with generic parameters, generic parameters on a, say, hyperplane, or special parameters taking values in your base field K. You have complete freedom.
 
-[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero-Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W<sub>H</sub>|-1, where W<sub>H</sub> is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
+[Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero–Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W<sub>H</sub>|-1, where W<sub>H</sub> is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
 
 The following examples should make all of the above discussion clear.
 
@@ -299,7 +301,7 @@ Rational Field
     <2, c2>
 
 //Now, let's look at k-parameters (the default):
-> k:=CherednikParameter(W);
+>k;
 > k;
 Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
     <1, 2*k1_1>
@@ -316,11 +318,11 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 
 <a name="cmspaces"></a>
 
-### Rational Cherednik algebras at t=0 and Calogero-Moser spaces
+## Rational Cherednik algebras at t=0 and Calogero–Moser spaces
 
-The rational Cherednik algebra H<sub>t=0,c</sub> has a big center Z<sub>c</sub>: it is a Poisson deformation of the symplectic singularity (V ⊕ V<sup>&ast;</sup>)/W, where W acts on V. The associated variety is called the *Calogero-Moser space* of W at parameter c. CHAMP can compute algebra generators of Z<sub>c</sub> and also a presentation of this algebra (the former works even for large groups like F<sub>4</sub>, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
+The rational Cherednik algebra H<sub>t=0,c</sub> has a big center Z<sub>c</sub>. The center is a Poisson deformation of the symplectic singularity (V ⊕ V<sup>&ast;</sup>)/W, where W acts on V. The associated variety is called the *Calogero–Moser space* of W at parameter c. CHAMP can compute algebra generators of Z<sub>c</sub> and also a presentation of this algebra (the former works even for large groups like F<sub>4</sub>, the latter involves rather complicated invariant theory computations which are even for small dihedral groups too much; but you can still get some ideas).
 
-The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed case) and Z<sub>k</sub> (k generic) for several cases. Some of the elements are extremely large (for G<sub>11</sub> there is one taking up >100MB compressed and >500MB uncompressed)! By default, all functions check the database first and load the data from there if available.
+The database contains generators of Z<sub>0</sub> (undeformed case) and Z<sub>k</sub> (k generic) for several cases. Some of the elements are extremely large (for G<sub>11</sub> there is one taking up >100MB compressed and >500MB uncompressed)! By default, all functions check the database first and load the data from there if available.
 
 
 ```C++
@@ -488,6 +490,28 @@ The ReflectionGroups database contains generators of Z<sub>0</sub> (undeformed c
 ```
 
 <a name="poisson-brackets"></a> 
+
+The degree-0 center generators for several exceptional complex reflection groups are stored in the database and are loaded automatically when requested. Here's an example:
+
+```
+> W:=ExceptionalComplexReflectionGroup(28);
+> H := RationalCherednikAlgebra(W,0);
+> CenterGeneratorsOfDegreeZero(~H);
+Fetched from DB
+Deforming center generator 1 of 6
+Found center generator in DB.
+Deforming center generator 2 of 6
+Found center generator in DB.
+Deforming center generator 3 of 6
+Found center generator in DB.
+Deforming center generator 4 of 6
+Found center generator in DB.
+Deforming center generator 5 of 6
+Found center generator in DB.
+Deforming center generator 6 of 6
+Found center generator in DB.
+```
+
 ### Poisson brackets
 
 You can compute Poisson brackets between elements in the Cherednik algebra.
@@ -561,13 +585,13 @@ Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 
 <a name="rrca-rep"></a>
 
-### Representation theory
+## Representation theory of restricted rational Cherednik algebras
 
 In CHAMP you can compute baby Verma modules (also called standard modules) for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of standard modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of standard modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
 
 <a name="rrca-conv"></a>
 
-#### Conventions
+### Conventions
 
 Let W be a complex reflection group acting on a vector space V over a field K. Let K[V] be the symmetric algebra of V<sup>&ast;</sup>. In the (restricted) rational Cherednik algebra I am putting V<sup>*</sup> in degree +1, V in degree -1, and W in degree 0. This yields a triangular decomposition H = H<sup>-</sup> ⊗ KW ⊗ H<sup>+</sup>. The standard module Δ(λ) of an irreducible W-module λ is obtained by inflating λ to a (H<sup>-</sup> ⊗ KW)-module (i.e. V acting trivial) and then inducing it to an H-module. So, as a vector space, Δ(λ) = K[V]<sub>W</sub> ⊗ λ, where K[V]<sub>W</sub> is the coinvariant algebra. With my grading convention, Δ(λ) lives in *positive* degree.
 
@@ -585,7 +609,7 @@ So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference betwe
 
 <a name="rrca-verma"></a>
 
-#### Working with modules
+### Working with modules
 
 ```C++
 > W := TypeBReflectionGroup(2);
@@ -808,25 +832,129 @@ The multiplicity computations are extremely complicated. There are some things t
 
    ~~~c++
    > W1:=ExceptionalComplexReflectionGroup(5); 
-   //This model is defined over CyclotomicField(3). But there are representations defined over CyclotomicField(12). So, we'll change base rings to CyclotomicField(12) everywhere.
+   //This model is defined over CyclotomicField(3). 
+   //But there are representations defined over CyclotomicField(12). 
+   //So, we'll change base rings to CyclotomicField(12) everywhere.
    > W := ChangeRing(W, CyclotomicField(12));
    > W`DBDir := W1`DBDir; //Needed for loading reps (and everything else) from the database.
    > Representations(~W,0);
    > LiftRepresentationsToCommonBaseField(~W);
    ~~~
 
+<a name="rrca-cmhyperplanes"></a>
+
+### Calogero–Moser hyperplanes and families
+
+The locus of parameters where the number of blocks of the restricted rational Cherednik algebra is less than the number of blocks for the generic algebra is known to be a union of hyperplanes. This locus is moreover known to be contained in the *Euler locus*, which is given by the pairwise differences of the values of the central characters of the simple modules for the generic algebra at the Euler element. To compute the Calogero–Moser hyperplanes, one can either compute the decomposition matrix on each Euler hyperplane and check whether the blocks are generic or not; or one can evaluate the central characters at the degree zero generators of the generic (non-restricted) rational Cherednik algebra. The database contains the Calogero–Moser hyperplanes for exceptional complex reflection groups whenever known:
+
+```c++
+> W:=TypeBReflectionGroup(2);
+//We will compute the CM hyperplanes and families via central characters
+> H := RationalCherednikAlgebra(W,0);
+> CalogeroMoserFamilies(~H);
+//The attribute H`CalogeroMoserFamilies is then an associative array with keys being the CM
+//hyperplanes and entries being the CM families.
+> H`CalogeroMoserFamilies;
+Associative Array with index universe Polynomial ring of rank 2 over Rational Field
+> Keys(H`CalogeroMoserFamilies);
+{
+k2_1,
+k1_1,
+1,
+k1_1 + k2_1,
+k1_1 - k2_1
+}
+//Here's a shortcut:
+> CalogeroMoserHyperplanes(H);
+{
+k2_1,
+k1_1,
+1,
+k1_1 + k2_1,
+k1_1 - k2_1
+}
+//Get the base ring
+> R := Universe(Keys( H`CalogeroMoserFamilies));
+> R;
+Polynomial ring of rank 2 over Rational Field
+Order: Lexicographical
+Variables: k1_1, k2_1
+//Let's look at the CM families at k1_1-k2_1
+> H`CalogeroMoserFamilies[R.1-R.2];
+{
+{ 1, 2, 5 },
+{ 3 },
+{ 4 }
+}
+```
+
+For several complex reflection groups, the Calogero–Moser hyperplanes are stored in the database:
+
+```
+> W := ExceptionalComplexReflectionGroup(28);
+> CalogeroMoserHyperplanes(W);
+[
+k2_1,
+k1_1,
+k1_1 - 2*k2_1,
+k1_1 - k2_1,
+k1_1 + k2_1,
+k1_1 + 2*k2_1,
+2*k1_1 - k2_1,
+2*k1_1 + k2_1
+]
+```
+
+In some exceptional cases, one can determine the CM families by using the *Euler families* (families one gets by evaluating the central characters only at the Euler element) and then using supersingularity (see my paper "A Counter-Example to Martino’s Conjecture About Generic Calogero–Moser Families", 2014). Here's an example:
+
+```
+> W:=TypeBReflectionGroup(2);
+> c:=CherednikParameter(W,[1,1]);
+> c;
+Mapping from: { 1 .. 2 } to Rational Field
+<1, 2>
+<2, 2>
+> EulerFamilies(W,c);
+{@
+<{@ 3 @}, -4>,
+<{@ 1, 2, 5 @}, 0>,
+<{@ 4 @}, 4>
+@}
+> CalogeroMoserFamiliesTry(W,c);
+The Euler families are:
+{@ 1, 2, 5 @}, {@ 3 @}, {@ 4 @}
+
+Singleton Euler families are CM families, so the following are already CM families:
+{@ 3 @}, {@ 4 @}
+
+The supersingular characters are:
+
+
+The following Euler families are CM families due to supersingularity:
+
+{@
+{@ 3 @},
+{@ 4 @}
+@}
+```
+
+
+
 <a name="rrca-db"></a>
 
 ### Database
 
-In the database I have stored a lot of data about the representation theory of restricted rational Cherednik algebras, especially decomposition matrices, Calogero–Moser hyperplanes and families. Here's how to access this data:
+In the database I have stored a lot of data (but certainly not all!) about the representation theory of restricted rational Cherednik algebras for exceptional complex reflection groups:
+
+* multiplicities;
+* Calogero–Moser hyperplanes and families.
+
+Here's an example:
 
 ```c++
-//The following loads the database record for the exceptional complex reflection group G4. I've called this 
-//data "Gordon" because Gordon introduced the baby Verma modules and posed the problem of determining their
-//decomposition matrices. 
-> gord := CHAMP_GetFromDB("ReflectionGroups/G4_CHEVIE/Cherednik", "Gordon"); 
-> gord;
+> W := ExceptionalComplexReflectionGroup(4);
+> rec := RestrictedRationalCherednikAlgebraRepresentationTheory(W); 
+> rec;
 rec<recformat<ParameterRing, BlGen, DecGenStratification, Data> |
 ParameterRing := Polynomial ring of rank 2 over Rational Field
 Order: Lexicographical
@@ -840,9 +968,10 @@ k1_1 + k1_2,
 2*k1_1 - k1_2
 ],
 Data := Associative Array with index universe Set of subsets of Polynomial ring of rank 2 over Rational Field>
-//The most important entry is Data. This is an associative array indexed by a set of equations in GGOR 
-//parameters. 
-> Keys(gord`Data);
+//The entry BlGen gives the CM hyperplanes.
+//The entry Data is an associative array indexed by (subsets of) the CM hyperplanes and giving
+//information about the representation theory on the (intersection of) the hyperplanes.
+> Keys(rec`Data);
 {
 {
 k1_2
@@ -866,67 +995,68 @@ k1_1 - 2*k1_2
 1
 }
 }
-//The data for a set of equations gives the data for the algebra when specialized to the subscheme defined by
-//the equations.
-//The entry BlGen gives the Calogero-Moser hyperplanes!
-//Let's look at the data for generic parameters, described by the entry {1}:
-> gord`Data[{1}];
+//Let's look at the data on the hyperplane 2*k1_1 - k2_1
+> R := rec`ParameterRing;
+> R;
+Polynomial ring of rank 2 over Rational Field
+Order: Lexicographical
+Variables: k1_1, k2_1
+> rec`Data[{2*R.1 - R.2}];
 rec<recformat<SimpleDims, SimplePSeries, SimpleGModStruct, SimpleGradedGModStruct, VermaDecomposition, CMFamilies, CuspidalCMFamilies, VermaGradedDecomposition> |
-SimpleDims := [ 24, 24, 24, 24, 24, 24, 24 ],
+SimpleDims := [ 24, 24, 3, 24, 24, 3, 18 ],
 SimplePSeries := [
 q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
 q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
-q^8 + 2*q^7 + 3*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1,
+2*q + 1,
 2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
 2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
-2*q^6 + 4*q^5 + 4*q^4 + 4*q^3 + 4*q^2 + 4*q + 2,
-3*q^4 + 6*q^3 + 6*q^2 + 6*q + 3
+q + 2,
+3*q^4 + 4*q^3 + 4*q^2 + 4*q + 3
 ],
 SimpleGModStruct := [
 (1 1 1 2 2 2 3),
 (1 1 1 2 2 2 3),
+(0 0 1 1 0 0 0),
 (1 1 1 2 2 2 3),
 (1 1 1 2 2 2 3),
-(1 1 1 2 2 2 3),
-(1 1 1 2 2 2 3),
-(1 1 1 2 2 2 3)
+(1 0 0 0 0 1 0),
+(0 1 0 1 2 1 3)
 ],
 SimpleGradedGModStruct := [
 (1   q^8   q^4   q^7 + q^5   q^3 + q   q^5 + q^3   q^6 + q^4 + q^2),
 (q^4   1   q^8   q^5 + q^3   q^7 + q^5   q^3 + q   q^6 + q^4 + q^2),
-(q^8   q^4   1   q^3 + q   q^5 + q^3   q^7 + q^5   q^6 + q^4 + q^2),
+(0 0 1 q 0 0 0),
 (          q^5             q           q^3       q^4 + 1     q^6 + q^2     q^4 + q^2 q^5 + q^3 + q),
 (          q^3           q^5             q     q^4 + q^2       q^4 + 1     q^6 + q^2 q^5 + q^3 + q),
-(            q           q^3           q^5     q^6 + q^2     q^4 + q^2       q^4 + 1 q^5 + q^3 + q),
-(          q^2           q^2           q^2       q^3 + q       q^3 + q       q^3 + q q^4 + q^2 + 1)
+(q 0 0 0 0 1 0),
+(            0           q^2             0             q       q^3 + q           q^3 q^4 + q^2 + 1)
 ],
 VermaDecomposition := [
 (1 0 0 0 0 0 0),
 (0 1 0 0 0 0 0),
-(0 0 1 0 0 0 0),
+(0 0 1 0 0 1 1),
 (0 0 0 2 0 0 0),
 (0 0 0 0 2 0 0),
-(0 0 0 0 0 2 0),
-(0 0 0 0 0 0 3)
+(0 0 2 0 0 2 2),
+(0 0 3 0 0 3 3)
 ],
 CMFamilies := {
 { 1 },
+{ 3, 6, 7 },
 { 2 },
-{ 3 },
 { 4 },
-{ 7 },
-{ 5 },
-{ 6 }
+{ 5 }
 },
 VermaGradedDecomposition := [
 (1 0 0 0 0 0 0),
 (0 1 0 0 0 0 0),
-(0 0 1 0 0 0 0),
+(  0   0   1   0   0 q^7 q^2),
 (      0       0       0 q^2 + 1       0       0       0),
 (      0       0       0       0 q^2 + 1       0       0),
-(      0       0       0       0       0 q^2 + 1       0),
-(            0             0             0             0             0             0 q^4 + q^2 + 1)
+(        0         0 q^7 + q^5         0         0   q^2 + 1   q^3 + q),
+(0   0   q^6 + q^4 + q^2   0   0   q^5 + q^3 + q   q^4 + q^2 + 1)
 ]>
+
 ```
 
-There could be more convenient access functions for the data but I didn't want to put more work into this.
+I emphasize that not everything that theoretically is computable is available in the database because it is quite complex already. In particular, one may be able to combine information to deduce further things.
