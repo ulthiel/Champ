@@ -768,7 +768,7 @@ The standard module theory of the restricted rational Cherednik algebra leads to
 * [L(λ) : μ], functions SimplesInGroupSimples and SimplesInGroupSimplesQuantum
 * [Δ(λ) : μ], functions StandardsInGroupSimples and StandardsInGroupSimplesQuantum
 
-In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm primarily targeting the *graded* multiplicities—from which you can of course immediately obtainen the ungraded ones—and this what the above mentioned functions are doing. To represent the graded multiplicities, we can fix a system of representatives of the simples *up to grading shift* and then there are *two* ways to represent the graded multiplicities:
+In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm primarily targeting the *graded* multiplicities—from which you can of course immediately obtain the ungraded ones—and this what the above mentioned functions are doing. To represent the graded multiplicities, we can fix a system of representatives of the simples *up to grading shift* and then there are *two* ways to represent the graded multiplicities:
 
 1. You collect for each simple of your system of representatives with which degree shift this occurs. We encode this information as a vector of size the number of simples in the system, and the entries are are (Laurent) polynomials in q. This is what the first named functions above are returning.
 2. You fix a grading shift [n] and collect all simples of your system of representatives occuring with this grading shift. We encode this as a (Laurent) polynomial in q with coefficients a polynomial (actually just a linear expression) in the numner of simples in the system. This is what the "Quantum" functions are returning.  
@@ -839,7 +839,7 @@ The multiplicity computations are extremely complicated. There are some things t
    //This model is defined over CyclotomicField(3). 
    //But there are representations defined over CyclotomicField(12). 
    //So, we'll change base rings to CyclotomicField(12) everywhere.
-   > W := ChangeRing(W, CyclotomicField(12));
+   > W := ChangeRing(W1, CyclotomicField(12));
    > W`DBDir := W1`DBDir; //Needed for loading reps (and everything else) from the database.
    > Representations(~W,0);
    > LiftRepresentationsToCommonBaseField(~W);
