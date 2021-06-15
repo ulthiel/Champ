@@ -7,17 +7,20 @@ A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 
 With this package you can:
 * compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114));
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space);
-* compute Poisson brackets on the center;
+* compute Poisson brackets;
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
-* compute Calogero–Moser families and hyperplanes.
+* compute Calogero–Moser families and hyperplanes;
+* compute Calogero–Moser cellular characters.
 
 The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including t≠0 and generic parameters valued in polynomial rings or rational function fields. An accompanying database contains many computational results. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
-* U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
-* C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
+* Thiel, U. (2015). Champ: a Cherednik algebra Magma package. *LMS J. Comput. Math., 18*(1), 266–307. [https://doi.org/10.1112/S1461157015000054](https://doi.org/10.1112/S1461157015000054)
+* Bonnafé, C. & Thiel, U. (2021). Calogero–Moser families and cellular characters: computational aspects.
+* Thiel, U. (2014). A counter-example to Martino's conjecture about generic Calogero-Moser families. *Algebr. Represent. Theory, 17*(5), 1323–1348. [https://doi.org/10.1007/s10468-013-9449-4](https://doi.org/10.1007/s10468-013-9449-4)
+* Thiel, U. (2017). Restricted rational Cherednik algebras. In: *Representation theory—current trends and perspectives* (pp. 681–745). Eur. Math. Soc., Zürich.
 
 ### Acknowledgements
 
-I would like to thank Cédric Bonnafé for his contributions and endurance. Furthermore, I would like to thank Dario Mathiä for testing. 
+I would like to thank Cédric Bonnafé for his contributions and endurance. Furthermore, I would like to thank Dario Mathiä for testing and feedback. 
 
 ## Contents
 
