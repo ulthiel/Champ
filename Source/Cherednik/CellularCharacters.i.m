@@ -204,7 +204,7 @@ intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::
 end intrinsic;
 
 //============================================================================
-intrinsic CMCellularCharacters(W::GrpMat, c::Map : vreg:=0)
+intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map : vreg:=0)
 {The Calogero-Moser c-cellular characters for W.}
 
 	Representations(~W);
@@ -280,57 +280,60 @@ intrinsic CMCellularCharacters(W::GrpMat, c::Map : vreg:=0)
 		disc := Discriminant(charpolssssprodss);
 		print Sprint(Cputime(t))*" seconds";
 
+
+		//Commented code
+		print "Searching for nonzero point";
+		R := BaseRing(gaudins[1]);
+		point := NonZeroPoint([Numerator(disc)] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
+
+		print point;
+
+		print "Specializing Gaudin operators";
+		gaudinsspec := [* Evaluate(D, point) : D in gaudins *];
+
+		print "Computing characteristic polynomials";
+		speccharpols := [];
+		count := 0;
+		for D in gaudinsspec do
+			count +:= 1;
+			print "Characteristic polynomial "*Sprint(count);
+			Append(~speccharpols, CharacteristicPolynomialNaive(D));
+			PrintPercentage(count, #W`Representations[0]);
+		end for;
+
+		print "Computing semisimple parts";
+		speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
+
+		print "Factorizing semisimple parts";
+		factorizations := [ Factorization(f) : f in speccharpolsss];
+
+		factors := {};
+		for f in factorizations do
+			for g in f do
+				factors join:={g[1]};
+			end for;
+		end for;
+		factors := SetToSequence(factors);
+
+		print "Computing multiplicities";
+		mults := ZeroMatrix(Integers(), #factors, #fam);
+		for l:=1 to #factors do
+			f := factors[l];
+			for i:=1 to #fam do
+				fpos := Position([factorizations[i][j][1] : j in [1..#factorizations[i]]], f);
+				if fpos eq 0 then
+					continue;
+				end if;
+				mults[l][i] := Dimension(Kernel(Evaluate(f^factorizations[i][fpos][2], gaudinsspec[i])))/Degree(f);
+			end for;
+		end for;
+
+		print mults;
+
 	end for;
 
 	return;
 
-/*
-	print "Searching for nonzero point";
-	R := BaseRing(gaudins[1]);
-	point := NonZeroPoint([Numerator(d) : d in discs] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
-
-	print "Specializaing Gaudin operators";
-	gaudinsspec := [* Evaluate(D, point) : D in gaudins *];
-
-	print "Computing characteristic polynomials";
-	speccharpols := [];
-	count := 0;
-	for D in gaudinsspec do
-		count +:= 1;
-		print "Characteristic polynomial "*Sprint(count);
-		Append(~speccharpols, CharacteristicPolynomialNaive(D));
-		PrintPercentage(count, #W`Representations[0]);
-	end for;
-
-	print "Computing semisimple parts";
-	speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
-
-	print "Factorizing semisimple parts";
-	factorizations := [ Factorization(f) : f in speccharpolsss];
-
-	factors := {};
-	for f in factorizations do
-		for g in f do
-			factors join:={g[1]};
-		end for;
-	end for;
-	factors := SetToSequence(factors);
-
-	print "Computing multiplicities";
-	mults := ZeroMatrix(Integers(), #factors, #W`Representations[0]);
-	for l:=1 to #factors do
-		f := factors[l];
-		for i:=1 to #W`Representations[0] do
-			fpos := Position([factorizations[i][j][1] : j in [1..#factorizations[i]]], f);
-			if fpos eq 0 then
-				continue;
-			end if;
-			mults[l][i] := Dimension(Kernel(Evaluate(f^factorizations[i][fpos][2], gaudinsspec[i])))/Degree(f);
-		end for;
-	end for;
-	*/
-
-	//print mults;
 
 end intrinsic;
 

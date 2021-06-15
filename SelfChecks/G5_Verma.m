@@ -13,7 +13,7 @@ print "Running self check \"G5_Verma\"";
 zeit := Cputime();
 
 G1:=ExceptionalComplexReflectionGroup(5);
-G := ChangeRing(G, CyclotomicField(12));
+G := ChangeRing(G1, CyclotomicField(12));
 G`DBDir := G1`DBDir;
 Representations(~G,0);
 LiftRepresentationsToCommonBaseField(~G,0);

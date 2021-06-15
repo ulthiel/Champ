@@ -15,6 +15,10 @@ The underlying reflection groups can be arbitrary and also the parameters can be
 * U. Thiel, [CHAMP: A Cherednik Algebra Magma Package](https://arxiv.org/abs/1403.6686), LMS J. Comput. Math. 18 (2015), no. 1, 266–307.
 * C. Bonnafé and U. Thiel, Calogero–Moser families and cellular characters: computational aspects (with C. Bonnafé). In preparation (2021).
 
+### Acknowledgements
+
+I would like to thank Cédric Bonnafé for his contributions and endurance. Furthermore, I would like to thank Dario Mathiä for testing. 
+
 ## Contents
 
 [1. Downloading an running](#downloading)  
@@ -194,8 +198,8 @@ c-parameter:
 //IMPORTANT: In Magma, matrices are acting from the *right* on vectors. Hence,
 //to keep everything consistent, I have implemented the *opposite* of the
 //rational Cherednik alebra as usually written on paper. This may be a bit
-//confusing, but in the end it's less confusing than trying to make artifically
-//make Magma act on the left.
+//confusing, but in the end it's less confusing than trying to artifically make 
+//Magma act on the left.
 ```
 
 The database contains (some) generators of the center of the rational Cherednik algebra at t=0 (see below). These elements are huge and the computation takes a lot of time, so one really wants to store them. I have implemented a function ```Rprint``` (for "reversible print") that returns program code for an element of an arbitrary Cherednik algebra allowing to reconstruct this element. Here's an example:
@@ -285,7 +289,7 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 //(this is the generic equal parameter case):
 > c := CherednikParameter(W : Type:="EG");
 > R:=Codomain(c);
-> cH:=SpecializeCherednikParameterInHyperplane(c, R.1-R.2);
+> cH:= SpecializeCherednikParameterInHyperplane(c, R.1-R.2);
 > cH;
 Mapping from: { 1 .. 2 } to Multivariate rational function field of rank 1 over
 Rational Field
@@ -301,7 +305,7 @@ Rational Field
     <2, c2>
 
 //Now, let's look at k-parameters (the default):
->k;
+> k := CherednikParameter(W);
 > k;
 Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
     <1, 2*k1_1>
