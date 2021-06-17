@@ -284,7 +284,11 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map : vreg:=0)
 		//Commented code
 		print "Searching for nonzero point";
 		R := BaseRing(gaudins[1]);
-		point := NonZeroPoint([Numerator(disc)] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
+		if vreg eq 0 then
+			point := NonZeroPoint([disc] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
+		else
+			point := NonZeroPoint([disc]);
+		end if;
 
 		print point;
 

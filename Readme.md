@@ -1018,12 +1018,7 @@ The following Euler families are CM families due to supersingularity:
 
 ### Database
 
-In the database I have stored a lot of data (but certainly not all!) about the representation theory of restricted rational Cherednik algebras for exceptional complex reflection groups:
-
-* multiplicities;
-* Calogero–Moser hyperplanes and families.
-
-Here's an example:
+In the database I have stored a lot of data (but certainly not all!) about the representation theory of restricted rational Cherednik algebras for exceptional complex reflection groups, especially multiplicities and Calogero–Moser hyperplanes and families. There could be even more data in the database and one could deduce more data from combining data but things were getting too complex and I didn't pursue this—you're free to expand this. Here's an example:
 
 ```c++
 > W := ExceptionalComplexReflectionGroup(4);
@@ -1132,5 +1127,3 @@ VermaGradedDecomposition := [
 ]>
 
 ```
-
-I emphasize that not everything that theoretically is computable is available in the database because it is quite complex already. In particular, one may be able to combine information to deduce further things.
