@@ -45,10 +45,11 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 
 You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH so that you can start Magma by calling ``magma`` in the terminal. CHAMP has an accompanying database containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality and that moreover contains many computational results. This database is stored as a [separate repository](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) with [Git Large File Storage](https://git-lfs.github.com) on my university's Git server to prevent Github's bandwidth limit on LFS storage.
 
-So, to get CHAMP and the database you can either:
+So, to get CHAMP and the database you can do *one* of the following:
 
-* Download the [latest source](https://github.com/ulthiel/Champ/archive/refs/heads/master.zip) (more up to date) or the [latest release](https://github.com/ulthiel/champ/releases/latest) (more stable) of CHAMP. Do the same with the [database](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) and place the database as the folder "Champ-DB" inside the CHAMP directory.
-* Clone the CHAMP repository via ``git clone https://github.com/ulthiel/champ`` and then inside the CHAMP directory clone the Git LFS database via ``git clone https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db Champ-DB``. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com).
+1. More stable: Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP together with the database from the release assets.
+2. More up to date: Download the [latest source of CHAMP](https://github.com/ulthiel/Champ/archive/refs/heads/master.zip) and the [latest source of the database](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db/-/archive/master/champ-db-master.zip) and place the database as the folder "Champ-DB" inside the CHAMP directory.
+3. Best for developers: Clone the CHAMP repository via ``git clone https://github.com/ulthiel/champ`` and then inside the CHAMP directory clone the Git LFS database via ``git clone https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db Champ-DB``. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com).
 
 You can then run CHAMP via ```./champ```:
 

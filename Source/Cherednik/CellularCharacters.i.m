@@ -251,10 +251,10 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 			Append(~gaudins, GaudinOperatorSpecialized(W,c,vreg,W`Representations[0][i]));
 		end if;
 		print Sprint(Cputime(t))*" seconds";
-		PrintPercentage(count, #fam);
+		//PrintPercentage(count, #fam);
 	end for;
 
-	//No, we need to find yreg such that the discriminant is non-zero
+	//Now, we need to find xreg such that the discriminant is non-zero
 	//If xreg is provided, we just specialize the Gaudins.
 	//Otherwise, the computation is much more complicated.
 	//Note: if xreg is provided, the cellular characters cannot be proven
@@ -267,7 +267,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 		for D in gaudins do
 			count +:= 1;
 			t := Cputime();
-			print "Characteristic polynomial "*Sprint(count);
+			print "Characteristic polynomial "*Sprint(fam[count]);
 			if vreg eq 0 then
 				Append(~charpols, CharacteristicPolynomialNaive(D));
 			else
@@ -283,7 +283,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 		for f in charpols do
 			count +:= 1;
 			t := Cputime();
-			print "Semisimple part "*Sprint(count);
+			print "Semisimple part "*Sprint(fam[count]);
 			Append(~charpolsss, SemisimplePart(f));
 			print Sprint(Cputime(t))*" seconds";
 			PrintPercentage(count, #fam);
@@ -329,8 +329,8 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 	count := 0;
 	for D in gaudinsspec do
 		count +:= 1;
-		print "Characteristic polynomial "*Sprint(count);
-		Append(~speccharpols, CharacteristicPolynomialNaive(D));
+		print "Characteristic polynomial "*Sprint(fam[count]);
+		Append(~speccharpols, CharacteristicPolynomial(D));
 		PrintPercentage(count, #W`Representations[0]);
 	end for;
 
