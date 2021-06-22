@@ -32,9 +32,9 @@ intrinsic CHAMP_GetDBDir() -> MonStgElt
 {Returns the directory of the database of CHAMP (full path).}
 
     if CHAMP_GetOS() eq "Win" then
-    	return CHAMP_GetDir()*"DB\\";
+    	return CHAMP_GetDir()*"Champ-DB\\";
     else
-    	return CHAMP_GetDir()*"DB/";
+    	return CHAMP_GetDir()*"Champ-DB/";
     end if;
 
 end intrinsic;
