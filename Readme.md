@@ -64,7 +64,7 @@ You can then run CHAMP via ```./champ```:
 #########################################################
 #  CHAMP (CHerednik Algebra Magma Package)              #
 #  Version v1.6.0-beta-2-g009e527                       #
-#  Copyright (C) 2013-2021 Ulrich Thiel                 #
+#  Copyright (C) 2010-2021 Ulrich Thiel                 #
 #  Licensed under GNU GPLv3                             #
 #  Please cite                                          #
 #    * LMS J. Comput. Math. 18 (2015), no. 1, 266-307   #
@@ -1021,6 +1021,35 @@ The following Euler families are CM families due to supersingularity:
 @}
 //Only the big Euler family {@ 7, 8, 9, 10, 15, 16, 17, 22, 23, 24, 25, 26, 29, 30, 33, 34 @} remains.
 //I believe it's a CM family as well but I'm not sure.
+```
+
+The parameter space for the restricted rational Cherednik algebras is the same as for the cyclotomic Hecke algebras. There is a conjecture due to Martino stating that the Calogero–Moser families coincide with the Rouquier families for generic parameters, and in general the Rouquier families are unions of Calogero–Moser families. For the exceptional complex reflection groups the Rouquier families were computed by Chlouveraki and these are stored in the database. Here's to access them:
+
+```
+> W:=ExceptionalComplexReflectionGroup(4);
+> rou := RouquierFamilies(W);
+> rou;
+Associative Array with index universe Polynomial ring of rank 2 over Cyclotomic Field of order 3 and degree 2
+> Keys(rou);
+{
+k_{1,2},
+k_{1,1} - 2*k_{1,2},
+k_{1,1},
+2*k_{1,1} - k_{1,2},
+1,
+k_{1,1} + k_{1,2},
+k_{1,1} - k_{1,2}
+}
+//The parameters for the Rouquier families are exactly the GGOR parameters of W.
+//Let's look the the Rouquier families at k_{1,1} - k_{1,2}.
+> R := Universe(Keys(rou));
+> rou[R.1-R.2];
+{
+{ 1 },
+{ 2, 3, 4 },
+{ 7 },
+{ 5, 6 }
+}
 ```
 
 
