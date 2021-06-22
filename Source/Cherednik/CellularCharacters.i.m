@@ -94,7 +94,7 @@ intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt) -> AlgMatElt
         img := Zero(E);
         for s in G`ReflectionLibraryFlat do
         	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-            img +:= s`Eigenvalue*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/coroot*E.G`NumberingMap(s`Element*w);
+            img +:= s`Eigenvalue/(s`Eigenvalue-1)*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/coroot*E.G`NumberingMap(s`Element*w);
         end for;
         //print img;
         D[i]:=img;
@@ -119,7 +119,7 @@ intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt, rho::Map) -> AlgMat
     D := ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
     for s in G`ReflectionLibraryFlat do
      	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  (K!s`Eigenvalue)*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/coroot*ChangeRing(rho(s`Element), K);
+        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/coroot*ChangeRing(rho(s`Element), K);
     end for;
 
     return D;
@@ -136,7 +136,7 @@ intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, y::ModTupFldElt, vreg::Mo
     D:=ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
     for s in G`ReflectionLibraryFlat do
      	//coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  s`Eigenvalue*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
+        D +:=  s`Eigenvalue/(s`Eigenvalue-1)*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
     end for;
 
     return D;
