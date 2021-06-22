@@ -45,7 +45,7 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 
 You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH (so that you can start Magma by calling ```magma`` in the terminal). CHAMP comes with a large database (~350MB) containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored with [Git Large File Storage](https://git-lfs.github.com). So, to get CHAMP and the database you can either:
 
-* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP along with the database DB.zip from the release assets and replace the folder DB in the CHAMP directory (which just consists of LFS file pointers) by what is extracted from this archive. 
+* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP along with the database DB.zip from the release assets and *replace* the folder DB in the CHAMP directory (which just consists of LFS file pointers) by what is extracted from this archive. 
 * Clone the Git repository. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com). Then you can do the usual ```git clone https://github.com/ulthiel/champ``` and the database will be cloned as well.
 
 You can then run CHAMP via ```./champ```:
@@ -1130,7 +1130,7 @@ VermaGradedDecomposition := [
 ```
 
 <a name="rrca-cellular"></a>
-### Calogero–Moser cellular characters
+## Calogero–Moser cellular characters
 
 ```C++
 //We compute the cellular characters for G4 at equal parameters
