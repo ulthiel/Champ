@@ -1,4 +1,4 @@
-# CHAMP
+# 	CHAMP
 
 A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2013–2021.
 
@@ -10,7 +10,7 @@ With this package you can:
 * compute Poisson brackets;
 * compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
 * compute Calogero–Moser families and hyperplanes;
-* compute Calogero–Moser cellular characters.
+* compute Calogero–Moser cellular characters (as introduced by [Bonnafé–Rouquier](https://arxiv.org/abs/1708.09764)).
 
 The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including t≠0 and generic parameters valued in polynomial rings or rational function fields. An accompanying database contains many computational results. This document contains a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
 * Thiel, U. (2015). Champ: a Cherednik algebra Magma package. *LMS J. Comput. Math., 18*(1), 266–307. [https://doi.org/10.1112/S1461157015000054](https://doi.org/10.1112/S1461157015000054)
@@ -43,10 +43,12 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH (so that you can start Magma by calling ```magma`` in the terminal). CHAMP comes with a large database (~350MB) containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored with [Git Large File Storage](https://git-lfs.github.com). So, to get CHAMP and the database you can either:
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH so that you can start Magma by calling ``magma`` in the terminal. CHAMP has an accompanying database containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored as a [separate repository](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) with [Git Large File Storage](https://git-lfs.github.com) on my university's Git server to prevent Github's bandwidth limit on LFS storage.
 
-* Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP along with the database DB.zip from the release assets and *replace* the folder DB in the CHAMP directory (which just consists of LFS file pointers) by what is extracted from this archive. 
-* Clone the Git repository. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com). Then you can do the usual ```git clone https://github.com/ulthiel/champ``` and the database will be cloned as well.
+So, to get CHAMP and the database you can either:
+
+* Download the [latest source](https://github.com/ulthiel/Champ/archive/refs/heads/master.zip) (more up to date) or the [latest release](https://github.com/ulthiel/champ/releases/latest) (more stable) of CHAMP. Do the same with the [database](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) and place the database as the folder "Champ-DB" inside the CHAMP directory.
+* Clone the CHAMP repository via ``git clone https://github.com/ulthiel/champ`` and then inside the CHAMP directory clone the Git LFS database via ``git clone https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db Champ-DB``. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com).
 
 You can then run CHAMP via ```./champ```:
 
@@ -67,7 +69,7 @@ You can then run CHAMP via ```./champ```:
 > 
 ```
 
-I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. (The ReflectionGroups and G5_Verma selfcheck will take a bit of time).
+I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. The ReflectionGroups and G5_Verma selfcheck will take a bit of time.
 
 <a name="reflgroups"></a>
 
