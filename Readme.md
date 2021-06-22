@@ -8,7 +8,7 @@ With this package you can:
 * compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114));
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space);
 * compute Poisson brackets;
-* compute decomposition matrices of baby Verma modules and graded characters of simples for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
+* compute decomposition matrices of baby Verma modules and graded characters of simple modules for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
 * compute Calogero–Moser families and hyperplanes;
 * compute Calogero–Moser cellular characters (as introduced by [Bonnafé–Rouquier](https://arxiv.org/abs/1708.09764)).
 
@@ -36,14 +36,14 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2 Working with modules](#rrca-verma)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3 Computing multiplicities](#rrca-mults)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4 Calogero–Moser hyperplanes and families](#rrca-cmhyperplanes)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5 Database](#rrca-db)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5 Database](#rrca-db)  
 [5. Calogero–Moser cellular characters](#rrca-cellular)
 
 <a name="downloading"></a>
 
 ## Downloading and running
 
-You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH so that you can start Magma by calling ``magma`` in the terminal. CHAMP has an accompanying database containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality. This database is stored as a [separate repository](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) with [Git Large File Storage](https://git-lfs.github.com) on my university's Git server to prevent Github's bandwidth limit on LFS storage.
+You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.19 (current version is 2.26 and CHAMP is tested with 2.25) and the Magma executable needs to be in your system PATH so that you can start Magma by calling ``magma`` in the terminal. CHAMP has an accompanying database containing data about complex reflection groups and rational Cherednik algebras that is necessary for full functionality and that moreover contains many computational results. This database is stored as a [separate repository](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db) with [Git Large File Storage](https://git-lfs.github.com) on my university's Git server to prevent Github's bandwidth limit on LFS storage.
 
 So, to get CHAMP and the database you can either:
 
