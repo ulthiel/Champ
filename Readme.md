@@ -37,6 +37,7 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3 Computing multiplicities](#rrca-mults)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4 Calogero–Moser hyperplanes and families](#rrca-cmhyperplanes)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5 Database](#rrca-db)
+[5. Calogero–Moser cellular characters](#rrca-cellular)
 
 <a name="downloading"></a>
 
@@ -1127,3 +1128,86 @@ VermaGradedDecomposition := [
 ]>
 
 ```
+
+<a name="rrca-cellular"></a>
+### Calogero–Moser cellular characters
+
+```C++
+//We compute the cellular characters for G4 at equal parameters
+> W:=ExceptionalComplexReflectionGroup(4);
+> c:=CherednikParameter(W,[1,1]);
+//It's more efficient to compute the cellular characters per CM family or,
+//more generally, for a union of CM families, like an Euler family.
+//So, let's determine the Euler families.
+> EulerFamilies(W,c);
+{@
+<{@ 7 @}, 0>,
+<{@ 5, 6 @}, 2>,
+<{@ 2, 3, 4 @}, -4>,
+<{@ 1 @}, 8>
+@}
+//Now, let's compute the cellular characters for the Euler family {2,3,4}:
+> cellchar := CalogeroMoserCellularCharacters(W,c,{@ 2,3,4 @});
+> cellchar;
+[1 1 2]
+//This means there is one cellular character, and it decomposes as 
+//1*chi_2 + 1*chi_3 + 2*chi_4, where chi_i is the character numbered by i
+//in W`CharacterTable. In particular, the Euler family {2,3,4} is indeed 
+//a CM family.
+//We can also compute all cellular characters at once (but it is more efficient
+//to do this per family):
+> cellchar := CalogeroMoserCellularCharacters(W,c,{@ 1,2,3,4,5,6,7 @});
+> cellchar;
+[0 0 0 0 0 0 1]
+[1 0 0 0 0 0 0]
+[0 1 1 2 0 0 0]
+[0 0 0 0 1 1 0]
+//We can also automatically compute the cellular characters for all the Euler
+//families. The result is a list of pairs consisting of an Euler family and the 
+//decomposition matrix.
+> cellchar := CalogeroMoserCellularCharacters(W,c);
+[*
+<
+{@ 7 @},
+
+[1]
+>,
+
+<
+{@ 5, 6 @},
+
+[1 1]
+>,
+
+<
+{@ 2, 3, 4 @},
+
+[1 1 2]
+>,
+
+<
+{@ 1 @},
+
+[1]
+>
+*]
+//The function CalogeroMoserCellularCharacters will automatically determine a
+//regular vector. It will be more efficient to manually provide an explicit 
+//regular vector since otherwise Gaudin operators will first be computed 
+//generically and not already specialized in a regular vector:
+> V:=VectorSpace(W);
+> vreg:=V![-3,5]; //a random choice
+> IsRegular(W,vreg);
+true
+//Let's use this particular regular vector for the computation of cellular 
+//characters.
+> cellchar := CalogeroMoserCellularCharacters(W,c,{@ 2,3,4 @} : vreg:=vreg);
+
+//The computation of cellular characters uses the Gaudin operators. 
+//Here are the functions for Gaudin operators:
+> GaudinOperator(W,c); //the full Gaudin operator
+> GaudinOperator(W,c, W`Representations[0][7]); //Gaudin operator for representation #7
+> GaudinOperator(W,c, V![1,1] ); //Gaudin operator specialized at y=(1,1)
+> GaudinOperator(W,c, V![1,1], W`Representations[0][7] ); //Gaudin operator specialized at y=(1,1) and for representation #7
+```
+

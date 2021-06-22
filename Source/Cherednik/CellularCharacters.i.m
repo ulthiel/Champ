@@ -58,6 +58,26 @@ intrinsic NonZeroPoint(f::FldFunRatMElt) -> RngElt
 end intrinsic;
 
 //============================================================================
+intrinsic NonZeroPoint(f::RngMPolElt) -> RngElt
+{Returns a point x such that f(x) is nonzero.}
+
+	R := BaseRing(Parent(f));
+	point := [];
+
+	for i:=1 to Ngens(Parent(f)) do
+		x := R!0;
+		while Evaluate(f,i,x) eq 0 do
+			x +:= 1;
+		end while;
+		Append(~point, x);
+		f := Evaluate(f,i,x);
+	end for;
+
+	return point;
+
+end intrinsic;
+
+//============================================================================
 intrinsic NonZeroPoint(F::SeqEnum[FldFunRatMElt]) -> RngElt
 {Returns a point x such that f(x) is nonzero for all f in F.}
 
@@ -204,140 +224,140 @@ intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::
 end intrinsic;
 
 //============================================================================
-intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map : vreg:=0)
-{The Calogero-Moser c-cellular characters for W.}
+intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0) -> AlgMatElt
+{The decomposition matrix of the Calogero-Moser c-cellular characters for W in the family fam of characters of W (fam should be a union of CM families).}
 
 	Representations(~W);
 	ReflectionLibrary(~W);
-	eulerfam := EulerFamilies(W,c);
-	eulerfam := {@ fam[1] : fam in eulerfam @};
 
-	for fam in eulerfam do
+	if #fam eq 1 then
+		mults := IdentityMatrix(Integers(), 1);
+		return mults;
+	end if;
 
-		print "Euler family "*Sprint(fam);
-
-		if #fam eq 1 then
-			continue;
-		end if;
-
-		print "Computing Gaudin operators";
-		gaudins := [* *];
-		count := 0;
-		for i in fam do
-			print i;
-			count +:= 1;
-			t := Cputime();
-			if vreg eq 0 then
-				Append(~gaudins, GaudinOperator(W,c,W`Representations[0][i]));
-			else
-				Append(~gaudins, GaudinOperatorSpecialized(W,c,vreg,W`Representations[0][i]));
-			end if;
-			print Sprint(Cputime(t))*" seconds";
-			PrintPercentage(count, #fam);
-		end for;
-
-		//K := BaseRing(gaudins[1]);
-
-		print "Computing characteristic polynomials";
-		charpols := [ ];
-		count := 0;
-		for D in gaudins do
-			count +:= 1;
-			t := Cputime();
-			print "Characteristic polynomial "*Sprint(count);
-			if vreg eq 0 then
-				Append(~charpols, CharacteristicPolynomialNaive(D));
-			else
-				Append(~charpols, CharacteristicPolynomial(D));
-			end if;
-			print Sprint(Cputime(t))*" seconds";
-			PrintPercentage(count, #fam);
-		end for;
-
-		print "Computing semisimple parts";
-		charpolsss := [];
-		count := 0;
-		for f in charpols do
-			count +:= 1;
-			t := Cputime();
-			print "Semisimple part "*Sprint(count);
-			Append(~charpolsss, SemisimplePart(f));
-			print Sprint(Cputime(t))*" seconds";
-			PrintPercentage(count, #fam);
-		end for;
-
-		//charpolsssprodss := SemisimplePart(&*charpolsss);
-		charpolssssprodss := charpolsss[1];
-		for i:=2 to #charpolsss do
-			charpolssssprodss *:= charpolsss[i];
-			charpolssssprodss := SemisimplePart(charpolssssprodss);
-			PrintPercentage(i, #fam-1);
-		end for;
-
-		print "Computing discriminant";
-		print charpolssssprodss;
+	print "Computing Gaudin operators";
+	gaudins := [* *];
+	count := 0;
+	for i in fam do
+		print i;
+		count +:= 1;
 		t := Cputime();
-		disc := Discriminant(charpolssssprodss);
-		print Sprint(Cputime(t))*" seconds";
-
-
-		//Commented code
-		print "Searching for nonzero point";
-		R := BaseRing(gaudins[1]);
 		if vreg eq 0 then
-			point := NonZeroPoint([disc] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
+			Append(~gaudins, GaudinOperator(W,c,W`Representations[0][i]));
 		else
-			point := NonZeroPoint([disc]);
+			Append(~gaudins, GaudinOperatorSpecialized(W,c,vreg,W`Representations[0][i]));
 		end if;
-
-		print point;
-
-		print "Specializing Gaudin operators";
-		gaudinsspec := [* Evaluate(D, point) : D in gaudins *];
-
-		print "Computing characteristic polynomials";
-		speccharpols := [];
-		count := 0;
-		for D in gaudinsspec do
-			count +:= 1;
-			print "Characteristic polynomial "*Sprint(count);
-			Append(~speccharpols, CharacteristicPolynomialNaive(D));
-			PrintPercentage(count, #W`Representations[0]);
-		end for;
-
-		print "Computing semisimple parts";
-		speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
-
-		print "Factorizing semisimple parts";
-		factorizations := [ Factorization(f) : f in speccharpolsss];
-
-		factors := {};
-		for f in factorizations do
-			for g in f do
-				factors join:={g[1]};
-			end for;
-		end for;
-		factors := SetToSequence(factors);
-
-		print "Computing multiplicities";
-		mults := ZeroMatrix(Integers(), #factors, #fam);
-		for l:=1 to #factors do
-			f := factors[l];
-			for i:=1 to #fam do
-				fpos := Position([factorizations[i][j][1] : j in [1..#factorizations[i]]], f);
-				if fpos eq 0 then
-					continue;
-				end if;
-				mults[l][i] := Dimension(Kernel(Evaluate(f^factorizations[i][fpos][2], gaudinsspec[i])))/Degree(f);
-			end for;
-		end for;
-
-		print mults;
-
+		print Sprint(Cputime(t))*" seconds";
+		PrintPercentage(count, #fam);
 	end for;
 
-	return;
+	//K := BaseRing(gaudins[1]);
 
+	print "Computing characteristic polynomials";
+	charpols := [ ];
+	count := 0;
+	for D in gaudins do
+		count +:= 1;
+		t := Cputime();
+		print "Characteristic polynomial "*Sprint(count);
+		if vreg eq 0 then
+			Append(~charpols, CharacteristicPolynomialNaive(D));
+		else
+			Append(~charpols, CharacteristicPolynomial(D));
+		end if;
+		print Sprint(Cputime(t))*" seconds";
+		PrintPercentage(count, #fam);
+	end for;
+
+	print "Computing semisimple parts";
+	charpolsss := [];
+	count := 0;
+	for f in charpols do
+		count +:= 1;
+		t := Cputime();
+		print "Semisimple part "*Sprint(count);
+		Append(~charpolsss, SemisimplePart(f));
+		print Sprint(Cputime(t))*" seconds";
+		PrintPercentage(count, #fam);
+	end for;
+
+	//charpolsssprodss := SemisimplePart(&*charpolsss);
+	charpolssssprodss := charpolsss[1];
+	for i:=2 to #charpolsss do
+		charpolssssprodss *:= charpolsss[i];
+		charpolssssprodss := SemisimplePart(charpolssssprodss);
+		PrintPercentage(i, #fam-1);
+	end for;
+
+	print "Computing discriminant";
+	//print charpolssssprodss;
+	t := Cputime();
+	disc := Discriminant(charpolssssprodss);
+	print Sprint(Cputime(t))*" seconds";
+
+
+	//Commented code
+	print "Searching for nonzero point";
+	R := BaseRing(gaudins[1]);
+	if vreg eq 0 then
+		point := NonZeroPoint([disc] cat [&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]] : s in W`ReflectionLibraryFlat ]]);
+	else
+		point := NonZeroPoint(disc);
+	end if;
+
+	print point;
+
+	print "Specializing Gaudin operators";
+	gaudinsspec := [* Evaluate(D, point) : D in gaudins *];
+
+	print "Computing characteristic polynomials";
+	speccharpols := [];
+	count := 0;
+	for D in gaudinsspec do
+		count +:= 1;
+		print "Characteristic polynomial "*Sprint(count);
+		Append(~speccharpols, CharacteristicPolynomialNaive(D));
+		PrintPercentage(count, #W`Representations[0]);
+	end for;
+
+	print "Computing semisimple parts";
+	speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
+
+	print "Factorizing semisimple parts";
+	factorizations := [ Factorization(f) : f in speccharpolsss];
+
+	factors := {};
+	for f in factorizations do
+		for g in f do
+			factors join:={g[1]};
+		end for;
+	end for;
+	factors := SetToSequence(factors);
+
+	print "Computing multiplicities";
+	mults := ZeroMatrix(Integers(), #factors, #fam);
+	for l:=1 to #factors do
+		f := factors[l];
+		for i:=1 to #fam do
+			fpos := Position([factorizations[i][j][1] : j in [1..#factorizations[i]]], f);
+			if fpos eq 0 then
+				continue;
+			end if;
+			mults[l][i] := Dimension(Kernel(Evaluate(f^factorizations[i][fpos][2], gaudinsspec[i])))/Degree(f);
+		end for;
+	end for;
+
+	return mults;
+
+end intrinsic;
+
+intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map : vreg:=0) -> List
+{The decomposition matrix of the Calogero-Moser c-cellular characters for W, computed per Euler family. The output is a pair, consisting of an Euler family and the decomposition matrix.}
+
+	eulerfam := EulerFamilies(W,c);
+	eulerfam := {@ fam[1] : fam in eulerfam @};
+	mults := [* <fam,CalogeroMoserCellularCharacters(W,c,fam : vreg:=vreg)> : fam in eulerfam *];
+	return mults;
 
 end intrinsic;
 
@@ -442,5 +462,20 @@ intrinsic ChangeRing(f::RngUPolElt, phi::Map) -> RngUPolElt
 
 	P := PolynomialRing(Codomain(phi));
 	return &+[ phi(Coefficients(f)[i])*P.1^(i-1) : i in [1..#Coefficients(f) ]];
+
+end intrinsic;
+
+//============================================================================
+intrinsic IsRegular(W::GrpMat, v::ModTupFldElt) -> BoolElt
+{Returns true if v is a regular vector, i.e. v is not fixed by any reflection in W.}
+
+	Reflections(~W);
+	for s in W`Reflections do
+		if v*s eq v then
+			return false;
+		end if;
+	end for;
+
+	return true;
 
 end intrinsic;
