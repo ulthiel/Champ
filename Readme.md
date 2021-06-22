@@ -44,7 +44,8 @@ I would like to thank Cédric Bonnafé for his contributions and endurance. Furt
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3 Computing multiplicities](#rrca-mults)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4 Calogero–Moser hyperplanes and families](#rrca-cmhyperplanes)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5 Database](#rrca-db)  
-[5. Calogero–Moser cellular characters](#rrca-cellular)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.6 Rouquier families](#rrca-rouquier)  
+[5. Calogero–Moser cellular characters](#rrca-cellular)  
 
 <a name="downloading"></a>
 
@@ -1023,37 +1024,6 @@ The following Euler families are CM families due to supersingularity:
 //I believe it's a CM family as well but I'm not sure.
 ```
 
-The parameter space for the restricted rational Cherednik algebras is the same as for the cyclotomic Hecke algebras. There is a conjecture due to Martino stating that the Calogero–Moser families coincide with the Rouquier families for generic parameters, and in general the Rouquier families are unions of Calogero–Moser families. For the exceptional complex reflection groups the Rouquier families were computed by Chlouveraki and these are stored in the database. Here's to access them:
-
-```
-> W:=ExceptionalComplexReflectionGroup(4);
-> rou := RouquierFamilies(W);
-> rou;
-Associative Array with index universe Polynomial ring of rank 2 over Cyclotomic Field of order 3 and degree 2
-> Keys(rou);
-{
-k_{1,2},
-k_{1,1} - 2*k_{1,2},
-k_{1,1},
-2*k_{1,1} - k_{1,2},
-1,
-k_{1,1} + k_{1,2},
-k_{1,1} - k_{1,2}
-}
-//The parameters for the Rouquier families are exactly the GGOR parameters of W.
-//Let's look the the Rouquier families at k_{1,1} - k_{1,2}.
-> R := Universe(Keys(rou));
-> rou[R.1-R.2];
-{
-{ 1 },
-{ 2, 3, 4 },
-{ 7 },
-{ 5, 6 }
-}
-```
-
-
-
 <a name="rrca-db"></a>
 
 ### Database
@@ -1168,7 +1138,44 @@ VermaGradedDecomposition := [
 
 ```
 
+<a name="rrca-rouquier"></a>
+
+### Rouquier families
+
+The parameter space for the restricted rational Cherednik algebras is the same as for the cyclotomic Hecke algebras. There is a conjecture due to Martino stating that the Calogero–Moser families coincide with the Rouquier families for generic parameters, and in general the Rouquier families are unions of Calogero–Moser families. For the exceptional complex reflection groups the Rouquier families were computed by Chlouveraki and these are stored in the database. Here's to access them:
+
+```
+> W:=ExceptionalComplexReflectionGroup(4);
+> rou := RouquierFamilies(W);
+> rou;
+Associative Array with index universe Polynomial ring of rank 2 over Cyclotomic Field of order 3 and degree 2
+> Keys(rou);
+{
+k_{1,2},
+k_{1,1} - 2*k_{1,2},
+k_{1,1},
+2*k_{1,1} - k_{1,2},
+1,
+k_{1,1} + k_{1,2},
+k_{1,1} - k_{1,2}
+}
+//The keys of this associative array are precisely the "essential hyperplanes"
+//defined by Chlouveraki. The parameters are exactly the GGOR parameters of W.
+//Let's look the the Rouquier families at k_{1,1} - k_{1,2}.
+> R := Universe(Keys(rou));
+> rou[R.1-R.2];
+{
+{ 1 },
+{ 2, 3, 4 },
+{ 7 },
+{ 5, 6 }
+}
+```
+
+
+
 <a name="rrca-cellular"></a>
+
 ## Calogero–Moser cellular characters
 
 ```C++
