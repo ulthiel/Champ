@@ -1,6 +1,6 @@
 /*
 	CHAMP (CHerednik Algebra Magma Package)
-	Copyright (C) 2013-2021 Ulrich Thiel
+	Copyright (C) 2010-2021 Ulrich Thiel
 	Licensed under GNU GPLv3, see COPYING.
 	thiel@mathematik.uni-kl.de
 	https://ulthiel.com/math
