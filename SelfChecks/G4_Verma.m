@@ -12,7 +12,7 @@
 print "Running self check \"G4_Verma\"";
 zeit := Cputime();
 
-G:=ExceptionalComplexReflectionGroup(4);
+G:=ComplexReflectionGroup(4);
 c:=CherednikParameter(G);
 Representations(~G,0);
 H:=RestrictedRationalCherednikAlgebra(G);

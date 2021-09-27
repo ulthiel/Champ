@@ -188,13 +188,17 @@ intrinsic CalogeroMoserFamilies(~H::AlgChe : SaveToDB:=false, UseDB:=true)
 	W := H`Group;
 	R := H`BaseRing;
 
-	if UseDB and CHAMP_ExistsInDB(W`DBDir, "Cherednik/Gordon") then
+	if UseDB and assigned W`DBDir and CHAMP_ExistsInDB(W`DBDir, "Cherednik/Gordon") then
 		gordon := CHAMP_GetFromDB(W`DBDir, "Cherednik/Gordon");
-		H`CalogeroMoserFamilies := AssociativeArray(Universe(Keys(gordon)));
-		for h in Keys(gordon) do
-			H`CalogeroMoserFamilies[h] := gordon[h]`CMFamilies;
-		end for;
-		return;
+		try
+			H`CalogeroMoserFamilies := AssociativeArray(SequenceToSet(gordon`BlGen));
+			for h in Keys(H`CalogeroMoserFamilies) do
+				H`CalogeroMoserFamilies[h] := gordon`Data[{h}]`CMFamilies;
+			end for;
+			return;
+		catch e
+			;
+		end try;
 	end if;
 
 	CenterGeneratorsOfDegreeZero(~H);
@@ -350,10 +354,51 @@ intrinsic CalogeroMoserHyperplanes(H::AlgChe) -> SetEnum
 
 end intrinsic;
 
-intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SeqEnum
+intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SetEnum
 {}
 
+	ReflectionClasses(~W);
+	if #W`ReflectionClasses eq 1 then
+		return {};
+	end if;
+
 	gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
-	return gord`BlGen;
+	return SequenceToSet(gord`BlGen);
+
+end intrinsic;
+
+intrinsic CalogeroMoserFamilies(W::GrpMat) -> SeqEnum
+{}
+
+	gordon := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
+	fams := AssociativeArray(SequenceToSet(gordon`BlGen));
+	for h in Keys(fams) do
+		fams[h] := gordon`Data[{h}]`CMFamilies;
+	end for;
+	return fams;
+
+end intrinsic;
+
+intrinsic CalogeroMoserHyperplanesAvailable(W::GrpMat) -> BoolElt
+{}
+
+	try
+		hyp := CalogeroMoserHyperplanes(W);
+		return true;
+	catch e
+		return false;
+	end try;
+
+end intrinsic;
+
+intrinsic CalogeroMoserFamiliesAvailable(W::GrpMat) -> BoolElt
+{}
+
+	try
+		fams := CalogeroMoserFamilies(W);
+		return true;
+	catch e
+		return false;
+	end try;
 
 end intrinsic;

@@ -10,6 +10,36 @@
     Handlers for explicit types of reflection groups.
 */
 
+intrinsic ComplexReflectionGroup(m::RngIntElt, p::RngIntElt, n::RngIntElt : Realization:="CHEVIE") -> GrpMat
+{}
+
+  label := "G"*Sprint(m)*"_"*Sprint(p)*"_"*Sprint(n)*"_"*Realization;
+
+  if not CHAMP_ExistsInDB("ReflectionGroups/"*label, "GrpMat") then
+    error "Group is not in database. Use export/import scripts in Champ-DB/Tools to add group from CHEVIE.";
+  end if;
+
+  G := CHAMP_GetFromDB("ReflectionGroups/"*label, "GrpMat");
+  G`IsReflectionGroup := true;
+  G`IsPolynomial := true;
+
+  return G;
+
+end intrinsic;
+
+intrinsic ComplexReflectionGroup(n::RngIntElt : Realization:="CHEVIE") -> GrpMat
+{}
+
+  label := "G"*Sprint(n)*"_"*Realization;
+
+  G := CHAMP_GetFromDB("ReflectionGroups/"*label, "GrpMat");
+  G`IsReflectionGroup := true;
+  G`IsPolynomial := true;
+
+  return G;
+
+end intrinsic;
+
 //============================================================================
 intrinsic ExceptionalComplexReflectionGroup(n::RngIntElt : Realization:="CHEVIE") -> GrpMat
 {

@@ -7,7 +7,7 @@
 */
 
 /*
-	A parabolic subgroup of a matrix group (G,V) is the stabilizer G_W of a subspace W of V.
+	A parabolic subgroup of a matrix group (G,V) is the pointwise stabilizer G_W of a subspace W of V.
 */
 
 //============================================================================

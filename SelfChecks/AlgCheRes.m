@@ -11,7 +11,7 @@ zeit := Cputime();
 
 //============================================================================
 //with this test I found this strange Magma bug with scalar multiplication in group algebras.
-W:=TypeBReflectionGroup(2); c:=CherednikParameter(W,[1,5]); H:=RestrictedRationalCherednikAlgebra(W,c);
+W:=ComplexReflectionGroup(2,1,2); c:=CherednikParameter(W,[1,5]); H:=RestrictedRationalCherednikAlgebra(W,c);
 Initialize(~H);
 M:=MatrixAlgebra(H);
 R:=RModule(M);
@@ -20,7 +20,7 @@ R0 := RModule(M0);
 
 P<z>:=PolynomialRing(Rationals());
 K:=NumberField(z^2+1);
-W:=ChangeRing(TypeBReflectionGroup(2),K); c:=CherednikParameter(W,[1,5]); H:=RestrictedRationalCherednikAlgebra(W,c);
+W:=ChangeRing(ComplexReflectionGroup(2,1,2),K); c:=CherednikParameter(W,[1,5]); H:=RestrictedRationalCherednikAlgebra(W,c);
 Initialize(~H);
 MK:=MatrixAlgebra(H);
 RK:=RModule(MK);

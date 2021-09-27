@@ -12,7 +12,7 @@
 print "Running self check \"G4_AlgChe\"";
 zeit := Cputime();
 
-G:=ExceptionalComplexReflectionGroup(4);
+G:=ComplexReflectionGroup(4);
 H:=RationalCherednikAlgebra(G);
 eu:=EulerElement(H);
 x1:=H.5;

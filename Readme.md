@@ -90,7 +90,7 @@ The following examples demonstrate how to use all functions around complex refle
 
 ```C++
 //Load the Weyl group B2 in a reflection representation
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > W;
 MatrixGroup(2, Rational Field)
 Generators:
@@ -102,7 +102,7 @@ Generators:
 
 //The database location for this group is stored in the DBDir attribute
 > W`DBDir;
-ReflectionGroups/B2_CHEVIE/
+ReflectionGroups/G2_1_2_CHEVIE/
 
 //Character tables and standard character names are stored in the database.
 > CharacterTable(~W);
@@ -154,17 +154,7 @@ Generators:
     [ 0  1]
 ```
 
-You can load all sorts of reflections groups with the following commands:
-
-* ExceptionalComplexReflectionGroup (groups G4 to G37 in Shephard–Todd notation)
-* SymmetricReflectionGroup
-* TypeBReflectionGroup
-* TypeDReflectionGroup
-* DihedralReflectionGroup
-* CyclicReflectionGroup
-* ImprimitiveReflectionGroup (groups G(m,p,n) in Shephard–Todd notation)
-
-Note: I have not imported all the data for all possible groups; my main focus were the exceptional groups. More data can always be added to the database of course.
+Note: I have not imported all the data for all possible groups; my main focus were the exceptional groups. More data can always be added to the database with the export/import programs in the directory ```Champ-DB/Tools```. 
 
 <a name="che"></a>
 
@@ -175,7 +165,7 @@ The definitition of rational Cherednik algebras used in CHAMP is exactly the one
 ```C++
 //Create the rational Cherednik algebra for t and c generic (valued in a
 //polynomial ring)
-> W := TypeBReflectionGroup(2); //Weyl group of type B2 as above
+> W := ComplexReflectionGroup(2,1,2); //Weyl group of type B2 as above
 > H := RationalCherednikAlgebra(W : Type:="EG"); //I will explain the EG below
 > H;
 Rational Cherednik algebra
@@ -237,7 +227,7 @@ c-parameter:
 The database contains (some) generators of the center of the rational Cherednik algebra at t=0 (see below). These elements are huge and the computation takes a lot of time, so one really wants to store them. I have implemented a function ```Rprint``` (for "reversible print") that returns program code for an element of an arbitrary Cherednik algebra allowing to reconstruct this element. Here's an example:
 
 ```
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > H := RationalCherednikAlgebra(W : Type:="EG");
 > Rprint(H.1);
 /*
@@ -287,7 +277,7 @@ The following examples should make all of the above discussion clear.
 
 ```C++
 //First, some shortcuts for creating generic rational Cherednik algebras:
-> W:=TypeBReflectionGroup(2);
+> W:=ComplexReflectionGroup(2,1,2);
 > H:=RationalCherednikAlgebra(W); //generic t and generic k-parameter
 > H:=RationalCherednikAlgebra(W : Type:="EG"); //generic t and generic c
 > H:=RationalCherednikAlgebra(W,0); //t=0 and generic k-parameter
@@ -362,7 +352,7 @@ The database contains generators of Z<sub>0</sub> (undeformed case) and Z<sub>k<
 
 
 ```C++
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > H := RationalCherednikAlgebra(W,0);
 > CenterGenerators(H); //this needs generic parameters!
 [*
@@ -530,7 +520,7 @@ The database contains generators of Z<sub>0</sub> (undeformed case) and Z<sub>k<
 The degree-0 center generators for several exceptional complex reflection groups are stored in the database and are loaded automatically when requested. Here's an example:
 
 ```
-> W:=ExceptionalComplexReflectionGroup(28);
+> W:=ComplexReflectionGroup(28);
 > H := RationalCherednikAlgebra(W,0);
 > CenterGeneratorsOfDegreeZero(~H);
 Fetched from DB
@@ -553,7 +543,7 @@ Found center generator in DB.
 You can compute Poisson brackets between elements in the Cherednik algebra.
 
 ```
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > H := RationalCherednikAlgebra(W,0);
 > PoissonBracket(H.5,H.3);
 [-1  0]
@@ -572,7 +562,7 @@ You can compute Poisson brackets between elements in the Cherednik algebra.
 The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301) or [my paper](https://arxiv.org/abs/1603.05230). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
 
 ```C++
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > H := RestrictedRationalCherednikAlgebra(W); //generic k-parameter
 > H;
 Restricted rational Cherednik algebra
@@ -648,7 +638,7 @@ So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference betwe
 ### Working with modules
 
 ```C++
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > Representations(~W);
 > W`CharacterNames;
 [ 11., 1.1, .11, 2., .2 ]
@@ -812,7 +802,7 @@ Before going to examples, I want to note that there are some relations between t
 The ideal and simplest use case is illustrated in the following example:
 
 ```c++
-> W := TypeBReflectionGroup(2);
+> W := ComplexReflectionGroup(2,1,2);
 > H:=RestrictedRationalCherednikAlgebra(W);
 > StandardModules(~H); //computes all the standard modules
 > H`StandardModules; //carries all the standard modules; numbering as in W`Representations[0]
@@ -884,7 +874,7 @@ The multiplicity computations are extremely complicated. There are some things t
 The locus of parameters where the number of blocks of the restricted rational Cherednik algebra is less than the number of blocks for the generic algebra is known to be a union of hyperplanes. This locus is moreover known to be contained in the *Euler locus*, which is given by the pairwise differences of the values of the central characters of the simple modules for the generic algebra at the Euler element. To compute the Calogero–Moser hyperplanes, one can either compute the decomposition matrix on each Euler hyperplane and check whether the blocks are generic or not; or one can evaluate the central characters at the degree zero generators of the generic (non-restricted) rational Cherednik algebra. The database contains the Calogero–Moser hyperplanes for exceptional complex reflection groups whenever known:
 
 ```c++
-> W:=TypeBReflectionGroup(2);
+> W:=ComplexReflectionGroup(2,1,2);
 //We will compute the CM hyperplanes and families via central characters
 > H := RationalCherednikAlgebra(W,0);
 > CalogeroMoserFamilies(~H);
@@ -927,7 +917,7 @@ Variables: k1_1, k2_1
 For several complex reflection groups, the Calogero–Moser hyperplanes are stored in the database:
 
 ```
-> W := ExceptionalComplexReflectionGroup(28);
+> W := ComplexReflectionGroup(28);
 > CalogeroMoserHyperplanes(W);
 [
 k2_1,
@@ -944,7 +934,7 @@ k1_1 + 2*k2_1,
 In some exceptional cases, one can determine the CM families by using the *Euler families* (families one gets by evaluating the central characters only at the Euler element) combined with *supersingularity* and *rigidity* (see my papers "A Counter-Example to Martino’s Conjecture About Generic Calogero–Moser Families" and "Restricted Rational Cherednik Algebras"). Here's an example:
 
 ```c++
-> W:=ExceptionalComplexReflectionGroup(23); //H3
+> W:=ComplexReflectionGroup(23); //H3
 > c:=CherednikParameter(W);
 //The following gives the Euler families together with the value of the central character
 {@
@@ -1031,7 +1021,7 @@ The following Euler families are CM families due to supersingularity:
 In the database I have stored a lot of data (but certainly not all!) about the representation theory of restricted rational Cherednik algebras for exceptional complex reflection groups, especially multiplicities and Calogero–Moser hyperplanes and families. There could be even more data in the database and one could deduce more data from combining data but things were getting too complex and I didn't pursue this—you're free to expand this. Here's an example:
 
 ```c++
-> W := ExceptionalComplexReflectionGroup(4);
+> W := ComplexReflectionGroup(4);
 > rec := RestrictedRationalCherednikAlgebraRepresentationTheory(W); 
 > rec;
 rec<recformat<ParameterRing, BlGen, DecGenStratification, Data> |
@@ -1145,7 +1135,7 @@ VermaGradedDecomposition := [
 The parameter space for the restricted rational Cherednik algebras is the same as for the cyclotomic Hecke algebras. There is a conjecture due to Martino stating that the Calogero–Moser families coincide with the Rouquier families for generic parameters, and in general the Rouquier families are unions of Calogero–Moser families. For the exceptional complex reflection groups the Rouquier families were computed by Chlouveraki and these are stored in the database. Here's to access them:
 
 ```
-> W:=ExceptionalComplexReflectionGroup(4);
+> W:=ComplexReflectionGroup(4);
 > rou := RouquierFamilies(W);
 > rou;
 Associative Array with index universe Polynomial ring of rank 2 over Cyclotomic Field of order 3 and degree 2
@@ -1180,7 +1170,7 @@ k_{1,1} - k_{1,2}
 
 ```C++
 //We compute the cellular characters for G4 at equal parameters
-> W:=ExceptionalComplexReflectionGroup(4);
+> W:=ComplexReflectionGroup(4);
 > c:=CherednikParameter(W,[1,1]);
 //It's more efficient to compute the cellular characters per CM family or,
 //more generally, for a union of CM families, like an Euler family.
