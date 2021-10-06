@@ -13,7 +13,8 @@
 */
 
 declare attributes AlgChe:
-	CenterSpace; //The polynomial ring R[z_1,...,z_N] where R is the base ring of H and the z_i are the center generators of H. The Calogero-Moser space lives in the associated affine space.
+	CenterSpace, //The polynomial ring R[z_1,...,z_N] where R is the base ring of H and the z_i are the center generators of H. The Calogero-Moser space lives in the associated affine space.
+	CenterPresentation;
 
 //============================================================================
 intrinsic ChangeRing(f::RngMPolElt, phi::Map) -> RngMPolElt
@@ -192,7 +193,6 @@ fundamental invariants of R).}
 	prim := PrimaryInvariants(R);
 	sec := IrreducibleSecondaryInvariants(R);
 	invar := prim cat sec;
-	invar := fund;
 	P := PolynomialRing(BaseRing(R), #fund);
 	A := Algebra(R);
 
@@ -211,8 +211,12 @@ fundamental invariants of R).}
 end intrinsic;
 
 //============================================================================
-intrinsic CenterPresentation(H::AlgChe : Weights:=false) -> SeqEnum
+intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, UseDB:=true)
 {The presentation of the center of the generic rational Cherednik algebra H.}
+
+	if assigned H`CenterPresentation then
+		return;
+	end if;
 
 	W := H`Group;
 	SymplecticDoublingFundamentalInvariants(~W);
@@ -231,10 +235,77 @@ intrinsic CenterPresentation(H::AlgChe : Weights:=false) -> SeqEnum
 		z := Evaluate(f,H`CenterGenerators);
 		print "Evaluation done. Computing preimage.";
 		zpre := Preimage(H,z);
-		Append(~rels, phi(f)-zpre);
+		rel := phi(f)-zpre;
+		Append(~rels, rel);
 	end for;
 
-	return rels;
+	H`CenterPresentation := rels;
+
+	if SaveToDB then
+		K := BaseRing(W);
+		R := H`BaseRing;
+		P := H`CenterSpace;
+
+		str := "K := ";
+		fieldstr := "";
+		if Type(K) eq FldRat then
+			fieldstr := "RationalField()";
+			str *:= fieldstr*";\n";
+		elif Type(K) eq FldCyc then
+			fieldstr := "CyclotomicField("*Sprint(CyclotomicOrder(K))*")";
+			str *:= fieldstr*";\n";
+			str *:= Sprint(K.1)*" := RootOfUnity("*Sprint(CyclotomicOrder(K))*");\n";
+		else
+			error "Not yet implemented for this type of base ring.";
+		end if;
+
+		if Type(R) eq RngMPol then
+			if BaseRing(R) ne K then
+				error "Not yet implemented for this type of base ring.";
+			end if;
+			rstr := "PolynomialRing("*fieldstr*", "*Sprint(Ngens(R))*")";
+			str *:= "R := "*rstr*";\n";
+			for i:=1 to Ngens(R) do
+				str *:= Sprint(R.i)*" := R."*Sprint(i)*";\n";
+			end for;
+		elif Type(R) eq Fld then
+			if R ne K then
+				error "Not yet implemented for this type of base ring.";
+			end if;
+			rstr := fieldstr;
+			str *:= "R := "*rstr*";\n";
+		end if;
+
+		str *:= "P := PolynomialRing(R,"*Sprint(Ngens(P))*");\n";
+		for i:=1 to Ngens(P) do
+			str *:= Sprint(P.i)*" := P."*Sprint(i)*";\n";
+		end for;
+
+		for i:=1 to #rels do
+			str *:= "rel"*Sprint(i)*" := "*Sprint(rels[i])*";\n";
+		end for;
+
+		str *:= "\n";
+		str *:= "return [";
+		for i:=1 to #rels do
+			str *:= "f"*Sprint(i);
+			if i lt #rels then
+				str *:= ",";
+			end if;
+		end for;
+		str *:= "]";
+
+		CHAMP_SaveToDB(str, H`DBDir, "CenterPresentation");
+
+	end if;
+
+end intrinsic;
+
+intrinsic CenterPresentation(H::AlgChe : Weights:=false) -> SeqEnum
+{}
+
+	CenterPresentation(~H : Weights:=Weights);
+	return H`CenterPresentation;
 
 end intrinsic;
 
