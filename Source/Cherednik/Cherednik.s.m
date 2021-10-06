@@ -9,7 +9,7 @@
 		RepTheory2.i.m
     Poisson.i.m
     GordonDB.i.m
-    CMFamilies.i.m
+    Families.i.m
     RigidRepresentations.i.m
     Center.i.m
     SymplecticDoubling.i.m
@@ -21,4 +21,5 @@
 		Supersingular.i.m
 		Cuspidal.i.m
 		BlockGraph.i.m
+    MartinoConjecture.i.m
 }

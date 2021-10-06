@@ -150,8 +150,11 @@ intrinsic SymplecticDoublingFundamentalInvariants(~G::GrpMat : UseDB:=true, Save
 
 	if not assigned G`SymplecticDoublingFundamentalInvariants then
 		if not SaveToDB and UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants") then
-			G`SymplecticDoublingFundamentalInvariants := CHAMP_GetFromDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants");
-			print "Fetched from DB";
+			inv := CHAMP_GetFromDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants");
+      G`SymplecticDoublingFundamentalInvariants := [ G`SymplecticDoublingCoordinateAlgebra!f : f in inv ];
+      G`SymplecticDoubling`InvariantRing`FundamentalInvariants := G`SymplecticDoublingFundamentalInvariants;
+
+      print "Fetched from DB";
 		else
     		G`SymplecticDoublingFundamentalInvariants := FundamentalInvariants(G`SymplecticDoubling`InvariantRing);
     	end if;
@@ -406,5 +409,14 @@ intrinsic PrintSymplecticDoublingFundamentalInvariantsData(W)
 	str *:= "|-";
 
 	print str;
+
+end intrinsic;
+
+intrinsic SymplecticDoublingFundamentalInvariantsOfDegree0(W::GrpMat) -> SeqEnum
+{}
+
+  SymplecticDoublingFundamentalInvariants(~W);
+  inv := W`SymplecticDoublingFundamentalInvariants;
+  return [ i : i in [1..#inv] | Bidegree(inv[i])[1] eq Bidegree(inv[i])[2] ];
 
 end intrinsic;

@@ -185,12 +185,14 @@ end intrinsic;
 
 //===========================================================================
 intrinsic Presentation(R::RngInvar) -> SeqEnum
-{A presentation of the invariant ring R.}
+{A presentation of the invariant ring R (the relations are with respect to the
+fundamental invariants of R).}
 
 	fund := FundamentalInvariants(R);
 	prim := PrimaryInvariants(R);
 	sec := IrreducibleSecondaryInvariants(R);
 	invar := prim cat sec;
+	invar := fund;
 	P := PolynomialRing(BaseRing(R), #fund);
 	A := Algebra(R);
 

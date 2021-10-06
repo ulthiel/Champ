@@ -359,7 +359,7 @@ intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SetEnum
 
 	ReflectionClasses(~W);
 	if #W`ReflectionClasses eq 1 then
-		return {};
+		return {1};
 	end if;
 
 	gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
@@ -371,10 +371,12 @@ intrinsic CalogeroMoserFamilies(W::GrpMat) -> SeqEnum
 {}
 
 	gordon := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
-	fams := AssociativeArray(SequenceToSet(gordon`BlGen));
-	for h in Keys(fams) do
+	hyp := CalogeroMoserHyperplanes(W);
+	fams := AssociativeArray(Universe(hyp));
+	for h in hyp do
 		fams[h] := gordon`Data[{h}]`CMFamilies;
 	end for;
+	fams[1] := gordon`Data[{1}]`CMFamilies;
 	return fams;
 
 end intrinsic;

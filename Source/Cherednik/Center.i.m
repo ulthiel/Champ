@@ -307,3 +307,18 @@ intrinsic ActionOnVermaModule(chi::AlgChtrElt, z::AlgCheElt) -> RngElt
 	return act;
 
 end intrinsic;
+
+intrinsic CenterGeneratorsAvailable(H::AlgChe) -> BoolElt
+{}
+
+	W := H`Group;
+	SymplecticDoublingFundamentalInvariants(~W);
+	inv := W`SymplecticDoublingFundamentalInvariants;
+	for i:=1 to #inv do
+		if not CHAMP_ExistsInDB(H`DBDir, "CenterGenerators/"*Sprint(i)) then
+			return false;
+		end if;
+	end for;
+	return true;
+
+end intrinsic;
