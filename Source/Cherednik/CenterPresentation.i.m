@@ -218,6 +218,14 @@ intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, Use
 		return;
 	end if;
 
+	if UseDB and assigned H`DBDir and CHAMP_ExistsInDB(H`DBDir, "CenterPresentation") then
+		pres := CHAMP_GetFromDB(H`DBDir, "CenterPresentation");
+		CenterSpace(~H);
+		H`CenterPresentation := [ H`CenterSpace!f : f in pres ];
+		print "Fetched from DB";
+		return;
+	end if;
+
 	W := H`Group;
 	SymplecticDoublingFundamentalInvariants(~W);
 	R := W`SymplecticDoubling`InvariantRing;
@@ -288,7 +296,7 @@ intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, Use
 		str *:= "\n";
 		str *:= "return [";
 		for i:=1 to #rels do
-			str *:= "f"*Sprint(i);
+			str *:= "rel"*Sprint(i);
 			if i lt #rels then
 				str *:= ",";
 			end if;
@@ -301,7 +309,7 @@ intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, Use
 
 end intrinsic;
 
-intrinsic CenterPresentation(H::AlgChe : Weights:=false) -> SeqEnum
+intrinsic CenterPresentation(H::AlgChe : Weights:=false, SaveToDB := false, UseDB:=true) -> SeqEnum
 {}
 
 	CenterPresentation(~H : Weights:=Weights);
