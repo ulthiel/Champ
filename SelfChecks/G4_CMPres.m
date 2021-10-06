@@ -112,8 +112,8 @@ assert -1/4*(rels[7] - 8*rels[9]) eq 9*eu^2*Y1*X1 + 2*Y2*X2 - 27*eu^6 + 11664*K1
   + 2160*(K1^2+K1*K2+K2^2)*C*eu + 16*C^2;
 
 // Relation 8
-// 2*A*Y1^2 - 3*B*eu^2*Y1 + 144*(K1^2 + K1*K2 + K2^2)*B*Y1 + 10*eu^3*Y2 - 468*(K1^2 + K1*K2 + K2^2)*eu*Y2 - 8*C*Y2 \
-  - 1728*K1*K2*(K1+K2)*Y2 - B^3
+assert rels[8] + rels[6] eq 2*A*Y1^2 - 3*B*eu^2*Y1 + 144*(K1^2 + K1*K2 + K2^2)*B*Y1 + 10*eu^3*Y2 - 468*(K1^2 + K1*K2 + K2^2)*eu*Y2 - 8*C*Y2 \
+  - 1728*K1*K2*(K1+K2)*Y2 - B^3;
 
 // Relation 9
 assert 10*rels[9] eq 60*eu^2*Y1*X1 + 1944*(K1^2+K1*K2+K2^2)*Y1*X1 + 5*B^2*X1 + 10*Y2*X2 + 5*A^2*Y1 - 360*eu^6 + 280*C*eu^3 \
@@ -125,4 +125,4 @@ IndentPush();
 print "Time: "*Sprint(Cputime(zeit));
 IndentPop();
 
-//quit;
+quit;
