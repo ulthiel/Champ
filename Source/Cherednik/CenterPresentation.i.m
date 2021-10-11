@@ -256,7 +256,7 @@ intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, Use
 	print "Computing presentation of invariant ring.";
 	SymplecticDoublingInvariantRingPresentation(~W : SaveToDB:=SaveToDB);
 	pres := W`SymplecticDoublingInvariantRingPresentation;
-	CenterGenerators(~H);
+	CenterGenerators(~H : SaveToDB:=SaveToDB);
 	rels := [];
 	P := Generic(pres);
 	CenterSpace(~H);

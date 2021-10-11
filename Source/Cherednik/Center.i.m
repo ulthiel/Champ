@@ -151,7 +151,6 @@ intrinsic CenterGenerators(~H::AlgChe : UseDB:=true, SaveToDB:=false)
 		if assigned H`CenterGenerators and H`CenterGenerators[i] ne Zero(H) then
 			continue;
 		else
-			print "Deforming center generator "*Sprint(i)*" of "*Sprint(#W`SymplecticDoublingFundamentalInvariants);
 			CenterGenerator(~H,i : UseDB:=UseDB, SaveToDB:=SaveToDB);
 		end if;
 	end for;
@@ -178,19 +177,14 @@ intrinsic CenterGenerator(~H::AlgChe, i::RngIntElt : UseDB:=true, SaveToDB:=fals
 	end if;
 
 	if H`CenterGenerators[i] eq Zero(H) then
-		gotfromdb := false;
-		if UseDB and not SaveToDB and assigned H`DBDir then
-			if CHAMP_ExistsInDB(H`DBDir, "CenterGenerators/"*Sprint(i)) then
-				z := CHAMP_GetFromDB(H`DBDir, "CenterGenerators/"*Sprint(i));
+		if UseDB and assigned H`DBDir and CHAMP_ExistsInDB(H`DBDir*"CenterGenerators", Sprint(i)) then
+				z := CHAMP_GetFromDB(H`DBDir*"CenterGenerators", Sprint(i));
 				H`CenterGenerators[i] := H!z;
-				delete z;	//perhaps not necessary
-				print "Found center generator in DB.";
-				gotfromdb := true;
-			end if;
+				print "Fetched center generator "*Sprint(i)*" from DB.";
+				return;
 		end if;
-		if not gotfromdb then
-			H`CenterGenerators[i] := TruncationInverse(H, W`SymplecticDoublingFundamentalInvariants[i]);
-		end if;
+		print "Deforming center generator "*Sprint(i)*" of "*Sprint(#W`SymplecticDoublingFundamentalInvariants);
+		H`CenterGenerators[i] := TruncationInverse(H, W`SymplecticDoublingFundamentalInvariants[i]);
 	end if;
 
 	if SaveToDB then
@@ -198,7 +192,7 @@ intrinsic CenterGenerator(~H::AlgChe, i::RngIntElt : UseDB:=true, SaveToDB:=fals
 			error "Algebra has no database directory assigned (needed for saving). Cannot save.";
 		end if;
 		gen, type := IsGeneric(H);
-		CHAMP_SaveToDB(Rprint(H`CenterGenerators[i]), H`DBDir, "CenterGenerators/"*Sprint(i));
+		CHAMP_SaveToDB(Rprint(H`CenterGenerators[i]), H`DBDir*"CenterGenerators", Sprint(i));
 	end if;
 
 end intrinsic;

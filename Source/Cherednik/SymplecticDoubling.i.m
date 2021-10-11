@@ -479,6 +479,10 @@ intrinsic SymplecticDoublingInvariantRingPresentation(~W::GrpMat : UseDB:=true, 
 
     str *:= Sprint(#names)*");\n";
 
+    if Type(K) eq FldCyc then
+  		str *:= Sprint(K.1)*" := RootOfUnity("*Sprint(CyclotomicOrder(K))*");\n";
+  	end if;
+
     basis := Basis(I);
 
     for i:=1 to #basis do

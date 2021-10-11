@@ -213,7 +213,7 @@ intrinsic RationalCherednikAlgebra(G::GrpMat, t::RngElt : Type:="GGOR", Rational
     R:=Codomain(c);
     H := RationalCherednikAlgebra(G, R!t,c  :    UseProductTable:=UseProductTable,UseCommutatorsTable:=UseCommutatorsTable,Poisson:=Poisson,PoissonModtSquare:=PoissonModtSquare);
     if assigned G`DBDir then
-    	H`DBDir := G`DBDir*"Cherednik/"*Type*"/Generic";
+    	H`DBDir := G`DBDir*"Cherednik/"*Type*"/Generic/";
     end if;
     return H;
 
