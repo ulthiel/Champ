@@ -386,7 +386,7 @@ intrinsic '.'(M::ModGrOld, i::RngIntElt) -> ModGrOldElt
 end intrinsic;
 
 //==============================================================================
-intrinsic Basis(M::ModGrOldp) -> List
+intrinsic Basis(M::ModGrOld) -> List
 {}
 
     return [M.i : i in [1..Dimension(M)]];

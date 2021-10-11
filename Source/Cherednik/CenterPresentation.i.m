@@ -185,15 +185,33 @@ intrinsic MonomialsOfDegree(R::RngUPol, k::RngIntElt) -> SeqEnum
 end intrinsic;
 
 //===========================================================================
-intrinsic Presentation(R::RngInvar) -> SeqEnum
+intrinsic Presentation(~R::RngInvar)
 {A presentation of the invariant ring R (the relations are with respect to the
 fundamental invariants of R).}
+
+	//Computing RelationIdeal of FundamentalInvariants is very slow.
+	//But RelationIdeal for an invariant ring is quick.
+	//However, the relations are not with respect to FundamentalInvariants but
+	//with respect to the list of PrimaryInvariants plus IrreducibleSecondaryInvariants.
+	//We transfer these relations to relations between fundamental invariants.
+
+	if assigned R`Presentation then
+		return;
+	end if;
 
 	fund := FundamentalInvariants(R);
 	prim := PrimaryInvariants(R);
 	sec := IrreducibleSecondaryInvariants(R);
 	invar := prim cat sec;
+
+	//Magma has a bug and sometimes FundamentalInvariants is not a *minimal*
+	//generating system. Then this approach doesn't work.
+	if #fund ne #invar then
+		error "Output of FundamentalInvariants is not minimal (a Magma bug in V2.22 up to V2.26-8)!";
+	end if;
+
 	P := PolynomialRing(BaseRing(R), #fund);
+	AssignNames(~P, ["z"*Sprint(i) : i in [1..#fund]]);
 	A := Algebra(R);
 
 	invarpres := [];
@@ -206,7 +224,15 @@ fundamental invariants of R).}
 
 	phi:=hom<A->P|invarpres>;
 
-	return ideal<P|[phi(r) : r in Basis(rel)]>;
+	R`Presentation := ideal<P|[phi(r) : r in Basis(rel)]>;
+
+end intrinsic;
+
+intrinsic Presentation(R::RngInvar) -> RngMPol
+{}
+
+	Presentation(~R);
+	return R`Presentation;
 
 end intrinsic;
 
@@ -221,19 +247,18 @@ intrinsic CenterPresentation(~H::AlgChe : Weights:=false, SaveToDB := false, Use
 	if UseDB and assigned H`DBDir and CHAMP_ExistsInDB(H`DBDir, "CenterPresentation") then
 		pres := CHAMP_GetFromDB(H`DBDir, "CenterPresentation");
 		CenterSpace(~H);
-		H`CenterPresentation := [ H`CenterSpace!f : f in pres ];
-		print "Fetched from DB";
+		H`CenterPresentation := [H`CenterSpace!f : f in pres];
+		print "Fetched CenterPresentation from DB";
 		return;
 	end if;
 
 	W := H`Group;
-	SymplecticDoublingFundamentalInvariants(~W);
-	R := W`SymplecticDoubling`InvariantRing;
 	print "Computing presentation of invariant ring.";
-	pres := Presentation(R);
+	SymplecticDoublingInvariantRingPresentation(~W : SaveToDB:=SaveToDB);
+	pres := W`SymplecticDoublingInvariantRingPresentation;
 	CenterGenerators(~H);
 	rels := [];
-	P := Parent(Basis(pres)[1]);
+	P := Generic(pres);
 	CenterSpace(~H);
 	phi:=hom<P->H`CenterSpace | [H`CenterSpace.i : i in [1..Ngens(H`CenterSpace)] ]>;
 	count:=0;

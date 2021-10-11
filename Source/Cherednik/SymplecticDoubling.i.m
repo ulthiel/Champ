@@ -16,6 +16,7 @@ declare attributes GrpMat:
     SymplecticDoublingPrimaryInvariants, //Primary invariants of the symplectic doubling.
 	SymplecticDoublingSecondaryInvariants, //Secondary invariants of the symplectic doubling.
     SymplecticDoublingFundamentalInvariants,
+    SymplecticDoublingInvariantRingPresentation,
     SympecticDoublingCoordinateAlgebraHilbertSeries,
     CoordinateAlgebraToSymplecticDoublingCoordinateAlgebraXpart, //K[V] to K[V] \subset K[V^*+V]
 	CoordinateAlgebraToSymplecticDoublingCoordinateAlgebraYpart; //K[V] to K[V^*] \subset K[V^*+V]
@@ -32,6 +33,10 @@ declare attributes RngMPolRes:
 	yPart, // this is K[y_1,...,y_n] ; this distinction is not really necessary here, in fact we take yPart just to be xPart but it becomes necessary for quotients.
 	xEmbedding, //the embedding xPart -> K[x_1,...,x_n] \subset P
 	yEmbedding;	//the embedding yPart -> K[y_1,...,y_n] \subset P
+
+
+declare attributes RngInvar:
+  Presentation;
 
 //===========================================================================
 intrinsic SymplecticDoubling(g::GrpMatElt) -> AlgMatElt
@@ -142,71 +147,70 @@ intrinsic SymplecticDoublingFundamentalInvariants(~G::GrpMat : UseDB:=true, Save
 	Attaches/computes fundamental invariants of the symplectic doubling.
 }
 
-    if assigned G`SymplecticDoublingFundamentalInvariants and not SaveToDB then
-        return;
-    end if;
+  if assigned G`SymplecticDoublingFundamentalInvariants then
+    return;
+  end if;
 
 	SymplecticDoubling(~G);
 
-	if not assigned G`SymplecticDoublingFundamentalInvariants then
-		if not SaveToDB and UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants") then
-			inv := CHAMP_GetFromDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants");
-      G`SymplecticDoublingFundamentalInvariants := [ G`SymplecticDoublingCoordinateAlgebra!f : f in inv ];
-      G`SymplecticDoubling`InvariantRing`FundamentalInvariants := G`SymplecticDoublingFundamentalInvariants;
+  if UseDB and assigned G`DBDir and CHAMP_ExistsInDB(G`DBDir*"Invariants", "SymplecticDoublingFundamentalInvariants") then
+    inv := CHAMP_GetFromDB(G`DBDir, "Invariants/SymplecticDoublingFundamentalInvariants");
+    G`SymplecticDoublingFundamentalInvariants := [ G`SymplecticDoublingCoordinateAlgebra!f : f in inv ];
+    G`SymplecticDoubling`InvariantRing`FundamentalInvariants := G`SymplecticDoublingFundamentalInvariants;
 
-      print "Fetched from DB";
-		else
-    		G`SymplecticDoublingFundamentalInvariants := FundamentalInvariants(G`SymplecticDoubling`InvariantRing);
-    	end if;
-    end if;
+    print "Fetched SymplecticDoublingFundamentalInvariants from DB";
+    return;
+  end if;
 
-    if SaveToDB then
-    	if not assigned G`DBDir then
-    		error "No database directory assigned to group.";
-    	end if;
-    	str := "/*\n\tSymplectic doubling fundamental invariants\n\tVersion: "*CHAMP_GetVersion()*"\n\tDate: "*Date()*"\n*/\n";
-		str *:= "P<";
-		for j:=1 to Dimension(G) do
-			str *:= "y"*Sprint(j);
-			if j lt Dimension(G) then
-				str *:= ",";
-			end if;
-		end for;
-		str *:= ",";
-		for j:=1 to Dimension(G) do
-			str *:= "x"*Sprint(j);
-			if j lt Dimension(G) then
-				str *:= ",";
-			end if;
-		end for;
+	G`SymplecticDoublingFundamentalInvariants := FundamentalInvariants(G`SymplecticDoubling`InvariantRing);
 
-    	str *:= "> := PolynomialRing(";
-    	K := BaseRing(G);
-    	if Type(K) eq FldRat then
-    		str *:= "Rationals(),";
-    	elif Type(K) eq FldCyc then
-    		str *:= "CyclotomicField("*Sprint(CyclotomicOrder(K))*"),";
-    	else
-    		error "No routine for this base ring yet.";
-    	end if;
-    	str *:= Sprint(2*Dimension(G))*");\n";
-    	if Type(K) eq FldCyc then
-    		str *:= Sprint(K.1)*" := RootOfUnity("*Sprint(CyclotomicOrder(K))*");\n";
-    	end if;
-    	for i:=1 to #G`SymplecticDoublingFundamentalInvariants do
-    		str *:= "f"*Sprint(i)*" := "*Sprint(G`SymplecticDoublingFundamentalInvariants[i])*";\n";
-    	end for;
-    	str *:= "return [";
-    	for i:=1 to #G`SymplecticDoublingFundamentalInvariants do
-    		str *:= "f"*Sprint(i);
-    		if i lt #G`SymplecticDoublingFundamentalInvariants then
-    			str *:= ",";
-    		end if;
-    	end for;
-    	str *:= "]";
-    	CHAMP_SaveToDB(str, G`DBDir, "SymplecticDoublingFundamentalInvariants");
-    	print "Saved";
-    end if;
+  if SaveToDB then
+  	if not assigned G`DBDir then
+  		error "No database directory assigned to group.";
+  	end if;
+  	str := "/*\n\tSymplectic doubling fundamental invariants\n\tVersion: "*CHAMP_GetVersion()*"\n\tDate: "*Date()*"\n*/\n";
+  	str *:= "P<";
+  	for j:=1 to Dimension(G) do
+  		str *:= "y"*Sprint(j);
+  		if j lt Dimension(G) then
+  			str *:= ",";
+  		end if;
+  	end for;
+  	str *:= ",";
+  	for j:=1 to Dimension(G) do
+  		str *:= "x"*Sprint(j);
+  		if j lt Dimension(G) then
+  			str *:= ",";
+  		end if;
+  	end for;
+
+  	str *:= "> := PolynomialRing(";
+  	K := BaseRing(G);
+  	if Type(K) eq FldRat then
+  		str *:= "Rationals(),";
+  	elif Type(K) eq FldCyc then
+  		str *:= "CyclotomicField("*Sprint(CyclotomicOrder(K))*"),";
+  	else
+  		error "No routine for this base ring yet.";
+  	end if;
+  	str *:= Sprint(2*Dimension(G))*");\n";
+  	if Type(K) eq FldCyc then
+  		str *:= Sprint(K.1)*" := RootOfUnity("*Sprint(CyclotomicOrder(K))*");\n";
+  	end if;
+  	for i:=1 to #G`SymplecticDoublingFundamentalInvariants do
+  		str *:= "f"*Sprint(i)*" := "*Sprint(G`SymplecticDoublingFundamentalInvariants[i])*";\n";
+  	end for;
+  	str *:= "return [";
+  	for i:=1 to #G`SymplecticDoublingFundamentalInvariants do
+  		str *:= "f"*Sprint(i);
+  		if i lt #G`SymplecticDoublingFundamentalInvariants then
+  			str *:= ",";
+  		end if;
+  	end for;
+  	str *:= "]";
+  	CHAMP_SaveToDB(str, G`DBDir*"Invariants", "SymplecticDoublingFundamentalInvariants");
+    print "Saved SymplecticDoublingFundamentalInvariants to DB";
+  end if;
 
 end intrinsic;
 
@@ -418,5 +422,81 @@ intrinsic SymplecticDoublingFundamentalInvariantsOfDegree0(W::GrpMat) -> SeqEnum
   SymplecticDoublingFundamentalInvariants(~W);
   inv := W`SymplecticDoublingFundamentalInvariants;
   return [ i : i in [1..#inv] | Bidegree(inv[i])[1] eq Bidegree(inv[i])[2] ];
+
+end intrinsic;
+
+
+intrinsic SymplecticDoublingInvariantRingPresentation(~W::GrpMat : UseDB:=true, SaveToDB := false)
+{}
+
+  if assigned W`SymplecticDoublingInvariantRingPresentation then
+    return ;
+  end if;
+
+  SymplecticDoublingFundamentalInvariants(~W : SaveToDB:=SaveToDB);
+
+  if UseDB and assigned W`DBDir and CHAMP_ExistsInDB(W`DBDir*"Invariants", "SymplecticDoublingInvariantRingPresentation") then
+    I := CHAMP_GetFromDB(W`DBDir*"Invariants", "SymplecticDoublingInvariantRingPresentation");
+    Iideal := ideal<Universe(I) | I>;
+    W`SymplecticDoublingInvariantRingPresentation := Iideal;
+    W`SymplecticDoubling`InvariantRing`Presentation := Iideal;
+    print "Fetched SymplecticDoublingInvariantRingPresentation from DB";
+    return;
+  end if;
+
+  Presentation(~W`SymplecticDoubling`InvariantRing);
+
+  W`SymplecticDoublingInvariantRingPresentation := W`SymplecticDoubling`InvariantRing`Presentation;
+
+  if SaveToDB then
+    if not assigned W`DBDir then
+      error "The group has no database directory assigned.";
+    end if;
+
+    I := W`SymplecticDoublingInvariantRingPresentation;
+    P := Generic(I);
+    names := Names(P);
+
+    str := "P<";
+
+    for i:=1 to #names do
+      str *:= names[i];
+      if i lt #names then
+        str *:= ",";
+      end if;
+    end for;
+
+    str *:= "> := PolynomialRing(";
+
+    K := BaseRing(W);
+    if Type(K) eq FldRat then
+      str *:= "Rationals(),";
+    elif Type(K) eq FldCyc then
+      str *:= "CyclotomicField("*Sprint(CyclotomicOrder(K))*"),";
+    else
+      error "No routine for this base ring yet.";
+    end if;
+
+    str *:= Sprint(#names)*");\n";
+
+    basis := Basis(I);
+
+    for i:=1 to #basis do
+      str *:= "rel"*Sprint(i)*" := "*Sprint(basis[i])*";\n";
+    end for;
+
+    str *:= "return [ ";
+    for i:=1 to #basis do
+      str *:= "rel"*Sprint(i);
+      if i lt #basis then
+        str *:= ", ";
+      end if;
+    end for;
+    str *:= " ]";
+
+    CHAMP_SaveToDB(str, W`DBDir*"Invariants", "SymplecticDoublingInvariantRingPresentation" );
+
+    print "Saved SymplecticDoublingInvariantRingPresentation to DB";
+  end if;
 
 end intrinsic;

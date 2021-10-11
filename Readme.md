@@ -78,8 +78,6 @@ You can then run CHAMP via ```./champ```:
 > 
 ```
 
-I advise to once run ```./selfcheck``` in the directory ```SelfCheck```. The ReflectionGroups and G5_Verma selfcheck will take a bit of time.
-
 <a name="reflgroups"></a>
 
 ## Complex reflection groups
