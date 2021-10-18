@@ -316,3 +316,10 @@ intrinsic CenterGeneratorsAvailable(H::AlgChe) -> BoolElt
 	return true;
 
 end intrinsic;
+
+intrinsic CenterSpace(H::AlgChe) -> RngMPol
+{}
+
+	return H`CenterSpace;
+
+end intrinsic;

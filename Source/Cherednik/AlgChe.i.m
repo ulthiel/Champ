@@ -776,3 +776,10 @@ intrinsic Bidegree(h::AlgCheElt) -> MonStgElt
 	end for;
 
 end intrinsic;
+
+intrinsic BaseRing(H::AlgChe) -> Rng
+{}
+
+  return H`BaseRing;
+
+end intrinsic;
