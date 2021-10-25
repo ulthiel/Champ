@@ -40,6 +40,14 @@ intrinsic PoissonMatrix(~H::AlgChe)
 
 end intrinsic;
 
+intrinsic PoissonMatrix(H::AlgChe) -> AlgMat
+{}
+
+	PoissonMatrix(~H);
+	return H`PoissonMatrix;
+
+end intrinsic;
+
 //============================================================================
 intrinsic RankStratification(M::AlgMatElt[RngMPol]) -> SeqEnum
 {
@@ -51,8 +59,13 @@ intrinsic RankStratification(M::AlgMatElt[RngMPol]) -> SeqEnum
 	o := Minimum(m,n);
 	R := BaseRing(M);
 
+	minor_ideals := [];
 
+	for d:=1 to o do
+		I := ideal<R | Minors(M, d)>;
+		Append(~minor_ideals, I);
+	end for;
 
-	return strata;
+	return minor_ideals;
 
 end intrinsic;

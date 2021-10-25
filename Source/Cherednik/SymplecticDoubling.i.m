@@ -504,3 +504,13 @@ intrinsic SymplecticDoublingInvariantRingPresentation(~W::GrpMat : UseDB:=true, 
   end if;
 
 end intrinsic;
+
+intrinsic SymplecticDoublingInvariantRingPresentation(W::GrpMat : UseDB:=true, SaveToDB := false) -> SeqEnum
+{A presentation of the invariant ring of the symplectic doubling in terms of
+fundamental invariants.}
+
+    SymplecticDoublingInvariantRingPresentation(~W : UseDB:=UseDB, SaveToDB:=SaveToDB);
+
+    return W`SymplecticDoublingInvariantRingPresentation;
+
+end intrinsic;
