@@ -362,7 +362,7 @@ intrinsic CalogeroMoserHyperplanes(H::AlgChe) -> SetEnum
 
 end intrinsic;
 
-intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SetEnum
+intrinsic CalogeroMoserHyperplanes(W::GrpMat : Type:="GGOR") -> SetEnum
 {}
 
 	ReflectionClasses(~W);
@@ -370,45 +370,55 @@ intrinsic CalogeroMoserHyperplanes(W::GrpMat) -> SetEnum
 		return {1};
 	end if;
 
-	gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
-	return SequenceToSet(gord`BlGen);
+	if Type eq "GGOR" and CHAMP_ExistsInDB(W`DBDir*"/Cherednik", "Gordon") then
+		gord := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
+		return gord`BlGen;
+	else
+		H := RationalCherednikAlgebra(W,0 : Type:=Type);
+		return CalogeroMoserHyperplanes(H);
+	end if;
 
 end intrinsic;
 
-intrinsic CalogeroMoserFamilies(W::GrpMat) -> SeqEnum
+intrinsic CalogeroMoserFamilies(W::GrpMat : Type:="GGOR") -> SeqEnum
 {}
 
-	gordon := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
-	hyp := CalogeroMoserHyperplanes(W);
-	fams := AssociativeArray(Universe(hyp));
-	for h in hyp do
-		fams[h] := gordon`Data[{h}]`CMFamilies;
-	end for;
-	fams[1] := gordon`Data[{1}]`CMFamilies;
-	return fams;
-
-end intrinsic;
-
-intrinsic CalogeroMoserHyperplanesAvailable(W::GrpMat) -> BoolElt
-{}
-
-	try
+	if Type eq "GGOR" and CHAMP_ExistsInDB(W`DBDir*"/Cherednik", "Gordon") then
+		gordon := CHAMP_GetFromDB(W`DBDir*"/Cherednik", "Gordon");
 		hyp := CalogeroMoserHyperplanes(W);
-		return true;
-	catch e
-		return false;
-	end try;
+		fams := AssociativeArray(Universe(hyp));
+		for h in hyp do
+			fams[h] := gordon`Data[{h}]`CMFamilies;
+		end for;
+		fams[1] := gordon`Data[{1}]`CMFamilies;
+		return fams;
+	else
+		H := RationalCherednikAlgebra(W,0 : Type:=Type);
+		return CalogeroMoserFamilies(H);
+	end if;
 
 end intrinsic;
-
-intrinsic CalogeroMoserFamiliesAvailable(W::GrpMat) -> BoolElt
-{}
-
-	try
-		fams := CalogeroMoserFamilies(W);
-		return true;
-	catch e
-		return false;
-	end try;
-
-end intrinsic;
+// 
+// intrinsic CalogeroMoserHyperplanesAvailable(W::GrpMat) -> BoolElt
+// {}
+//
+// 	try
+// 		hyp := CalogeroMoserHyperplanes(W);
+// 		return true;
+// 	catch e
+// 		return false;
+// 	end try;
+//
+// end intrinsic;
+//
+// intrinsic CalogeroMoserFamiliesAvailable(W::GrpMat) -> BoolElt
+// {}
+//
+// 	try
+// 		fams := CalogeroMoserFamilies(W);
+// 		return true;
+// 	catch e
+// 		return false;
+// 	end try;
+//
+// end intrinsic;

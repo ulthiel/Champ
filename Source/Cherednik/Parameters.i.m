@@ -112,6 +112,14 @@ intrinsic CherednikParameter(G::GrpMat : Type:="GGOR", Rational:=false) -> Map
         c := map<{1..N} -> K | [ <i,cvalues[i]> : i in [1..#cvalues]]>;
         return c;
 
+			elif Type eq "Spetsial" then
+				c := CherednikParameter(G : Type:="GGOR");
+				R := Codomain(c);
+				K := BaseRing(R);
+				spets := [ K!1 : i in [1..Ngens(R)] ];
+				c_spets := map<Domain(c) -> K | [<i,Evaluate(c(i),spets)> : i in Domain(c)]>;
+				return c_spets;
+
     end if;
 
     return 0;
