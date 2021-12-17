@@ -1,3 +1,6 @@
+//Compute Calogero-Moser cellular characters for the exceptional complex
+//reflection group G_n for the spetsial parameter. Writes output to a Markdown
+//file.
 n := 8;
 
 //No change from here on
@@ -21,6 +24,8 @@ eulerfams := EulerFamilies(Wnew,c);
 
 //Output
 str := "# Calogero-Moser cellular characters for G"*Sprint(n)*" for spetsial parameter\n\n";
+
+str *:= "Cellular characters and their decomposition into irreducible characters are listed per (non-trivial) Euler family.\n\n";
 
 for i:=1 to #eulerfams do
   //Skip singleton Euler family
