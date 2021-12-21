@@ -191,10 +191,12 @@ intrinsic CalogeroMoserFamilies(~H::AlgChe : SaveToDB:=false, UseDB:=true)
 	if UseDB and assigned W`DBDir and CHAMP_ExistsInDB(W`DBDir, "Cherednik/Gordon") then
 		gordon := CHAMP_GetFromDB(W`DBDir, "Cherednik/Gordon");
 		try
-			H`CalogeroMoserFamilies := AssociativeArray(SequenceToSet(gordon`BlGen));
-			for h in Keys(H`CalogeroMoserFamilies) do
+			P := gordon`BlGen;
+			H`CalogeroMoserFamilies := AssociativeArray(P);
+			for h in gordon`BlGen do
 				H`CalogeroMoserFamilies[h] := gordon`Data[{h}]`CMFamilies;
 			end for;
+			H`CalogeroMoserFamilies[1] := gordon`Data[{1}]`CMFamilies;
 			return;
 		catch e
 			;
@@ -398,7 +400,7 @@ intrinsic CalogeroMoserFamilies(W::GrpMat : Type:="GGOR") -> SeqEnum
 	end if;
 
 end intrinsic;
-// 
+//
 // intrinsic CalogeroMoserHyperplanesAvailable(W::GrpMat) -> BoolElt
 // {}
 //

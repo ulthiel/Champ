@@ -156,7 +156,7 @@ intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, y::ModTupFldElt, vreg::Mo
     D:=ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
     for s in G`ReflectionLibraryFlat do
      	//coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  s`Eigenvalue/(s`Eigenvalue-1)*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
+        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
     end for;
 
     return D;
@@ -212,7 +212,7 @@ intrinsic GaudinOperator(G::GrpMat, c::Map, rho::Map) -> AlgMatElt
 end intrinsic;
 
 //============================================================================
-intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::HomGrp) -> AlgMatElt
+intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::Map) -> AlgMatElt
 {The Gaudin operator specialized in the regular vector vreg acting on rho.}
 	K := Codomain(c);
 	S := PolynomialRing(Codomain(c), Dimension(G) : Global:=true);
@@ -491,5 +491,25 @@ intrinsic IsRegular(W::GrpMat, v::ModTupFldElt) -> BoolElt
 	end for;
 
 	return true;
+
+end intrinsic;
+
+intrinsic RandomRegularVector(W::GrpMat) -> ModTupFldElt
+{Returns a random regular vector (tries to keep the entries small).}
+
+	N := 10;
+	V := VectorSpace(W);
+	n := Dimension(V);
+	while true do
+		i := 1;
+		S := {-i..i};
+		for j:=1 to N do
+			v := V![ Random(S) : k in [1..n] ];
+			if IsRegular(W,v) then
+				return v;
+			end if;
+		end for;
+		i +:= 1;
+	end while;
 
 end intrinsic;
