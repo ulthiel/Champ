@@ -1,33 +1,34 @@
 # 	CHAMP
 
-A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2010–2021.
+A Cherednik Algebra Magma Package. By [Ulrich Thiel](https://ulthiel.com/math), 2010–2022.
 
 ## Scope
 
 With this package you can:
-* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114));
+* compute in rational Cherednik algebras (as introduced by [Etingof–Ginzburg](https://arxiv.org/abs/math/0011114); the underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including t≠0 and generic parameters valued in polynomial rings or rational function fields);
 * compute generators and a presentation of the center of the rational Cherednik algebra at t=0 (the coordinate algebra of the Calogero-Moser space);
-* compute Poisson brackets;
+* compute Poisson brackets on the rational Cherednik algebra at t=0 (and its center);
 * compute decomposition matrices of baby Verma modules and graded characters of simple modules for restricted rational Cherednik algebras (as introduced by [Gordon](https://arxiv.org/abs/math/0202301));
-* compute Calogero–Moser families and hyperplanes;
+* compute Calogero–Moser families and hyperplanes (as introduced by [Gordon](https://arxiv.org/abs/math/0202301), [Bonnafé-Rouquier](https://arxiv.org/abs/1708.09764), and [Bellamy-Schedler-Thiel](https://arxiv.org/abs/1505.00486));
+* compute cuspidal Calogero–Moser families (as introduced by [Bellamy](https://arxiv.org/abs/0911.0069));
 * compute Calogero–Moser cellular characters (as introduced by [Bonnafé–Rouquier](https://arxiv.org/abs/1708.09764)).
 
-The underlying reflection groups can be arbitrary and also the parameters can be arbitrary, including t≠0 and generic parameters valued in polynomial rings or rational function fields. An accompanying database contains many computational results. This document gives a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
-* Thiel, U. (2015). Champ: a Cherednik algebra Magma package. *LMS J. Comput. Math., 18*(1), 266–307. [https://doi.org/10.1112/S1461157015000054](https://doi.org/10.1112/S1461157015000054)
-* Bonnafé, C. & Thiel, U. (2021). Calogero–Moser families and cellular characters: computational aspects.
+An accompanying database contains many computational results. This document gives a complete overview of the functionality with many examples. The theory and algorithms are discussed in the following publications:
+* Thiel, U. (2015). Champ: a Cherednik algebra Magma package. *LMS J. Comput. Math., 18*(1), 266–307. [https://doi.org/10.1112/S1461157015000054](https://doi.org/10.1112/S1461157015000054), https://arxiv.org/abs/1403.6686
+* Bonnafé, C. & Thiel, U. (2022). Computational aspects of Calogero–Moser spaces. https://arxiv.org/abs/2112.15495
 
-And some more is in here:
+More information about the theoretical background can be found in the following papers (and in the references therein):
 
-* Thiel, U. (2014). A counter-example to Martino's conjecture about generic Calogero-Moser families. *Algebr. Represent. Theory, 17*(5), 1323–1348. [https://doi.org/10.1007/s10468-013-9449-4](https://doi.org/10.1007/s10468-013-9449-4)
-* Bellamy, G. & Thiel, U. (2016). Cuspidal Calogero-Moser and Lusztig families for Coxeter groups. *J. Algebra, 462*, 197--252. [https://doi.org/10.1016/j.jalgebra.2016.06.003](https://doi.org/10.1016/j.jalgebra.2016.06.003)
-* Thiel, U. (2017). Restricted rational Cherednik algebras. In: *Representation theory—current trends and perspectives* (pp. 681–745). Eur. Math. Soc., Zürich.
-* Bellamy, G., Schedler, T., & Thiel, U. (2018). Hyperplane arrangements associated to symplectic quotient singularities. In  *Phenomenological approach to algebraic geometry* (pp. 25–45). Polish Acad. Sci. Inst. Math., Warsaw.
+* Thiel, U. (2014). A counter-example to Martino's conjecture about generic Calogero–Moser families. *Algebr. Represent. Theory, 17*(5), 1323–1348. [https://doi.org/10.1007/s10468-013-9449-4](https://doi.org/10.1007/s10468-013-9449-4), https://arxiv.org/abs/1301.4975
+* Bellamy, G. & Thiel, U. (2016). Cuspidal Calogero-Moser and Lusztig families for Coxeter groups. *J. Algebra, 462*, 197--252. [https://doi.org/10.1016/j.jalgebra.2016.06.003](https://doi.org/10.1016/j.jalgebra.2016.06.003), https://arxiv.org/abs/1505.00486
+* Thiel, U. (2017). Restricted rational Cherednik algebras. In: *Representation theory—current trends and perspectives* (pp. 681–745). Eur. Math. Soc., Zürich. https://arxiv.org/abs/1603.05230
+* Bellamy, G., Schedler, T., & Thiel, U. (2018). Hyperplane arrangements associated to symplectic quotient singularities. In: *Phenomenological approach to algebraic geometry* (pp. 25–45). Polish Acad. Sci. Inst. Math., Warsaw. https://arxiv.org/abs/1702.04881
 
 I have written the first few lines of code back in 2010 as a beginning PhD student. I didn't expect this to become such a large project and it was going through many iterations. I used the name CHAMP for this project from 2013 on.
 
 ### Acknowledgements
 
-I would like to thank Cédric Bonnafé for his contributions and endurance. Furthermore, I would like to thank Dario Mathiä for testing and feedback. 
+I would like to thank Cédric Bonnafé for his contributions and endurance. Furthermore, I would like to thank Dario Mathiä for testing and feedback. This work is a contribution to the SFB-TRR 195 'Symbolic Tools in Mathematics and their Application' of the German Research Foundation (DFG).
 
 ## Contents
 
@@ -55,7 +56,7 @@ You need a [Magma](http://magma.maths.usyd.edu.au/magma/) version of at least 2.
 
 So, to get CHAMP and the database you can do *one* of the following:
 
-1. More stable: Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP together with the database from the release assets.
+1. Easiest and most stable: Download the [latest release](https://github.com/ulthiel/champ/releases/latest) of CHAMP together with the database from the release assets.
 2. More up to date: Download the [latest source of CHAMP](https://github.com/ulthiel/Champ/archive/refs/heads/master.zip) and the [latest source of the database](https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db/-/archive/master/champ-db-master.zip) and place the database as the folder "Champ-DB" inside the CHAMP directory.
 3. Best for developers: Clone the CHAMP repository via ``git clone https://github.com/ulthiel/champ`` and then inside the CHAMP directory clone the Git LFS database via ``git clone https://gitlab.rhrk.uni-kl.de/ulthiel/champ-db Champ-DB``. To this end, you need to install the Git LFS extension first as described [here](https://git-lfs.github.com).
 
@@ -64,8 +65,8 @@ You can then run CHAMP via ```./champ```:
 ```c++
 #########################################################
 #  CHAMP (CHerednik Algebra Magma Package)              #
-#  Version v1.6.0-beta-2-g009e527                       #
-#  Copyright (C) 2010-2021 Ulrich Thiel                 #
+#  Version v1.6.0                                       #
+#  Copyright (C) 2010-2022 Ulrich Thiel                 #
 #  Licensed under GNU GPLv3                             #
 #  Please cite                                          #
 #    * LMS J. Comput. Math. 18 (2015), no. 1, 266-307   #
@@ -82,7 +83,7 @@ You can then run CHAMP via ```./champ```:
 
 ## Complex reflection groups
 
-Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package from 2014 (there were some character label changes afterwards but this is not dramatic; everything in CHAMP is consistent). The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
+Models for several complex reflection groups, their character tables, character names, models for irreducible representations, etc. is stored in the ReflectionGroups database. The data is taken from (and compatible with) J. Michel's [CHEVIE](https://webusers.imj-prg.fr/~jean.michel/chevie/chevie.html) package from 2014 (there were some character label changes afterwards but everything in CHAMP is consistent). The reason for using a database is that we need consistent labelings (of e.g. characters) that allow us to compare results with the literature. A general philosophy in CHAMP is that most objects (like groups) will have attributes (like CharacterTable) which are set by a similarly named procedure operating on the object (using the ~ operator). Usually, it is first checked whether the data exists in the database; if not, it will be computed in a consistent way.
 
 The following examples demonstrate how to use all functions around complex reflection groups:
 
@@ -152,7 +153,7 @@ Generators:
     [ 0  1]
 ```
 
-Note: I have not imported all the data for all possible groups; my main focus were the exceptional groups. More data can always be added to the database with the export/import programs in the directory ```Champ-DB/Tools```. 
+**Remark.** I have not imported *all* the data for *all* possible groups of course. My main focus were the exceptional groups but I have also added small cases of types ABD and dihedral groups. More data can always be added to the database with the export/import programs in the directory ```Champ-DB/Tools```. 
 
 <a name="che"></a>
 
@@ -214,13 +215,9 @@ c-parameter:
 +
 [1 0]
 [0 1]*(y1*x1 + t)
-
-//IMPORTANT: In Magma, matrices are acting from the *right* on vectors. Hence,
-//to keep everything consistent, I have implemented the *opposite* of the
-//rational Cherednik alebra as usually written on paper. This may be a bit
-//confusing, but in the end it's less confusing than trying to artifically make 
-//Magma act on the left.
 ```
+
+**Remark.** In Magma, matrices are acting from the *right* on vectors. Hence, to keep everything consistent, I have implemented the *opposite* of the rational Cherednik alebra as usually written on paper. This may be a bit confusing at first, but in the end it's less confusing than trying to artificially make Magma act on the left.
 
 The database contains (some) generators of the center of the rational Cherednik algebra at t=0 (see below). These elements are huge and the computation takes a lot of time, so one really wants to store them. I have implemented a function ```Rprint``` (for "reversible print") that returns program code for an element of an arbitrary Cherednik algebra allowing to reconstruct this element. Here's an example:
 
@@ -271,15 +268,18 @@ For the construction of the rational Cherednik algebra in CHAMP you can take as 
 
 [Ginzburg-Guay-Opdam-Rouquier](https://arxiv.org/abs/math/0212036) considered a Fourier transform on the c-parameter space which makes some expressions in the parameters much simpler (such as equations for the Calogero–Moser hyperplanes). I will refer to these as *k-parameters*. While the c-parameters by Etingof-Ginzburg are indexed by conjugacy classes of reflections, the k-parameters have a double index: the first indexes an orbit [H] of reflection hyperplanes, the second is an index between 0 and |W<sub>H</sub>|-1, where W<sub>H</sub> is the stabilizer of a representative of [H]. Of course, in the end the number of parameters is the same. By default, CHAMP uses k-parameters.
 
+[Bonnafé-Rouquier](https://arxiv.org/abs/1708.09764) use another variant of the GGOR parameters. Finally, there is a notion of *spetsial* parameters (due to Broué-Malle-Michel) generalizing the equal parameter case from Weyl groups to complex reflection groups.
+
 The following examples should make all of the above discussion clear.
 
 ```C++
 //First, some shortcuts for creating generic rational Cherednik algebras:
 > W:=ComplexReflectionGroup(2,1,2);
-> H:=RationalCherednikAlgebra(W); //generic t and generic k-parameter
+> H:=RationalCherednikAlgebra(W); //generic t and generic k
 > H:=RationalCherednikAlgebra(W : Type:="EG"); //generic t and generic c
-> H:=RationalCherednikAlgebra(W,0); //t=0 and generic k-parameter
+> H:=RationalCherednikAlgebra(W,0); //t=0 and generic k
 > H:=RationalCherednikAlgebra(W,0 : Type:="EG"); //t=0 and generic c
+> H:=RationalCherednikAlgebra(W,0 : Type:="BR"); //t=0 and generic Bonnafe-Rouquier parameter
 
 //Now, let's have a closer look at parameters. Let's create a generic
 //c-parameter.
@@ -338,6 +338,13 @@ Mapping from: { 1 .. 2 } to Polynomial ring of rank 2 over Rational Field
 //again an array indexed by reflection hyperplanes in this orbit. The entries
 //of this array are the reflections for the corresponding hyperplane.
 //You can work with k-parameters exactly as with the c-parameters above.
+
+//We can also create spetsial parameters:
+> c := CherednikParameter(W : Type:="Spetsial");
+> c;
+Mapping from: { 1 .. 2 } to Rational Field
+<1, 2>
+<2, 2> 
 ```
 
 <a name="cmspaces"></a>
@@ -554,10 +561,19 @@ You can compute Poisson brackets between elements in the Cherednik algebra.
 [0 1]*(1)
 ```
 
+Always keep in mind that we use the opposite convention and this also effects the Poisson brackets. If (z<sub>i</sub>)<sub>i ∈ I</sub> is a system of generators of the center, one can express the Poisson bracket [z<sub>i</sub>,z<sub>j</sub>] in terms of the z<sub>k</sub>. This yields a matrix we call *Poisson matrix*. It can be computed as follows:
+
+```
+> W := ComplexReflectionGroup(2,1,2);
+> H := RationalCherednikAlgebra(W,0);
+> P:= PoissonMatrix(H);
+```
+
 <a name="rrca"></a>
+
 ## Restricted rational Cherednik algebras
 
-The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301) or [my paper](https://arxiv.org/abs/1603.05230). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
+The *restricted* rational Cherednik algebra is an important finite-dimensional quotient of the rational Cherednik algebra at t=0. See the paper by [Gordon](https://arxiv.org/abs/math/0202301), [my survey paper](https://arxiv.org/abs/1603.05230), and [Bonnafé-Rouquier](https://arxiv.org/abs/1708.09764). Its representation theory detects smoothness of the Calogero-Moser space (see [Bellamy-Schedler-Thiel](https://arxiv.org/abs/1505.00486)). Computation in the restricted algebra can be done in CHAMP in the same way as with the uncrestricted algebra.
 
 ```C++
 > W := ComplexReflectionGroup(2,1,2);
@@ -611,7 +627,7 @@ Matrix Algebra [ideal of A] of degree 512 and dimension 346 over Rational Field
 
 ## Representation theory of restricted rational Cherednik algebras
 
-In CHAMP you can compute baby Verma modules (also called standard modules) for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301)). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads of standard modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of standard modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
+In CHAMP you can compute baby Verma modules (also called standard modules) for restricted rational Cherednik algebras (as defined by [Gordon](https://arxiv.org/abs/math/0202301), see also [Bellamy-Thiel](https://arxiv.org/abs/1705.08024) for general theoretical background). Using modular lifting techniques I introduced in [my paper](https://arxiv.org/abs/1403.6686) you can compute the heads (i.e. the quotient by the unique maximal submodule) of standard modules (which then give all the simples of the restricted rational Cherednik algebra) as graded modules (also giving the graded W-character) and the (graded) decomposition matrix of standard modules into simples. It works surprisingly well even in huge and complicated examples, and for generic parameters as well.
 
 <a name="rrca-conv"></a>
 
@@ -648,6 +664,7 @@ So, CHAMP and Bonnafé-Rouquier use the *same* conventions. The difference betwe
 //representation 1.1:
 > rho := W`Representations[0][2];
 > M:=StandardModules(H, rho);
+> M;
 Graded module of dimension 16 over an algebra with generator degrees [ 0, 0, -1,
 -1, 1, 1 ] over Multivariate rational function field of rank 2 over Rational
 Field.
@@ -781,12 +798,12 @@ true
 
 ### Computing multiplicities
 
-The standard module theory of the restricted rational Cherednik algebra leads to the following multiplicity problems:
+The standard module theory of the restricted rational Cherednik algebra leads to the following multiplicity invariants:
 
-* [P(λ) : Δ(μ)], functions ProjectivesInSimples and ProjectivesInSimplesQuantum
-* [Δ(λ) : L(μ)], functions StandardsInSimples and StandardsInSimplesQuantum
-* [L(λ) : μ], functions SimplesInGroupSimples and SimplesInGroupSimplesQuantum
-* [Δ(λ) : μ], functions StandardsInGroupSimples and StandardsInGroupSimplesQuantum
+* [P(λ) : Δ(μ)], functions ProjectivesInSimples and ProjectivesInSimplesQuantum;
+* [Δ(λ) : L(μ)], functions StandardsInSimples and StandardsInSimplesQuantum;
+* [L(λ) : μ], functions SimplesInGroupSimples and SimplesInGroupSimplesQuantum;
+* [Δ(λ) : μ], functions StandardsInGroupSimples and StandardsInGroupSimplesQuantum.
 
 In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm primarily targeting the *graded* multiplicities—from which you can of course immediately obtain the ungraded ones—and this what the above mentioned functions are doing. To represent the graded multiplicities, we can fix a system of representatives of the simples *up to grading shift* and then there are *two* ways to represent the graded multiplicities:
 
@@ -795,7 +812,7 @@ In all cases, you can ask for both *graded* and *ungraded* multiplicities. I'm p
 
 So, these two ways of representing multiplicities is just about what to put first: simple module or grading shift. All this becomes clear in the examples below.
 
-Before going to examples, I want to note that there are some relations between the multiplicities. Brauer reciprocity (combined with the [Δ(λ)] = [∇(λ)] result by Bellamy and myself) says that [P(λ) : Δ(μ)] = [Δ(λ) : L(μ)]. The multiplicities [Δ(λ) : μ] can be computed directly with a fake degree formula by Gordon. If you compute all the [Δ(λ) : μ] and manage to compute *all* the graded modules L(λ), then you know the [L(λ) : μ] and (by a result by Bellamy and myself) you can directly compute the [Δ(λ) : L(μ)] from the *matrix* formula ([Δ(λ) : μ]) = ([Δ(λ) : L(μ)])([L(λ) : μ]). I've built in many convenience functions that allow all these computations automatically. As I will explain allow, it's not always possible to get everything automatically because it's very complicated. For this reason, I'm not using matrices to store the multiplicities but associative arrays which are allowed to have undefined entries. If a method fails, you could still try to build the (irreducible) module in another way and if you succeed you can attach it to the corresponding array and keep computing. 
+Before going to examples, I want to note that there are some relations between the multiplicities. Brauer reciprocity (combined with the [Δ(λ)] = [∇(λ)] result by [Bellamy-Thiel](https://arxiv.org/abs/1705.08024), Prop. 4.22) says that [P(λ) : Δ(μ)] = [Δ(λ) : L(μ)]. The multiplicities [Δ(λ) : μ] can be computed directly with a fake degree formula by Gordon. If you compute all the [Δ(λ) : μ] and manage to compute *all* the graded modules L(λ), then you know the [L(λ) : μ] and (by a result by [Bellamy-Thiel](https://arxiv.org/abs/1705.08024) you can directly compute the [Δ(λ) : L(μ)] from the *matrix* formula ([Δ(λ) : μ]) = ([Δ(λ) : L(μ)])([L(λ) : μ]). I've built in many convenience functions that allow all these computations automatically. As I will explain allow, it's not always possible to get everything automatically because it's very complicated. For this reason, I'm not using matrices to store the multiplicities but associative arrays which are allowed to have undefined entries. If a method fails, you could still try to build the (irreducible) module in another way and if you succeed you can attach it to the corresponding array and keep computing. 
 
 The ideal and simplest use case is illustrated in the following example:
 
@@ -846,9 +863,10 @@ I have implemented a function that produces MediaWiki code of all the representa
 MediaWiki(H);
 ```
 
+<a name="things-wrong"></a>
 #### Things that can go wrong
 
-The multiplicity computations are extremely complicated. There are some things that can go wrong generically and that will require manual fiddling.
+The multiplicity computations are extremely complicated. There are some things that can go wrong generically and that will require manual fiddling. But please note: by "can go wrong" I mean that the computation will produce an error; whenever it runs through, the result is mathematically correct.
 
 1. The function HeadOfLocalModule computes the unique irreducible quotient of a standard (which, just to remind you, is a huge module over a multivariate rational function field in characteristic zero). This uses a Las Vegas algorithm that I've presented in my original Champ paper. For some reason, it performs exceptionally well. But sometimes, you're just not lucky (like playing in Las Vegas). In this case, you could try to run the function manually a few more times or tweak its (complicated and unpredictable) parameters or you could try other things. 
 
@@ -877,7 +895,7 @@ The locus of parameters where the number of blocks of the restricted rational Ch
 > H := RationalCherednikAlgebra(W,0);
 > CalogeroMoserFamilies(~H);
 //The attribute H`CalogeroMoserFamilies is then an associative array with keys being the CM
-//hyperplanes and entries being the CM families.
+//hyperplanes and entries being the CM families. The entry 1 stands for generic parameters (not a hyperplane technically).
 > H`CalogeroMoserFamilies;
 Associative Array with index universe Polynomial ring of rank 2 over Rational Field
 > Keys(H`CalogeroMoserFamilies);
@@ -893,7 +911,6 @@ k1_1 - k2_1
 {
 k2_1,
 k1_1,
-1,
 k1_1 + k2_1,
 k1_1 - k2_1
 }
@@ -912,7 +929,7 @@ Variables: k1_1, k2_1
 }
 ```
 
-For several complex reflection groups, the Calogero–Moser hyperplanes are stored in the database:
+For many complex reflection groups, the Calogero–Moser hyperplanes are stored in the database:
 
 ```
 > W := ComplexReflectionGroup(28);
@@ -935,6 +952,7 @@ In some exceptional cases, one can determine the CM families by using the *Euler
 > W:=ComplexReflectionGroup(23); //H3
 > c:=CherednikParameter(W);
 //The following gives the Euler families together with the value of the central character
+> EulerFamilies(W,c);
 {@
 <{@ 9, 10 @}, 0>,
 <{@ 7, 8 @}, 5*k1_1>,
@@ -1200,6 +1218,7 @@ k_{1,1} - k_{1,2}
 //families. The result is a list of pairs consisting of an Euler family and the 
 //decomposition matrix.
 > cellchar := CalogeroMoserCellularCharacters(W,c);
+> cellchar;
 [*
 <
 {@ 7 @},
@@ -1225,23 +1244,14 @@ k_{1,1} - k_{1,2}
 [1]
 >
 *]
-//The function CalogeroMoserCellularCharacters will automatically determine a
-//regular vector. It will be more efficient to manually provide an explicit 
-//regular vector since otherwise Gaudin operators will first be computed 
-//generically and not already specialized in a regular vector:
-> V:=VectorSpace(W);
-> vreg:=V![-3,5]; //a random choice
-> IsRegular(W,vreg);
-true
-//Let's use this particular regular vector for the computation of cellular 
-//characters.
-> cellchar := CalogeroMoserCellularCharacters(W,c,{@ 2,3,4 @} : vreg:=vreg);
-
 //The computation of cellular characters uses the Gaudin operators. 
 //Here are the functions for Gaudin operators:
 > GaudinOperator(W,c); //the full Gaudin operator
 > GaudinOperator(W,c, W`Representations[0][7]); //Gaudin operator for representation #7
+> V:=VectorSpace(W);
 > GaudinOperator(W,c, V![1,1] ); //Gaudin operator specialized at y=(1,1)
 > GaudinOperator(W,c, V![1,1], W`Representations[0][7] ); //Gaudin operator specialized at y=(1,1) and for representation #7
 ```
+
+**Remark.** Like in the computation of decomposition matrices of standard modules it may happen that distinct coefficient rings of the group and representations may lead to errors. You can resolve them by lifting everything to a common coefficient ring as described [above](#things-wrong).
 

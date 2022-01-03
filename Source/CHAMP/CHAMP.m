@@ -12,7 +12,7 @@ print "#  CHAMP (CHerednik Algebra Magma Package)              #";
 __CHAMP_VER := CHAMP_GetVersion();
 __CHAMP_VER *:= &*[" " : i in [1..45-#__CHAMP_VER] ];
 print "#  Version "*__CHAMP_VER*"#";
-print "#  Copyright (C) 2010-2021 Ulrich Thiel                 #";
+print "#  Copyright (C) 2010-2022 Ulrich Thiel                 #";
 print "#  Licensed under GNU GPLv3                             #";
 print "#  Please cite                                          #";
 print "#    * LMS J. Comput. Math. 18 (2015), no. 1, 266-307   #";
