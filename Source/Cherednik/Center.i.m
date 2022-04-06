@@ -160,7 +160,7 @@ end intrinsic;
 intrinsic CenterGenerators(H::AlgChe : UseDB:=true, SaveToDB:=false) -> SeqEnum
 {}
 
-	CenterGenerators(~H);
+	CenterGenerators(~H : UseDB:=UseDB);
 	return H`CenterGenerators;
 
 end intrinsic;

@@ -289,7 +289,9 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 			PrintPercentage(count, #fam);
 		end for;
 
-		//charpolsssprodss := SemisimplePart(&*charpolsss);
+		print "Computing semisimple part of product";
+		return charpols,charpolsss; //for debugging
+
 		charpolssssprodss := charpolsss[1];
 		for i:=2 to #charpolsss do
 			charpolssssprodss *:= charpolsss[i];

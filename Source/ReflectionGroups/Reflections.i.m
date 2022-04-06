@@ -779,3 +779,23 @@ intrinsic RootOperator(G::GrpMat, i::RngIntElt, p::RngMPolElt : SaveToTable:=tru
     return result;
 
 end intrinsic;
+
+intrinsic ReflectionHyperplanes(W::GrpMat) -> SetEnum
+{}
+
+  ReflectionLibrary(~W);
+  hyp := { s`Hyperplane : s in Flat(ReflectionLibrary(W)) };
+  return hyp;
+
+end intrinsic;
+
+intrinsic CoxeterNumberGeneral(W::GrpMat) -> RngIntElt
+{}
+
+  ReflectionLibrary(~W);
+  N := #Reflections(W);
+  Nd := #ReflectionHyperplanes(W);
+  n := Dimension(W);
+  return Integers()!( (N+Nd)/n );
+
+end intrinsic;
