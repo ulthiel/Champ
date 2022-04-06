@@ -348,18 +348,18 @@ intrinsic CalogeroMoserFamilies(~H::AlgChe : SaveToDB:=false, UseDB:=true)
 
 end intrinsic;
 
-intrinsic CalogeroMoserFamilies(H::AlgChe) -> SetEnum
+intrinsic CalogeroMoserFamilies(H::AlgChe : UseDB:=true) -> SetEnum
 {}
 
-	CalogeroMoserFamilies(~H);
+	CalogeroMoserFamilies(~H: UseDB:=UseDB);
 	return H`CalogeroMoserFamilies;
 
 end intrinsic;
 
-intrinsic CalogeroMoserHyperplanes(H::AlgChe) -> SetEnum
+intrinsic CalogeroMoserHyperplanes(H::AlgChe : UseDB:=true) -> SetEnum
 {}
 
-	CalogeroMoserFamilies(~H);
+	CalogeroMoserFamilies(~H : UseDB:=UseDB);
 	return SetToSequence(Keys(H`CalogeroMoserFamilies) diff {1});
 
 end intrinsic;
