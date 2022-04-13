@@ -10,7 +10,206 @@
 	Joint work with Cédric Bonnafé (Montpellier).
 */
 
+//============================================================================
+intrinsic CommonBaseRingForCherednikStuff(G::GrpMat, c::Map, reps::List) -> Rng
+{A common base ring to do Cherednik type computations with G, c, and specified representations.}
 
+	L := BaseRing(G);
+
+	for i:=1 to #reps do
+		L := CommonOverfield(L, BaseRing(Codomain(reps[i])));
+	end for;
+
+	if Type(Codomain(c)) eq FldRat or Type(Codomain(c)) eq FldCyc then
+		L := CommonOverfield(L, Codomain(c));
+	elif Type(Codomain(c)) eq RngMPol or Type(Codomain(c)) eq FldFunRat then
+		L := ChangeRing(Codomain(c), L);
+	end if;
+
+	return L;
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt) -> AlgMatElt
+{The action of the Gaudin operator at y on the full group algebra.}
+
+	L := CommonBaseRingForCherednikStuff(G,c,[**]);
+
+    NumberingMap(~G);
+    ReflectionLibrary(~G);
+    K := RationalFunctionField(Codomain(c), Dimension(G)); //k(V), k=Codomain(c)
+    AssignNames(~K, ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
+    D:=ZeroMatrix(K, #G, #G);
+    E:=VectorSpace(K, #G);
+    for i:=1 to #G do
+    	w := G`InverseNumberingMap(i);
+        //image of e_w under D^{c,v,vstar}_y
+        img := Zero(E);
+        for s in G`ReflectionLibraryFlat do
+        	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
+            img +:= s`Eigenvalue/(s`Eigenvalue-1)*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/coroot*E.G`NumberingMap(s`Element*w);
+        end for;
+        //print img;
+        D[i]:=img;
+    end for;
+
+    return D;
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperator(G::GrpMat, c::Map) -> AlgMatElt
+{The full Gaudin operator.}
+
+	L := CommonBaseRingForCherednikStuff(G,c,[**]);
+
+	K := RationalFunctionField(L, Dimension(G));
+	S := RationalFunctionField(L, 2*Dimension(G));
+	phi := hom<K->S | [S.(i+Dimension(G)) : i in [1..Dimension(G)]]>;
+	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]] cat ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
+	V := VectorSpace(G);
+
+	return &+[ S.i*ChangeRing(ChangeRing(GaudinOperator(G,c,V.i),K),phi) : i in [1..Dimension(G)]];
+
+end intrinsic;
+
+
+//============================================================================
+intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt, rho::Map) -> AlgMatElt
+{The action of the Gaudin operator at y on rho.}
+
+	L := CommonBaseRingForCherednikStuff(G,c,[*rho*]);
+
+    NumberingMap(~G);
+    ReflectionLibrary(~G);
+    K := RationalFunctionField(L, Dimension(G)); //k(V), k=Codomain(c)
+    AssignNames(~K, ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
+    D:=ZeroMatrix(K, Dimension(Codomain(rho)), Dimension(Codomain(rho)));
+    E:=VectorSpace(K, Dimension(Codomain(rho)));
+
+    D := ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
+    for s in G`ReflectionLibraryFlat do
+     	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
+        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/coroot*ChangeRing(rho(s`Element), K);
+    end for;
+
+    return D;
+
+end intrinsic;
+
+
+//============================================================================
+intrinsic GaudinOperator(G::GrpMat, c::Map, rho::Map) -> AlgMatElt
+{The Gaudin operator acting on rho.}
+
+	L := CommonBaseRingForCherednikStuff(G,c,[*rho*]);
+
+	K := RationalFunctionField(L, Dimension(G));
+	S := RationalFunctionField(L, 2*Dimension(G));
+	phi := hom<K->S | [S.(i+Dimension(G)) : i in [1..Dimension(G)]]>;
+	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]] cat ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
+	V := VectorSpace(G);
+
+	return &+[ S.i*ChangeRing(ChangeRing(GaudinOperator(G,c,V.i,rho),K),phi) : i in [1..Dimension(G)]];
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperators(G::GrpMat, c::Map, fam::SetIndx) -> List
+{}
+
+	Representations(~G);
+
+	L := CommonBaseRingForCherednikStuff(G,c,[*G`Representations[0][i] : i in fam*]);
+
+	gaudins := [**];
+
+	for i in fam do
+		print i;
+		rho := G`Representations[0][i];
+		D := GaudinOperator(G,c,rho);
+		R := BaseRing(D);
+		S := ChangeRing(R, L);
+		D := ChangeRing(D, S);
+		Append(~gaudins, D);
+	end for;
+
+	return gaudins;
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, y::ModTupFldElt, vreg::ModTupFldElt, rho::Map) -> AlgMatElt
+{The action of the Gaudin operator at y specialized in the regular vector rho on rho.}
+
+	K := CommonBaseRingForCherednikStuff(G,c,[*rho*]);
+
+    NumberingMap(~G);
+    ReflectionLibrary(~G);
+
+    D:=ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
+    for s in G`ReflectionLibraryFlat do
+     	//coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
+        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
+    end for;
+
+    return D;
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::Map) -> AlgMatElt
+{The Gaudin operator specialized in the regular vector vreg acting on rho.}
+	L := CommonBaseRingForCherednikStuff(G,c,[*rho*]);
+
+	S := PolynomialRing(L, Dimension(G) : Global:=true);
+	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]]);
+	V := VectorSpace(G);
+
+	return &+[ S.i*ChangeRing(GaudinOperatorSpecialized(G,c,V.i,vreg,rho),L) : i in [1..Dimension(G)]];
+
+end intrinsic;
+
+//============================================================================
+intrinsic GaudinOperatorsSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, fam::SetIndx) -> AlgMatElt
+{The Gaudin operator specialized in the regular vector vreg acting on rho.}
+
+	Representations(~G);
+
+	L := CommonBaseRingForCherednikStuff(G,c,[*G`Representations[0][i] : i in fam*]);
+
+	gaudins := [**];
+
+	for i in fam do
+		print i;
+		rho := G`Representations[0][i];
+		D := GaudinOperatorSpecialized(G,c,vreg,rho);
+		R := BaseRing(D);
+		S := ChangeRing(R, L);
+		D := ChangeRing(D, S);
+		Append(~gaudins, D);
+	end for;
+
+	return gaudins;
+
+end intrinsic;
+
+
+intrinsic DualRepresentation(f::Map) -> Map
+{}
+
+	G := Domain(f);
+	codom := Codomain(f);
+	K := BaseRing(codom);
+	n := Dimension(codom);
+	gl := GL(n, K);
+
+	mats := [ Transpose(f(g^-1)) : g in Generators(G) ];
+
+	return hom<G->gl | mats>;
+
+end intrinsic;
 
 //============================================================================
 intrinsic SemisimplePart(f::RngUPolElt) -> RngUPolElt
@@ -98,133 +297,9 @@ intrinsic NonZeroPoint(F::SeqEnum[FldFunRatMElt]) -> RngElt
 
 end intrinsic;
 
-//============================================================================
-intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt) -> AlgMatElt
-{The action of the Gaudin operator at y on the full group algebra.}
-
-    NumberingMap(~G);
-    ReflectionLibrary(~G);
-    K := RationalFunctionField(Codomain(c), Dimension(G)); //k(V), k=Codomain(c)
-    AssignNames(~K, ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
-    D:=ZeroMatrix(K, #G, #G);
-    E:=VectorSpace(K, #G);
-    for i:=1 to #G do
-    	w := G`InverseNumberingMap(i);
-        //image of e_w under D^{c,v,vstar}_y
-        img := Zero(E);
-        for s in G`ReflectionLibraryFlat do
-        	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-            img +:= s`Eigenvalue/(s`Eigenvalue-1)*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)/coroot*E.G`NumberingMap(s`Element*w);
-        end for;
-        //print img;
-        D[i]:=img;
-    end for;
-
-    return D;
-
-end intrinsic;
 
 //============================================================================
-intrinsic GaudinOperator(G::GrpMat, c::Map, y::ModTupFldElt, rho::Map) -> AlgMatElt
-{The action of the Gaudin operator at y on rho.}
-
-
-    NumberingMap(~G);
-    ReflectionLibrary(~G);
-    K := RationalFunctionField(Codomain(c), Dimension(G)); //k(V), k=Codomain(c)
-    AssignNames(~K, ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
-    D:=ZeroMatrix(K, Dimension(Codomain(rho)), Dimension(Codomain(rho)));
-    E:=VectorSpace(K, Dimension(Codomain(rho)));
-
-    D := ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
-    for s in G`ReflectionLibraryFlat do
-     	coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/coroot*ChangeRing(rho(s`Element), K);
-    end for;
-
-    return D;
-
-end intrinsic;
-
-//============================================================================
-intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, y::ModTupFldElt, vreg::ModTupFldElt, rho::Map) -> AlgMatElt
-{The action of the Gaudin operator at y specialized in the regular vector rho on rho.}
-
-    NumberingMap(~G);
-    ReflectionLibrary(~G);
-    K := Codomain(c);
-    D:=ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
-    for s in G`ReflectionLibraryFlat do
-     	//coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  (K!s`Eigenvalue/(K!s`Eigenvalue-1))*(K!c(s`ReflectionClass))*CanonicalPairing(y,s`Coroot)/CanonicalPairing(vreg,s`Coroot)*ChangeRing(rho(s`Element), K);
-    end for;
-
-    return D;
-
-end intrinsic;
-
-/*
-//============================================================================
-intrinsic GaudinOperatorModified(G::GrpMat, c::Map, y::ModTupFldElt, rho::Map) -> AlgMatElt
-{The action of the Gaudin operator at y on rho.}
-
-    NumberingMap(~G);
-    ReflectionLibrary(~G);
-    K := PolynomialRing(Codomain(c), #G`ReflectionLibraryFlat); //k(V), k=Codomain(c)
-    AssignNames(~K, ["C"*Sprint(i) : i in [1..#G`ReflectionLibraryFlat]]);
-    D:=ZeroMatrix(K, Degree(Codomain(rho)), Degree(Codomain(rho)));
-
-    for i:=1 to #G`ReflectionLibraryFlat do
-     	s := G`ReflectionLibraryFlat[i];
-     	//coroot := &+[s`Coroot[i]*K.i : i in [1..Ngens(K)]];
-        D +:=  s`Eigenvalue*c(s`ReflectionClass)*CanonicalPairing(y,s`Coroot)*K.i*ChangeRing(rho(s`Element), K);
-    end for;
-
-    return D;
-
-end intrinsic;
-*/
-
-//============================================================================
-intrinsic GaudinOperator(G::GrpMat, c::Map) -> AlgMatElt
-{The full Gaudin operator.}
-	K := RationalFunctionField(Codomain(c), Dimension(G));
-	S := RationalFunctionField(Codomain(c), 2*Dimension(G));
-	phi := hom<K->S | [S.(i+Dimension(G)) : i in [1..Dimension(G)]]>;
-	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]] cat ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
-	V := VectorSpace(G);
-
-	return &+[ S.i*ChangeRing(ChangeRing(GaudinOperator(G,c,V.i),K),phi) : i in [1..Dimension(G)]];
-
-end intrinsic;
-
-//============================================================================
-intrinsic GaudinOperator(G::GrpMat, c::Map, rho::Map) -> AlgMatElt
-{The Gaudin operator acting on rho.}
-	K := RationalFunctionField(Codomain(c), Dimension(G));
-	S := RationalFunctionField(Codomain(c), 2*Dimension(G));
-	phi := hom<K->S | [S.(i+Dimension(G)) : i in [1..Dimension(G)]]>;
-	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]] cat ["y"*Sprint(i) : i in [1..Dimension(G)] ]);
-	V := VectorSpace(G);
-
-	return &+[ S.i*ChangeRing(ChangeRing(GaudinOperator(G,c,V.i,rho),K),phi) : i in [1..Dimension(G)]];
-
-end intrinsic;
-
-//============================================================================
-intrinsic GaudinOperatorSpecialized(G::GrpMat, c::Map, vreg::ModTupFldElt, rho::Map) -> AlgMatElt
-{The Gaudin operator specialized in the regular vector vreg acting on rho.}
-	K := Codomain(c);
-	S := PolynomialRing(Codomain(c), Dimension(G) : Global:=true);
-	AssignNames(~S, ["X"*Sprint(i) : i in [1..Dimension(G)]]);
-	V := VectorSpace(G);
-
-	return &+[ S.i*ChangeRing(GaudinOperatorSpecialized(G,c,V.i,vreg,rho),K) : i in [1..Dimension(G)]];
-
-end intrinsic;
-
-//============================================================================
-intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0, xreg:=0) -> AlgMatElt
+intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::SetIndx : vreg:=0, xreg:=0) -> AlgMatElt
 {The decomposition matrix of the Calogero-Moser c-cellular characters for W in the family fam of characters of W (fam should be a union of CM families).}
 
 	Representations(~W);
@@ -239,20 +314,25 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 	//operators. Otherwise, we compute them specialized them in vreg
 	//already.
 	print "Computing Gaudin operators";
-	gaudins := [* *];
-	count := 0;
-	for i in fam do
-		print i;
-		count +:= 1;
-		t := Cputime();
-		if vreg eq 0 then
-			Append(~gaudins, GaudinOperator(W,c,W`Representations[0][i]));
-		else
-			Append(~gaudins, GaudinOperatorSpecialized(W,c,vreg,W`Representations[0][i]));
-		end if;
-		print Sprint(Cputime(t))*" seconds";
-		//PrintPercentage(count, #fam);
-	end for;
+	if vreg eq 0 then
+		gaudins := GaudinOperators(W,c,fam);
+	else
+		gaudins := GaudinOperatorsSpecialized(W,c,vreg,fam);
+	end if;
+
+	// count := 0;
+	// for i in fam do
+	// 	print i;
+	// 	count +:= 1;
+	// 	t := Cputime();
+	// 	if vreg eq 0 then
+	// 		Append(~gaudins, GaudinOperator(W,c,W`Representations[0][i]));
+	// 	else
+	// 		Append(~gaudins, GaudinOperatorSpecialized(W,c,vreg,W`Representations[0][i]));
+	// 	end if;
+	// 	print Sprint(Cputime(t))*" seconds";
+	// 	//PrintPercentage(count, #fam);
+	// end for;
 
 	//Now, we need to find xreg such that the discriminant is non-zero
 	//If xreg is provided, we just specialize the Gaudins.
@@ -290,7 +370,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 		end for;
 
 		print "Computing semisimple part of product";
-		return charpols,charpolsss; //for debugging
+		//return charpols,charpolsss; //for debugging
 
 		charpolssssprodss := charpolsss[1];
 		for i:=2 to #charpolsss do
@@ -352,6 +432,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::Setq : vreg:=0
 
 	print "Computing multiplicities";
 	mults := ZeroMatrix(Integers(), #factors, #fam);
+
 	for l:=1 to #factors do
 		f := factors[l];
 		for i:=1 to #fam do
@@ -513,5 +594,166 @@ intrinsic RandomRegularVector(W::GrpMat) -> ModTupFldElt
 		end for;
 		i +:= 1;
 	end while;
+
+end intrinsic;
+
+
+intrinsic GaudinOperatorsForJulia(W::GrpMat, c::Map, fam::SetIndx : file:="") -> MonStgElt
+{}
+
+	str := "";
+	gaudins := GaudinOperators(W,c,fam);
+	R := BaseRing(gaudins[1]); //a rational function field
+	Rb := BaseRing(R);
+	if Type(Rb) eq FldRat or Type(Rb) eq FldCyc then
+		k := Rb;
+	elif Type(Rb) eq RngMPol or Type(Rb) eq FldFunRat then
+		k := BaseRing(Rb);
+	else
+		error "Not implemented for this type of base ring";
+	end if;
+
+	if Type(k) eq FldRat then
+		str *:= "k = QQ";
+	elif Type(k) eq FldCyc then
+		n := CyclotomicOrder(k);
+		str *:= Sprintf("k,z = CyclotomicField(%o, \"z\")", n);
+	end if;
+	str *:= "\n";
+
+	if Type(Rb) eq FldRat or Type(Rb) eq FldCyc then
+		str *:= "P = k";
+	elif Type(Rb) eq RngMPol or Type(Rb) eq FldFunRat then
+		str *:= "P, ";
+		if Rank(Rb) gt 1 then
+			str *:= "(";
+		end if;
+		for i:=1 to Rank(Rb) do
+			str *:= Sprint(Rb.i);
+			if i lt Rank(Rb) then
+				str *:= ",";
+			end if;
+		end for;
+		if Rank(Rb) gt 1 then
+			str *:= ")";
+		end if;
+		str *:= " = PolynomialRing(k, ";
+		if Rank(Rb) gt 1 then
+			str *:= "[";
+		end if;
+		for i:=1 to Rank(Rb) do
+			str *:= "\""*Sprint(Rb.i)*"\"";
+			if i lt Rank(Rb) then
+				str *:= ",";
+			end if;
+		end for;
+		if Rank(Rb) gt 1 then
+			str *:= "]";
+		end if;
+		str *:= ")";
+	end if;
+	str *:= "\n";
+
+	if Type(Rb) eq FldFunRat then
+		str *:= "P = FractionField(P)";
+		str *:= "\n";
+		for i:=1 to Rank(Rb) do
+			str *:= Sprint(Rb.i);
+			if i lt Rank(Rb) then
+				str *:= ",";
+			end if;
+		end for;
+		str *:= " = map(P, gens(base_ring(P)))";
+		str *:= "\n";
+	end if;
+
+	str *:= "K, (";
+	for i:=1 to Rank(R) do
+		str *:= Sprint(R.i);
+		if i lt Rank(R) then
+			str *:= ",";
+		end if;
+	end for;
+	str *:= ") = PolynomialRing(P, [";
+	for i:=1 to Rank(R) do
+		str *:= "\""*Sprint(R.i)*"\"";
+		if i lt Rank(R) then
+			str *:= ",";
+		end if;
+	end for;
+	str *:= "])";
+	str *:= "\n";
+
+	str *:= "K = FractionField(K)";
+	str *:= "\n";
+	for i:=1 to Rank(R) do
+		str *:= Sprint(R.i);
+		if i lt Rank(R) then
+			str *:= ",";
+		end if;
+	end for;
+	str *:= " = map(K, gens(base_ring(K)))";
+	str *:= "\n";
+
+	if Type(Rb) eq RngMPol or Type(Rb) eq FldFunRat then
+		for i:=1 to Rank(Rb) do
+			str *:= Sprint(Rb.i);
+			if i lt Rank(Rb) then
+				str *:= ",";
+			end if;
+		end for;
+		str *:= " = map(K,[";
+		for i:=1 to Rank(Rb) do
+			str *:= Sprint(Rb.i);
+			if i lt Rank(Rb) then
+				str *:= ",";
+			end if;
+		end for;
+		str *:= "])";
+		str *:= "\n";
+	end if;
+
+	for i:=1 to #gaudins do
+		N := Ncols(gaudins[i]);
+		Dstr := Sprint(Eltseq(gaudins[i]));
+		Dstr := Replace(Dstr, "\\\\/", "\\\\/\\\\\/");
+		if Type(k) eq FldCyc then
+			Dstr := Replace(Dstr, Sprint(k.1), "z");
+		end if;
+		str *:= Sprintf("D%o = matrix(K, %o, %o, %o)", fam[i], N, N, Dstr);
+		str *:= "\n";
+	end for;
+
+	str *:= "D = [";
+	for i:=1 to #gaudins do
+		str *:= Sprintf("D%o", fam[i]);
+		if i lt #gaudins then
+			str *:= ",";
+		end if;
+	end for;
+	str *:= "]";
+	str *:= "\n";
+
+	coroots_str := "coroots = [";
+	for j:=1 to #W`ReflectionLibraryFlat do
+		s := W`ReflectionLibraryFlat[j];
+		coroots_str *:= Sprint(&*[ &+[s`Coroot[i]*R.(Dimension(W)+i) : i in [1..Dimension(W)]]]);
+		if j lt #W`ReflectionLibraryFlat then
+			coroots_str *:= ",";
+		end if;
+	end for;
+	coroots_str *:= "]";
+	coroots_str := Replace(coroots_str, "\\\\/", "\\\\/\\\\\/");
+	if Type(k) eq FldCyc then
+		coroots_str := Replace(coroots_str, Sprint(k.1), "z");
+	end if;
+	str *:= coroots_str;
+
+	if file ne "" then
+		Write(file, str : Overwrite:=true);
+	end if;
+
+	return str;
+
 
 end intrinsic;
