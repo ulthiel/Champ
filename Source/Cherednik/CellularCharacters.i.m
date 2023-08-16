@@ -416,11 +416,16 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::SetIndx : vreg
 		PrintPercentage(count, #W`Representations[0]);
 	end for;
 
-	print "Computing semisimple parts";
-	speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
+	//UT: Aug 16, 2023: Here were some unstaged changes.
+	//I think this should be correct now.
+	//print "Computing semisimple parts";
+	//speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
 
-	print "Factorizing semisimple parts";
-	factorizations := [ Factorization(f) : f in speccharpolsss];
+	print "Factorizing characteristic polynomials";
+	//factorizations := [ Factorization(f) : f in speccharpolsss];
+	factorizations := [ Factorization(f) : f in speccharpols];
+
+	//print factorizations;
 
 	factors := {};
 	for f in factorizations do
