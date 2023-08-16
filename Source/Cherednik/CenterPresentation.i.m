@@ -420,3 +420,34 @@ intrinsic BettiNumbers(S::Sch) -> SeqEnum
 	return BettiNumbers(GradedModule(I));
 
 end intrinsic;
+
+intrinsic SpecializeCenterPresentation(H::AlgChe, param::SeqEnum) -> SeqEnum
+{}
+
+	K := Universe(param);
+	if Type(K) eq RngInt then
+		K := Rationals();
+	end if;
+
+	N := Rank(H`CenterSpace);
+
+	R := PolynomialRing(K, N);
+	AssignNames(~R, Names(H`CenterSpace));
+
+	phi := hom<BaseRing(H) -> K | param>;
+
+	Zspec := [ R!ChangeRing(f, phi) : f in H`CenterPresentation ];
+
+	return Zspec;
+
+end intrinsic;
+
+intrinsic CalogeroMoserSpace(H::AlgChe, param::SeqEnum) -> SeqEnum
+{}
+
+	Zcpres := SpecializeCenterPresentation(H, param);
+	A := AffineSpace(Universe(Zcpres));
+	Xc := Scheme(A, Zcpres);
+	return Xc;
+
+end intrinsic;
