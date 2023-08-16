@@ -406,7 +406,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::SetIndx : vreg
 	print "Specializing Gaudin operators";
 	gaudinsspec := [* Evaluate(D, point) : D in gaudins *];
 
-	print "Computing characteristic polynomials";
+	print "Computing specialized characteristic polynomials";
 	speccharpols := [];
 	count := 0;
 	for D in gaudinsspec do
@@ -421,7 +421,7 @@ intrinsic CalogeroMoserCellularCharacters(W::GrpMat, c::Map, fam::SetIndx : vreg
 	//print "Computing semisimple parts";
 	//speccharpolsss := [ SemisimplePart(f) : f in speccharpols ];
 
-	print "Factorizing characteristic polynomials";
+	print "Factorizing specialized characteristic polynomials";
 	//factorizations := [ Factorization(f) : f in speccharpolsss];
 	factorizations := [ Factorization(f) : f in speccharpols];
 
