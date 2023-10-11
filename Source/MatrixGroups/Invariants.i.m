@@ -280,8 +280,8 @@ end intrinsic;
 intrinsic Degrees(G::GrpMat) -> SeqEnum
 {}
 
-    Degrees(~R);
-    return R`Degrees;
+    Degrees(~G);
+    return G`Degrees;
 
 end intrinsic;
 
